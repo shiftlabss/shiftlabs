@@ -194,14 +194,18 @@ const layers = [
   { label: "Camada de Inteligência", Icon: IntelligenceLayerIcon },
 ];
 
-const arrivalSeconds = [0.2, 1, 1.72, 2.38, 3];
-const pulseStartSeconds = 4.6;
-const pulseStepSeconds = 0.7;
+const arrivalSeconds = [0.3, 1.8, 3.2, 4.5, 5.7];
 const playRatio = 0.45;
+
+type CyclePhase = "idle" | "run" | "reset";
+
+const phaseDurationMs: Record<CyclePhase, number> = { idle: 300, run: 7400, reset: 840 };
+const nextPhase: Record<CyclePhase, CyclePhase> = { idle: "run", run: "reset", reset: "idle" };
 
 export function FrameworkLayers() {
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isInView, setIsInView] = useState(false);
+  const [phase, setPhase] = useState<CyclePhase>("idle");
 
   useEffect(() => {
     const root = rootRef.current;
@@ -209,8 +213,8 @@ export function FrameworkLayers() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.intersectionRatio >= playRatio) setIsPlaying(true);
-        else if (!entry.isIntersecting) setIsPlaying(false);
+        if (entry.intersectionRatio >= playRatio) setIsInView(true);
+        else if (!entry.isIntersecting) setIsInView(false);
       },
       { threshold: [0, playRatio] },
     );
@@ -219,11 +223,24 @@ export function FrameworkLayers() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!isInView) {
+      setPhase("idle");
+      return;
+    }
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const timer = window.setTimeout(() => setPhase(nextPhase[phase]), phaseDurationMs[phase]);
+    return () => window.clearTimeout(timer);
+  }, [isInView, phase]);
+
   return (
     <div
       ref={rootRef}
       className="framework-flow"
-      data-playing={isPlaying ? "" : undefined}
+      data-in-view={isInView ? "" : undefined}
+      data-playing={phase === "idle" ? undefined : ""}
+      data-resetting={phase === "reset" ? "" : undefined}
     >
       <span aria-hidden className="framework-flow-aura" />
       <span aria-hidden className="framework-flow-rail">
@@ -241,12 +258,10 @@ export function FrameworkLayers() {
             style={
               {
                 "--arrive": `${arrivalSeconds[index]}s`,
-                "--pulse": `${pulseStartSeconds + index * pulseStepSeconds}s`,
               } as CSSProperties
             }
           >
             <span aria-hidden className="framework-orb">
-              <span className="framework-orb-glow" />
               <span className="framework-orb-ripple" />
               <svg className="framework-ring" viewBox="0 0 86 86">
                 <circle className="framework-ring-base" cx="43" cy="43" r="42.5" />
@@ -264,9 +279,12 @@ export function FrameworkLayers() {
               <span className="framework-icon framework-icon-base">
                 <Icon />
               </span>
-              <span className="framework-orb-disc" />
-              <span className="framework-icon framework-icon-lit">
-                <Icon />
+              <span className="framework-orb-lit">
+                <span className="framework-orb-glow" />
+                <span className="framework-orb-disc" />
+                <span className="framework-icon framework-icon-lit">
+                  <Icon />
+                </span>
               </span>
             </span>
             <span className="framework-flow-label">{label}</span>

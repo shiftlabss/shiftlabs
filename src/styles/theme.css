@@ -443,6 +443,13 @@
   --flood-from: 50% 0%;
 }
 
+.framework-orb-lit {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
 .framework-orb-glow {
   position: absolute;
   z-index: -1;
@@ -563,84 +570,91 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .framework-flow[data-playing] .framework-flow-aura {
-    animation: framework-aura 1.8s ease-out 3.1s both;
+    opacity: 0.5;
+    transition: opacity 1.2s ease-out 5.8s;
   }
 
   .framework-flow[data-playing] .framework-rail-fill {
-    animation:
-      framework-rail-fill 2.4s linear 0.6s both,
-      framework-rail-settle 0.8s ease 3.6s forwards;
+    animation: framework-rail-fill 5s linear 0.7s both;
   }
 
   .framework-flow[data-playing] .framework-rail-runner {
-    animation:
-      framework-rail-run 2.4s linear 0.6s both,
-      framework-rail-idle 7s linear 4.6s infinite;
+    animation: framework-rail-run 5s linear 0.7s both;
   }
 
   .framework-flow[data-playing] .framework-orb {
-    animation: framework-orb-pop 0.64s cubic-bezier(0.23, 1, 0.32, 1) var(--arrive) both;
+    animation: framework-orb-pop 0.9s ease-in-out var(--arrive) both;
   }
 
   .framework-flow[data-playing] .framework-orb-glow {
-    animation:
-      framework-glow-in 0.7s ease-out calc(var(--arrive) + 0.26s) both,
-      framework-glow-pulse 7s linear var(--pulse) infinite;
+    animation: framework-glow-in 1s ease-out calc(var(--arrive) + 0.3s) both;
   }
 
   .framework-flow[data-playing] .framework-orb-ripple {
-    animation:
-      framework-ripple 0.9s cubic-bezier(0.23, 1, 0.32, 1) calc(var(--arrive) + 0.3s) both,
-      framework-ripple-idle 7s linear var(--pulse) infinite;
+    animation: framework-ripple 1.3s ease-out calc(var(--arrive) + 0.4s) both;
   }
 
   .framework-flow[data-playing] .framework-ring-arc {
-    animation: framework-draw 0.46s cubic-bezier(0.23, 1, 0.32, 1) var(--arrive) both;
+    animation: framework-draw 0.7s ease-in-out var(--arrive) both;
   }
 
   .framework-flow[data-playing] .framework-orb-disc {
-    animation: framework-flood 0.5s cubic-bezier(0.23, 1, 0.32, 1) calc(var(--arrive) + 0.04s) both;
+    animation: framework-flood 0.8s ease-in-out calc(var(--arrive) + 0.06s) both;
   }
 
   .framework-flow[data-playing] .framework-icon-lit {
-    animation: framework-fade-in 0.16s linear calc(var(--arrive) + 0.18s) both;
+    animation: framework-fade-in 0.24s linear calc(var(--arrive) + 0.3s) both;
   }
 
   .framework-flow[data-playing] .framework-icon-lit [stroke="currentColor"] {
-    animation: framework-draw 0.72s cubic-bezier(0.23, 1, 0.32, 1) calc(var(--arrive) + 0.18s) both;
+    animation: framework-draw 1s ease-in-out calc(var(--arrive) + 0.3s) both;
   }
 
   .framework-flow[data-playing] .framework-flow-label {
-    animation: framework-label 0.46s ease calc(var(--arrive) + 0.2s) both;
+    color: #101700;
+    transition: color 0.6s ease calc(var(--arrive) + 0.3s);
   }
 
-  .framework-flow[data-playing] + .framework-outcome {
-    animation: framework-label 0.46s ease 3.4s both;
+  .framework-flow[data-resetting] .framework-rail-fill,
+  .framework-flow[data-resetting] .framework-orb-lit,
+  .framework-flow[data-resetting] .framework-ring-arc,
+  .framework-flow[data-resetting] .framework-flow-aura {
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+
+  .framework-flow[data-resetting] .framework-flow-label {
+    color: #4a6010;
+    transition: color 0.8s ease;
+  }
+
+  .framework-flow[data-in-view] + .framework-outcome {
+    animation: framework-label 0.6s ease 6.3s both;
   }
 }
 
 @keyframes framework-rail-fill {
   0% {
     transform: scaleX(0);
-    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    animation-timing-function: ease-in-out;
   }
 
-  16.7%,
-  30.8% {
+  22%,
+  29% {
     transform: scaleX(0.25);
-    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    animation-timing-function: ease-in-out;
   }
 
-  46.7%,
-  59.2% {
+  50%,
+  57% {
     transform: scaleX(0.5);
-    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    animation-timing-function: ease-in-out;
   }
 
-  74.2%,
-  85.8% {
+  76%,
+  82% {
     transform: scaleX(0.75);
-    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    animation-timing-function: ease-in-out;
   }
 
   100% {
@@ -652,55 +666,31 @@
   0% {
     opacity: 1;
     transform: translateX(0);
-    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    animation-timing-function: ease-in-out;
   }
 
-  16.7%,
-  30.8% {
+  22%,
+  29% {
     transform: translateX(25%);
-    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    animation-timing-function: ease-in-out;
   }
 
-  46.7%,
-  59.2% {
+  50%,
+  57% {
     transform: translateX(50%);
-    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    animation-timing-function: ease-in-out;
   }
 
-  74.2%,
-  85.8% {
+  76%,
+  82% {
     transform: translateX(75%);
-    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    animation-timing-function: ease-in-out;
   }
 
   99% {
     opacity: 1;
   }
 
-  100% {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-}
-
-@keyframes framework-rail-settle {
-  to {
-    opacity: 0.7;
-  }
-}
-
-@keyframes framework-rail-idle {
-  0% {
-    opacity: 0;
-    transform: translateX(0);
-  }
-
-  2%,
-  38% {
-    opacity: 1;
-  }
-
-  40%,
   100% {
     opacity: 0;
     transform: translateX(100%);
@@ -754,18 +744,6 @@
   }
 }
 
-@keyframes framework-glow-pulse {
-  0%,
-  16%,
-  100% {
-    opacity: 0.6;
-  }
-
-  4% {
-    opacity: 1;
-  }
-}
-
 @keyframes framework-ripple {
   from {
     opacity: 0.65;
@@ -778,36 +756,9 @@
   }
 }
 
-@keyframes framework-ripple-idle {
-  0% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-
-  12%,
-  100% {
-    opacity: 0;
-    transform: scale(1.32);
-  }
-}
-
 @keyframes framework-label {
   to {
     color: #101700;
-  }
-}
-
-@keyframes framework-aura {
-  0% {
-    opacity: 0;
-  }
-
-  36% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0.5;
   }
 }
 
@@ -817,7 +768,6 @@
   }
 
   .framework-rail-fill {
-    opacity: 0.7;
     transform: none;
   }
 
