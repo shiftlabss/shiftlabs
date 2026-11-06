@@ -13,15 +13,6 @@ const googleSiteVerification = (
   process.env.VITE_GOOGLE_SITE_VERIFICATION ||
   ""
 ).trim();
-const hiddenCareerRoleSlugs = [
-  "analista-financeiro-operacional",
-  "designer-ui-ux-pleno",
-  "diretor-de-arte",
-  "gerente-operacional",
-  "rh-operacional",
-  "social-media",
-];
-
 function assert(condition, message) {
   if (!condition) {
     throw new Error(message);
@@ -141,31 +132,14 @@ function validateHtml(url, html, { canonical, robots, jobPosting = false }) {
 
   const jsonLdEntries = flattenJsonLd(extractJsonLdBlocks(html, url));
   assert(hasJsonLdType(jsonLdEntries, "Organization"), `${url}: Organization ausente`);
-  if (jobPosting) {
-    assert(hasJsonLdType(jsonLdEntries, "JobPosting"), `${url}: JobPosting ausente`);
-  }
 }
 
 async function validateIndexablePages(locs) {
   for (const loc of locs) {
-    const url = new URL(loc);
-    const path = url.pathname === "/" ? "/" : url.pathname.replace(/\/$/, "");
     const { text } = await fetchText(loc);
     validateHtml(loc, text, {
       canonical: loc,
       robots: "index, follow, max-image-preview:large",
-      jobPosting: path.startsWith("/vagas/"),
-    });
-  }
-}
-
-async function validateHiddenPages() {
-  for (const slug of hiddenCareerRoleSlugs) {
-    const path = `/vagas/${slug}`;
-    const { text } = await fetchText(path);
-    validateHtml(toUrl(path), text, {
-      canonical: `${siteUrl}/vagas`,
-      robots: "noindex, nofollow, noarchive",
     });
   }
 }
@@ -173,24 +147,19 @@ async function validateHiddenPages() {
 async function run() {
   const robots = await fetchText("/robots.txt");
   assert(robots.text.includes("User-agent: *"), "robots.txt sem user-agent");
-  assert(robots.text.includes("Disallow: /vagas/editor"), "robots.txt sem editor bloqueado");
+  assert(!robots.text.includes("/vagas"), "robots.txt ainda cita /vagas");
   assert(robots.text.includes(`Sitemap: ${siteUrl}/sitemap.xml`), "robots.txt sem sitemap");
 
   const sitemap = await fetchText("/sitemap.xml");
   const locs = extractSitemapLocs(sitemap.text);
   assert(locs.includes(`${siteUrl}/`), "sitemap sem home");
-  assert(locs.includes(`${siteUrl}/vagas`), "sitemap sem /vagas");
+  assert(!sitemap.text.includes("/vagas"), "sitemap ainda cita /vagas");
 
   for (const loc of locs) {
     assert(loc.startsWith(siteUrl), `sitemap com dominio incorreto: ${loc}`);
   }
 
-  for (const slug of hiddenCareerRoleSlugs) {
-    assert(!sitemap.text.includes(`/vagas/${slug}`), `sitemap inclui vaga oculta ${slug}`);
-  }
-
   await validateIndexablePages(locs);
-  await validateHiddenPages();
 
   if (!googleSiteVerification) {
     console.warn(
@@ -198,7 +167,7 @@ async function run() {
     );
   }
 
-  console.log(`[seo:production] ${locs.length} URLs indexaveis e ${hiddenCareerRoleSlugs.length} vagas ocultas validadas.`);
+  console.log(`[seo:production] ${locs.length} URLs indexaveis validadas.`);
 }
 
 run().catch((error) => {

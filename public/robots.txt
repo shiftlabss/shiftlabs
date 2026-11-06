@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /vagas/editor
 
 Sitemap: https://shiftlabs.sh/sitemap.xml

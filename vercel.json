@@ -1,22 +1,14 @@
 {
-  "headers": [
+  "redirects": [
     {
-      "source": "/vagas/editor",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow"
-        }
-      ]
+      "source": "/vagas",
+      "destination": "/",
+      "permanent": true
     },
     {
-      "source": "/vagas/editor/(.*)",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow"
-        }
-      ]
+      "source": "/vagas/:path*",
+      "destination": "/",
+      "permanent": true
     }
   ],
   "rewrites": [

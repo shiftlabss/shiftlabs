@@ -8,15 +8,6 @@ const siteUrl = (process.env.SITE_URL || process.env.VITE_SITE_URL || fallbackSi
   .trim()
   .replace(/\/+$/, "");
 const socialPreviewUrl = `${siteUrl}/social-preview.png`;
-const hiddenCareerRoleSlugs = new Set([
-  "analista-financeiro-operacional",
-  "designer-ui-ux-pleno",
-  "diretor-de-arte",
-  "gerente-operacional",
-  "rh-operacional",
-  "social-media",
-]);
-
 function assert(condition, message) {
   if (!condition) {
     throw new Error(message);
@@ -195,70 +186,13 @@ function validateCommonPage({ route, relativePath, html }) {
 }
 
 function validateHome(routeState) {
-  assert(routeState.title === "ShiftLabs | Arquitetura de Produto, Tecnologia e Operacao", "/: title incorreto");
+  assert(routeState.title === "ShiftLabs | Da Ideia ao Primeiro Cliente e Estrutura para Empresas", "/: title incorreto");
   assert(routeState.canonical === toCanonicalUrl("/"), "/: canonical incorreto");
   assert(
-    routeState.h1 === "Não construímos ideias. Estruturamos negócios.",
+    routeState.h1 === "Tiramos negócios do papel. Estruturamos os que já existem.",
     "/: H1 incorreto",
   );
   assert(findJsonLdEntry(routeState.jsonLdEntries, "WebPage"), "/: WebPage ausente");
-}
-
-function validateCareers(routeState) {
-  assert(routeState.title === "Vagas na ShiftLabs | Carreiras", "/vagas: title incorreto");
-  assert(routeState.canonical === toCanonicalUrl("/vagas"), "/vagas: canonical incorreto");
-  assert(
-    routeState.h1 === "Onde você entra para construir sistema, não só tarefa.",
-    "/vagas: H1 incorreto",
-  );
-  assert(
-    findJsonLdEntry(routeState.jsonLdEntries, "CollectionPage"),
-    "/vagas: CollectionPage ausente",
-  );
-}
-
-function validateRole(route, routeState) {
-  const slug = route.replace("/vagas/", "");
-  const isHidden = hiddenCareerRoleSlugs.has(slug);
-
-  if (isHidden) {
-    assert(
-      routeState.robots === "noindex, nofollow, noarchive",
-      `${route}: vaga oculta sem noindex correto`,
-    );
-    assert(
-      routeState.canonical === toCanonicalUrl("/vagas"),
-      `${route}: vaga oculta deve apontar canonical para /vagas`,
-    );
-    assert(
-      findJsonLdEntry(routeState.jsonLdEntries, "CollectionPage"),
-      `${route}: vaga oculta sem CollectionPage`,
-    );
-    return;
-  }
-
-  assert(
-    routeState.robots === "index, follow, max-image-preview:large",
-    `${route}: vaga publica sem robots indexavel`,
-  );
-  assert(routeState.canonical === toCanonicalUrl(route), `${route}: canonical incorreto`);
-  assert(routeState.title.endsWith("| Vagas ShiftLabs"), `${route}: title de vaga incorreto`);
-
-  const jobPosting = findJsonLdEntry(routeState.jsonLdEntries, "JobPosting");
-  assert(jobPosting, `${route}: JobPosting ausente`);
-
-  for (const field of [
-    "datePosted",
-    "description",
-    "hiringOrganization",
-    "jobLocation",
-    "title",
-    "url",
-  ]) {
-    assert(field in jobPosting, `${route}: JobPosting sem campo ${field}`);
-  }
-
-  assert(jobPosting.url === routeState.canonical, `${route}: JobPosting.url incorreto`);
 }
 
 async function validateRoute(filePath) {
@@ -269,10 +203,6 @@ async function validateRoute(filePath) {
 
   if (route === "/") {
     validateHome(routeState);
-  } else if (route === "/vagas") {
-    validateCareers(routeState);
-  } else if (route.startsWith("/vagas/")) {
-    validateRole(route, routeState);
   } else {
     assert(routeState.canonical === toCanonicalUrl(route), `${route}: canonical incorreto`);
   }
@@ -305,9 +235,7 @@ async function validateSitemap(routeStates) {
     assert(expectedLocs.has(loc), `sitemap.xml com URL nao indexavel: ${loc}`);
   }
 
-  for (const slug of hiddenCareerRoleSlugs) {
-    assert(!sitemapXml.includes(`/vagas/${slug}`), `sitemap.xml inclui vaga oculta ${slug}`);
-  }
+  assert(!sitemapXml.includes("/vagas"), "sitemap.xml ainda cita /vagas");
 }
 
 async function run() {
@@ -320,7 +248,7 @@ async function run() {
 
   const robotsTxt = await readFile(path.join(distDir, "robots.txt"), "utf8");
   assertIncludes(robotsTxt, "User-agent: *", "robots.txt sem user-agent");
-  assertIncludes(robotsTxt, "Disallow: /vagas/editor", "robots.txt sem bloqueio do editor");
+  assert(!robotsTxt.includes("/vagas"), "robots.txt ainda cita /vagas");
   assertIncludes(robotsTxt, `Sitemap: ${siteUrl}/sitemap.xml`, "robots.txt sem sitemap correto");
 
   const indexFiles = await findIndexFiles(distDir);
@@ -328,6 +256,10 @@ async function run() {
 
   const routeStates = [];
   for (const filePath of indexFiles) {
+    assert(
+      !routeFromIndexFile(filePath).startsWith("/vagas"),
+      `${routeFromIndexFile(filePath)}: rota de vagas nao deve existir`,
+    );
     routeStates.push(await validateRoute(filePath));
   }
 

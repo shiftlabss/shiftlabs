@@ -1,7 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { Session } from "@supabase/supabase-js";
+import { useEffect, useRef, useState } from "react";
 import svgPaths from "../imports/svg-pgtixnbxan";
-import { MenuxLogo, CortexLogo } from "./components/BrandLogos";
+import {
+  MenuxLogo,
+  CortexLogo,
+  ConttoLogo,
+  RepasseSeguroLogo,
+} from "./components/BrandLogos";
+import { FrameworkLayers } from "./components/FrameworkLayers";
 import { HairlineFigure } from "./components/HairlineFigure";
 import { HeroTimeline } from "./components/HeroTimeline";
 import sondagemFigure from "../vendor/hairline/framework/sondagem.js";
@@ -25,40 +30,13 @@ const titleTracking = "var(--tracking-title)";
 const audienceTextHalo =
   "0 0 0 #F2F3EF, 1px 0 0 #F2F3EF, -1px 0 0 #F2F3EF, 0 1px 0 #F2F3EF, 0 -1px 0 #F2F3EF, 2px 0 0 #F2F3EF, -2px 0 0 #F2F3EF, 0 2px 0 #F2F3EF, 0 -2px 0 #F2F3EF, 0 0 12px #F2F3EF, 0 0 22px #F2F3EF, 0 0 34px #F2F3EF";
 
-const supabaseUrl =
-  (import.meta.env.VITE_SUPABASE_URL as string | undefined) ??
-  "https://cjoyxelowsfkhgswkipd.supabase.co";
-const supabasePublishableKey =
-  (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined) ??
-  "sb_publishable_EWydN_Aqm9YbtXkQUNGfrA_BpB8LD4R";
-const hasSupabaseConfig = Boolean(supabaseUrl && supabasePublishableKey);
-type SupabaseModule = typeof import("@supabase/supabase-js");
-type ShiftLabsSupabaseClient = ReturnType<SupabaseModule["createClient"]>;
-let supabaseClientPromise: Promise<ShiftLabsSupabaseClient> | null = null;
-
-async function getSupabaseClient() {
-  if (!hasSupabaseConfig) return null;
-
-  supabaseClientPromise ??= import("@supabase/supabase-js").then(
-    ({ createClient }) =>
-      createClient(supabaseUrl, supabasePublishableKey, {
-        auth: {
-          autoRefreshToken: true,
-          persistSession: true,
-          detectSessionInUrl: true,
-        },
-      }),
-  );
-
-  return supabaseClientPromise;
-}
 const fallbackSiteUrl = "https://shiftlabs.sh";
 const configuredSiteUrl = (
   (import.meta.env.VITE_SITE_URL as string | undefined) ?? fallbackSiteUrl
 ).trim();
 const siteUrl = configuredSiteUrl.replace(/\/+$/, "") || fallbackSiteUrl;
 const seoDefaultDescription =
-  "A ShiftLabs estrutura produto, tecnologia, growth e operacoes para empresas crescerem com previsibilidade e execucao coordenada.";
+  "A ShiftLabs leva sua ideia até a entrega ao primeiro cliente e estrutura empresas prontas para crescer com previsibilidade e execução coordenada.";
 const seoDefaultImagePath = "/social-preview.png";
 const seoOrganizationLogoPath = "/fav-icon.svg";
 
@@ -93,24 +71,6 @@ function SectionTitle({
     >
       {children}
     </Tag>
-  );
-}
-
-function BorderBox({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={`relative ${className}`}>
-      <div
-        aria-hidden
-        className="absolute inset-0 border border-[#d6dace] pointer-events-none"
-      />
-      {children}
-    </div>
   );
 }
 
@@ -170,7 +130,13 @@ function SectionBorderTicks({
   );
 }
 
-function AsciiStarfield({ className = "" }: { className?: string }) {
+function AsciiStarfield({
+  className = "",
+  color = "#70745A",
+}: {
+  className?: string;
+  color?: string;
+}) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const [asciiFrame, setAsciiFrame] = useState("");
   const asciiFontSizePx = 11;
@@ -380,7 +346,7 @@ function AsciiStarfield({ className = "" }: { className?: string }) {
           fontFamily: mono,
           fontSize: `${asciiFontSizePx}px`,
           lineHeight: `${asciiLineHeightPx}px`,
-          color: "#70745A",
+          color,
           letterSpacing: `${asciiLetterSpacingPx}px`,
           fontVariantLigatures: "none",
           display: "block",
@@ -456,272 +422,6 @@ function InstagramIcon() {
   );
 }
 
-function CareersLocationIcon() {
-  return (
-    <svg className="size-[16px] shrink-0" fill="none" viewBox="0 0 14 14">
-      <path
-        d="M7 12.2C7 12.2 11 8.7 11 5.8C11 3.9 9.4 2.4 7.5 2.4C7.3 2.4 7.1 2.4 7 2.5C6.9 2.4 6.7 2.4 6.5 2.4C4.6 2.4 3 3.9 3 5.8C3 8.7 7 12.2 7 12.2Z"
-        stroke="#0E0E0C"
-        strokeWidth="1.25"
-      />
-      <circle cx="7" cy="5.8" r="1.1" stroke="#0E0E0C" strokeWidth="1.25" />
-    </svg>
-  );
-}
-
-function CareersClockIcon() {
-  return (
-    <svg className="size-[16px] shrink-0" fill="none" viewBox="0 0 14 14">
-      <circle cx="7" cy="7" r="4.9" stroke="#0E0E0C" strokeWidth="1.25" />
-      <path
-        d="M7 4.4V7L8.8 8.1"
-        stroke="#0E0E0C"
-        strokeLinecap="round"
-        strokeWidth="1.25"
-      />
-    </svg>
-  );
-}
-
-function CareersWorkModeIcon() {
-  return (
-    <svg className="size-[16px] shrink-0" fill="none" viewBox="0 0 14 14">
-      <rect
-        height="6.2"
-        rx="1.2"
-        stroke="#0E0E0C"
-        strokeWidth="1.25"
-        width="8.8"
-        x="2.6"
-        y="5.2"
-      />
-      <path
-        d="M5 5.2V4.5C5 3.6 5.7 2.9 6.6 2.9H7.4C8.3 2.9 9 3.6 9 4.5V5.2"
-        stroke="#0E0E0C"
-        strokeWidth="1.25"
-      />
-      <path d="M2.6 8.1H11.4" stroke="#0E0E0C" strokeWidth="1.25" />
-    </svg>
-  );
-}
-
-function CareersBackIcon() {
-  return (
-    <svg className="size-[18px] shrink-0" fill="none" viewBox="0 0 18 18">
-      <path
-        d="M11.2 4.2L6.5 8.9L11.2 13.6"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.6"
-      />
-      <path
-        d="M6.9 8.9H14.1"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth="1.6"
-      />
-    </svg>
-  );
-}
-
-function CareersPill({ children }: { children: React.ReactNode }) {
-  return (
-    <span
-      className="inline-flex items-center justify-center rounded-none border border-[#d6dace] bg-[#f2f3ef] p-2 text-[15px] text-[#5f644c]"
-      style={{ fontFamily: mono, fontWeight: 400, lineHeight: "normal" }}
-    >
-      <span>{children}</span>
-    </span>
-  );
-}
-
-/* ─── Framework icons ─── */
-function IdentityLayerIcon() {
-  return (
-    <svg className="size-9" fill="none" viewBox="0 0 40 40">
-      <circle cx="20" cy="20" r="10.5" stroke="#b6bea1" strokeWidth="1.5" />
-      <circle cx="20" cy="20" r="4.5" stroke="#b6bea1" strokeWidth="1.5" />
-      <path
-        d="M20 4.5V9.5"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M20 30.5V35.5"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M4.5 20H9.5"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M30.5 20H35.5"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-    </svg>
-  );
-}
-
-function FundamentalsLayerIcon() {
-  return (
-    <svg className="size-9" fill="none" viewBox="0 0 40 40">
-      <rect
-        height="5.5"
-        rx="1.2"
-        stroke="#b6bea1"
-        strokeWidth="1.5"
-        width="23"
-        x="8.5"
-        y="25.5"
-      />
-      <rect
-        height="5.5"
-        rx="1.2"
-        stroke="#b6bea1"
-        strokeWidth="1.5"
-        width="17"
-        x="11.5"
-        y="18.2"
-      />
-      <rect
-        height="5.5"
-        rx="1.2"
-        stroke="#b6bea1"
-        strokeWidth="1.5"
-        width="11"
-        x="14.5"
-        y="10.9"
-      />
-    </svg>
-  );
-}
-
-function ArchitectureLayerIcon() {
-  return (
-    <svg className="size-9" fill="none" viewBox="0 0 40 40">
-      <rect
-        height="23"
-        rx="2"
-        stroke="#b6bea1"
-        strokeWidth="1.5"
-        width="23"
-        x="8.5"
-        y="8.5"
-      />
-      <path d="M8.5 16.2H31.5" stroke="#b6bea1" strokeWidth="1.5" />
-      <path d="M16.2 8.5V31.5" stroke="#b6bea1" strokeWidth="1.5" />
-      <path d="M22 22H31.5" stroke="#b6bea1" strokeWidth="1.5" />
-      <path d="M22 31.5V22" stroke="#b6bea1" strokeWidth="1.5" />
-    </svg>
-  );
-}
-
-function OperatingSystemLayerIcon() {
-  return (
-    <svg className="size-9" fill="none" viewBox="0 0 40 40">
-      <circle cx="20" cy="20" r="6.2" stroke="#b6bea1" strokeWidth="1.5" />
-      <path
-        d="M20 7.2V11.2"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M20 28.8V32.8"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M7.2 20H11.2"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M28.8 20H32.8"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M11 11L13.8 13.8"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M26.2 26.2L29 29"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M29 11L26.2 13.8"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M13.8 26.2L11 29"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-    </svg>
-  );
-}
-
-function IntelligenceLayerIcon() {
-  return (
-    <svg className="size-9" fill="none" viewBox="0 0 40 40">
-      <circle cx="10" cy="11" fill="#b6bea1" r="2.2" />
-      <circle cx="29.8" cy="10.5" fill="#b6bea1" r="2.2" />
-      <circle cx="20" cy="20" fill="#b6bea1" r="2.2" />
-      <circle cx="10.5" cy="29.2" fill="#b6bea1" r="2.2" />
-      <circle cx="30" cy="29" fill="#b6bea1" r="2.2" />
-      <path
-        d="M12 12.5L18.3 18.2"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M27.8 12L21.7 18.1"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M12.4 27.8L18.1 21.9"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M27.8 27.4L21.9 21.7"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M12.2 11.1H27.6"
-        stroke="#b6bea1"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-    </svg>
-  );
-}
-
 /* ─── Footer big wordmark ─── */
 function BigWordmark() {
   return (
@@ -750,7 +450,7 @@ function BigWordmark() {
 const heroTimeline = [
   {
     step: "/01",
-    title: "diagnóstico",
+    title: "validação",
     figure: sondagemFigure,
     label:
       "Um terreno de sondagem com uma grade de estacas; com o mouse, as estacas sobem onde o solo cede, e no ponto fraco sobem mais.",
@@ -771,7 +471,7 @@ const heroTimeline = [
   },
   {
     step: "/04",
-    title: "inteligência",
+    title: "escala",
     figure: balancaFigure,
     label:
       "Uma balança romana; com o mouse, entra carga no prato e o contrapeso corre sozinho pela escala até nivelar de novo.",
@@ -781,86 +481,70 @@ const heroTimeline = [
 const problemCards = [
   {
     id: 1,
-    text: "Produto evolui sem alinhamento com comercial.",
+    text: "Ideia e mercado que nunca se encontram.",
     figure: ponteFigure,
     figureLabel:
       "Duas metades de uma ponte, feitas de margens opostas; com o mouse, elas crescem e passam uma ao lado da outra, sem se encontrar.",
   },
   {
     id: 2,
+    text: "Decisões no palpite, sem validação real.",
+    figure: painelFigure,
+    figureLabel:
+      "Um painel com três mostradores cujos ponteiros oscilam no palpite; com o mouse, a medição liga e os ponteiros vão para bem longe do palpite.",
+  },
+  {
+    id: 3,
     text: "Marketing gera demanda que a operação não absorve.",
     figure: pedidosFigure,
     figureLabel:
       "Pedidos caem numa bandeja mais rápido do que um carimbo despacha; com o mouse, a pilha transborda.",
   },
   {
-    id: 3,
+    id: 4,
     text: "Tecnologia acumula decisões sem arquitetura clara.",
     figure: gaveteiroFigure,
     figureLabel:
       "Um arquivo com gavetas abarrotadas; com o mouse, a gaveta é empurrada e volta a abrir, cuspindo papel.",
-  },
-  {
-    id: 4,
-    text: "Gestão decide por percepção, não por sistema.",
-    figure: painelFigure,
-    figureLabel:
-      "Um painel com três mostradores cujos ponteiros oscilam no palpite; com o mouse, a medição liga e os ponteiros vão para bem longe do palpite.",
   },
 ];
 
 const services = [
   {
     title: "Produto & Estratégia",
-    desc: "Estruturamos proposta de valor, arquitetura e roadmap com base em pesquisa e validação.",
+    desc: "Validamos a ideia e definimos proposta de valor, arquitetura e roadmap com base em pesquisa.",
     figure: roadmapFigure,
     figureLabel:
       "Uma trilha de pedras até uma bandeira; com o mouse em cima, o caminho se constrói em degraus até o marco escolhido.",
   },
   {
     title: "Tecnologia & Arquitetura",
-    desc: "Projetamos arquiteturas escaláveis com stack moderna e bem definida.",
+    desc: "Construímos o produto do zero ou reorganizamos o que já existe, com arquitetura escalável e stack bem definida.",
     figure: torreFigure,
     figureLabel:
       "Uma torre de blocos empilhados sem prumo; com o mouse em cima, as camadas entram no prumo.",
   },
   {
     title: "Growth & Comercial",
-    desc: "Estruturamos posicionamento, pricing e funis com lógica de margem e LTV.",
+    desc: "Definimos posicionamento, pricing e funis para conquistar o primeiro cliente e crescer com margem.",
     figure: funilFigure,
     figureLabel:
       "Um funil em degraus por onde descem bolinhas; as das bordas caem pelo caminho e só as do centro chegam ao cofre.",
   },
   {
     title: "Inteligência & Operação",
-    desc: "Modelamos indicadores, automatizamos processos e reduzimos fricção operacional.",
+    desc: "Montamos a operação, modelamos indicadores e automatizamos processos para reduzir fricção.",
     figure: chipFigure,
     figureLabel:
       "Um chip numa placa recebendo sinais sem parar; com o mouse em cima, o chip sobe, e a trilha sob o mouse recebe todo o fluxo.",
   },
 ];
 
-const frameworkLayers = [
-  { label: "Identidade", widthClass: "w-[85px]", Icon: IdentityLayerIcon },
-  { label: "Fundamentos", widthClass: "w-[96px]", Icon: FundamentalsLayerIcon },
-  { label: "Arquitetura", widthClass: "w-[85px]", Icon: ArchitectureLayerIcon },
-  {
-    label: "Sistema Operacional",
-    widthClass: "w-[86px]",
-    Icon: OperatingSystemLayerIcon,
-  },
-  {
-    label: "Camada de Inteligência",
-    widthClass: "w-[85px]",
-    Icon: IntelligenceLayerIcon,
-  },
-];
-
 const workSteps = [
   {
     step: "/01",
-    title: "Diagnóstico estrutural",
-    desc: "Mapeamos produto, tecnologia, operação e crescimento para encontrar gargalos reais, dependências críticas e oportunidades de coordenação.",
+    title: "Diagnóstico",
+    desc: "Entendemos a ideia ou a operação atual: mercado, produto, tecnologia e crescimento, para encontrar riscos reais e prioridades.",
   },
   {
     step: "/02",
@@ -869,37 +553,144 @@ const workSteps = [
   },
   {
     step: "/03",
-    title: "Implementação coordenada",
-    desc: "Executamos com frentes integradas, rituais objetivos e decisões orientadas por contexto, conectando estratégia, software, growth e operação na mesma direção.",
+    title: "Entrega coordenada",
+    desc: "Executamos com frentes integradas até o resultado combinado: o primeiro cliente atendido ou a operação funcionando com previsibilidade.",
   },
 ];
 
 const audienceItems = [
-  { text: "Empresas que já validaram mercado.", textMaxClass: "max-w-[171px]" },
   {
-    text: "Fundadores que querem previsibilidade.",
-    textMaxClass: "max-w-[181px]",
+    text: "Fundadores com uma ideia para tirar do papel.",
+    textMaxClass: "max-w-[230px]",
+  },
+  {
+    text: "Empresas que querem lançar um novo produto.",
+    textMaxClass: "max-w-[230px]",
   },
   {
     text: "Negócios que cresceram rápido demais.",
-    textMaxClass: "max-w-[205px]",
+    textMaxClass: "max-w-[230px]",
   },
   {
-    text: "Produtos que precisam de estrutura.",
-    textMaxClass: "max-w-[172px]",
+    text: "Empresas prontas que precisam de estrutura.",
+    textMaxClass: "max-w-[230px]",
   },
 ];
 
-const featureItems = [
-  "Design isolado.",
-  "Código isolado.",
-  "Marketing isolado.",
+const pathTracks = [
+  {
+    label: "/Do zero",
+    title: "Da ideia ao primeiro cliente.",
+    desc: "Para quem tem uma ideia e precisa transformá-la em um negócio real.",
+    steps: [
+      "Validamos a ideia e o mercado.",
+      "Desenhamos o modelo de negócio e o produto.",
+      "Construímos e lançamos a primeira versão.",
+      "Acompanhamos a entrega ao primeiro cliente.",
+    ],
+  },
+  {
+    label: "/Empresa pronta",
+    title: "Estrutura para o que já existe.",
+    desc: "Para empresas em operação que cresceram mais rápido do que a própria estrutura.",
+    steps: [
+      "Mapeamos onde a operação trava.",
+      "Organizamos produto, tecnologia e comercial.",
+      "Implementamos processos e indicadores.",
+      "Preparamos a empresa para crescer com previsibilidade.",
+    ],
+  },
 ];
-const thesisLead = "Muita gente melhora peças soltas.";
-const thesisClose = "A ShiftLabs estrutura o sistema.";
+
+const ecosystemSites = [
+  { name: "Menux", href: "https://menux.co", Logo: MenuxLogo },
+  { name: "Cortex", href: "https://www.cortex.je", Logo: CortexLogo },
+  { name: "Contto", href: "https://www.contto.sh", Logo: ConttoLogo },
+  {
+    name: "Repasse Seguro",
+    href: "https://www.repasseseguro.com.br",
+    Logo: RepasseSeguroLogo,
+  },
+];
+
+const ecosystemMarqueeItems = Array.from(
+  { length: 16 },
+  (_, index) => ecosystemSites[index % ecosystemSites.length],
+);
+
+const caseStudies = [
+  {
+    name: "Menux",
+    Logo: MenuxLogo,
+    href: "https://menux.co",
+    domain: "menux.co",
+    title: "Uma IA que explica o cardápio em cada mesa.",
+    context:
+      "dúvidas travam o salão, os adicionais saem sem padrão e a gestão fica sem leitura do que acontece na mesa.",
+    effect:
+      "pelo QR Code da mesa, sem instalar app, o cliente tira dúvidas sobre pratos, porções e restrições e recebe sugestões de adicionais. O garçom segue no atendimento.",
+    capability:
+      "IA no navegador e o Maestro no backoffice, que organiza comportamento, dúvidas e aceitação em sinais para ajustar cardápio, oferta e operação.",
+  },
+  {
+    name: "Cortex",
+    Logo: CortexLogo,
+    href: "https://www.cortex.je",
+    domain: "cortex.je",
+    title: "Atender na régua e provar que atendeu.",
+    context:
+      "operadores regulados costumam atender em um sistema e provar em outro, e a prova só é montada depois do pedido.",
+    effect:
+      "a Atena atende no WebChat dentro da régua do operador, leva casos de julgamento ao time humano e registra cada decisão na hora.",
+    capability:
+      "quatro agentes de IA para atendimento, eventos de pagamento, jogo responsável e governança de evidências.",
+  },
+  {
+    name: "Contto",
+    Logo: ConttoLogo,
+    href: "https://www.contto.sh",
+    domain: "contto.sh",
+    title: "Histórias de dormir na voz da família.",
+    context:
+      "a hora de dormir depende de quem está por perto para contar a história.",
+    effect:
+      "um adulto grava a própria voz com autorização, ou usa a Voz do Contto, e as histórias nascem em conversa para crianças de 3 a 8 anos.",
+    capability:
+      "livro de seis noites escrito por IA, sem anúncios, com o adulto no controle da conta e da retirada da voz.",
+  },
+  {
+    name: "Repasse Seguro",
+    Logo: RepasseSeguroLogo,
+    href: "https://www.repasseseguro.com.br",
+    domain: "repasseseguro.com.br",
+    title: "Formalização de cessões imobiliárias.",
+    context:
+      "quem precisa sair de um contrato imobiliário nem sempre encontra um caminho seguro.",
+    effect:
+      "a plataforma conecta quem quer sair do contrato a quem busca oportunidade abaixo da tabela, com comissão apenas no fechamento.",
+    capability:
+      "verificação documental, conta escrow e módulos para cedente, cessionário e administração.",
+  },
+];
+
+const coordinationItems = [
+  {
+    before: "Design isolado.",
+    after: "Marca, produto e experiência decididos junto com o negócio.",
+  },
+  {
+    before: "Código isolado.",
+    after: "Sistemas feitos do zero, com a nossa engenharia e o nosso framework.",
+  },
+  {
+    before: "Marketing isolado.",
+    after: "Oferta e comercial prontos para chegar ao primeiro cliente.",
+  },
+];
 
 const homeSections = [
   ["#problema", "Problema"],
+  ["#caminhos", "Caminhos"],
   ["#servicos", "Serviços"],
   ["#como-trabalhamos", "Método"],
   ["#cases", "Cases"],
@@ -918,420 +709,6 @@ const socialLinks = [
   },
 ];
 
-const careersSocialLinks = [
-  {
-    name: "LinkedIn",
-    href: "https://www.linkedin.com/company/shiftlabs-br/",
-    Icon: LinkedInIcon,
-  },
-  {
-    name: "Instagram",
-    href: "https://instagram.com/shiftlabs.br",
-    Icon: InstagramIcon,
-  },
-];
-
-type CareersRole = {
-  slug: string;
-  title: string;
-  displayTitle?: string;
-  displaySeniority?: string;
-  displayCommitment?: string;
-  location: string;
-  commitment: string;
-  model: string;
-  area: string;
-  displayArea?: string;
-  intro: string;
-  cardSummary?: string;
-  roleOneLiner?: string;
-  about: string[];
-  responsibilities: string[];
-  requirements: string[];
-  stack: string[];
-  process: string[];
-  whyTitle?: string;
-  roleTitle?: string;
-  doTitle?: string;
-  bringTitle?: string;
-  stackTitle?: string;
-  processTitle?: string;
-  joinTitle?: string;
-  joinUs?: string[];
-  bodyMarkdown?: string;
-  datePosted?: string;
-  updatedAt?: string;
-};
-
-type CareersRoleRow = {
-  id: string;
-  slug: string;
-  title: string;
-  display_title?: string | null;
-  display_seniority?: string | null;
-  display_commitment?: string | null;
-  location: string;
-  commitment: string;
-  model: string;
-  area: string;
-  display_area?: string | null;
-  intro: string;
-  card_summary?: string | null;
-  role_one_liner: string | null;
-  body_markdown: string | null;
-  about: string[] | null;
-  responsibilities: string[] | null;
-  requirements: string[] | null;
-  stack: string[] | null;
-  process: string[] | null;
-  why_title: string | null;
-  role_title: string | null;
-  do_title: string | null;
-  bring_title: string | null;
-  stack_title: string | null;
-  process_title: string | null;
-  join_title: string | null;
-  join_us: string[] | null;
-  is_published: boolean;
-  sort_order: number;
-  created_at: string;
-  updated_at: string;
-};
-
-function toTextArray(value: unknown): string[] {
-  if (!Array.isArray(value)) return [];
-  return value.filter(
-    (item): item is string =>
-      typeof item === "string" && item.trim().length > 0,
-  );
-}
-
-function normalizeSearchText(value: string): string {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function isGenericArea(value: string | undefined): boolean {
-  const normalized = normalizeSearchText(value ?? "");
-  return !normalized || normalized === "geral" || normalized === "general";
-}
-
-function inferRoleArea({
-  area,
-  title,
-  intro,
-  roleOneLiner,
-  aboutFirst,
-  bodyMarkdown,
-}: {
-  area?: string;
-  title?: string;
-  intro?: string;
-  roleOneLiner?: string;
-  aboutFirst?: string;
-  bodyMarkdown?: string;
-}): string {
-  const trimmedArea = (area ?? "").trim();
-  if (trimmedArea && !isGenericArea(trimmedArea)) {
-    return trimmedArea;
-  }
-
-  const detectArea = (haystack: string): string | null => {
-    if (
-      /(finance|contab|fiscal|tesouraria|controlador|analista financeiro)/.test(
-        haystack,
-      )
-    )
-      return "Financeiro";
-    if (/(rh|people|recrut|talent|human)/.test(haystack)) return "Pessoas";
-    if (/(customer success|suporte|atendimento|cx|operac)/.test(haystack))
-      return "Operações";
-    if (/(video|criador|editor|conteudo|content)/.test(haystack))
-      return "Conteúdo";
-    if (/(design|ui|ux)/.test(haystack)) return "Design";
-    if (
-      /(backend|frontend|fullstack|dev|engenhari|software|tech|tecnolog)/.test(
-        haystack,
-      )
-    )
-      return "Tecnologia";
-    if (/(produto|product|pm|manager)/.test(haystack)) return "Produto";
-    if (/(growth|marketing|comercial|sdr|closer|venda|sales)/.test(haystack))
-      return "Growth & Comercial";
-    return null;
-  };
-
-  const titleMatch = detectArea(
-    normalizeSearchText(`${title ?? ""} ${area ?? ""}`),
-  );
-  if (titleMatch) return titleMatch;
-
-  const fullMatch = detectArea(
-    normalizeSearchText(
-      `${title ?? ""} ${intro ?? ""} ${roleOneLiner ?? ""} ${aboutFirst ?? ""} ${bodyMarkdown ?? ""}`,
-    ),
-  );
-  if (fullMatch) return fullMatch;
-
-  return "Geral";
-}
-
-function stripRoleSenioritySuffix(title: string): string {
-  const trimmed = title.trim();
-  if (!trimmed) return trimmed;
-
-  const hasSeniorityTokens = (value: string) => {
-    const normalized = normalizeSearchText(value);
-    if (!normalized) return false;
-
-    const tokens = normalized.split(" ").filter(Boolean);
-    if (!tokens.length || tokens.length > 8) return false;
-
-    const allowed = new Set([
-      "junior",
-      "jr",
-      "pleno",
-      "senior",
-      "especialista",
-      "lead",
-      "lider",
-      "mid",
-      "middle",
-      "nivel",
-      "i",
-      "ii",
-      "iii",
-      "iv",
-      "v",
-      "ou",
-      "e",
-      "de",
-    ]);
-    const levelTokens = new Set([
-      "junior",
-      "jr",
-      "pleno",
-      "senior",
-      "especialista",
-      "lead",
-      "lider",
-      "mid",
-      "middle",
-    ]);
-
-    let hasLevel = false;
-    for (const token of tokens) {
-      if (!allowed.has(token)) return false;
-      if (levelTokens.has(token)) hasLevel = true;
-    }
-    return hasLevel;
-  };
-
-  const separatorMatch = trimmed.match(/^(.*?)(?:\s[-–—]\s|\s\|\s)([^|]+)$/);
-  if (separatorMatch) {
-    const base = separatorMatch[1].trim();
-    const tail = separatorMatch[2].trim();
-    if (base && hasSeniorityTokens(tail)) return base;
-  }
-
-  const parentheticalMatch = trimmed.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
-  if (parentheticalMatch) {
-    const base = parentheticalMatch[1].trim();
-    const tail = parentheticalMatch[2].trim();
-    if (base && hasSeniorityTokens(tail)) return base;
-  }
-
-  return trimmed;
-}
-
-function applyRoleTitleAlias(title: string): string {
-  const trimmed = title.trim();
-  if (!trimmed) return trimmed;
-
-  const normalized = normalizeSearchText(trimmed);
-
-  if (
-    /^executivo comercial\b/.test(normalized) &&
-    /(sdr|closer)/.test(normalized)
-  ) {
-    return "Sales Executive";
-  }
-
-  if (/^(rh|recursos humanos)\b/.test(normalized)) {
-    return "Gestor de RH";
-  }
-
-  if (
-    /^(criador editor de video com i a|videomaker i a first)\b/.test(normalized)
-  ) {
-    return "Videomaker I.A First";
-  }
-
-  return trimmed;
-}
-
-function getDisplayRoleTitle(
-  title: string,
-  precomputedDisplayTitle?: string,
-): string {
-  const sourceTitle = precomputedDisplayTitle?.trim() || title;
-  return stripRoleSenioritySuffix(applyRoleTitleAlias(sourceTitle));
-}
-
-function detectSeniorityLabelInText(
-  normalizedText: string,
-): string | undefined {
-  if (!normalizedText) return undefined;
-
-  const firstMatchIndex = (patterns: RegExp[]): number => {
-    let best = Number.POSITIVE_INFINITY;
-    for (const pattern of patterns) {
-      const index = normalizedText.search(pattern);
-      if (index >= 0 && index < best) {
-        best = index;
-      }
-    }
-    return Number.isFinite(best) ? best : -1;
-  };
-
-  const matches = [
-    { label: "JUNIOR", index: firstMatchIndex([/\bjunior\b/, /\bjr\b/]) },
-    { label: "PLENO", index: firstMatchIndex([/\bpleno\b/]) },
-    { label: "SENIOR", index: firstMatchIndex([/\bsenior\b/]) },
-    { label: "ESPECIALISTA", index: firstMatchIndex([/\bespecialista\b/]) },
-    { label: "LEAD", index: firstMatchIndex([/\blead\b/, /\blider\b/]) },
-    { label: "MID", index: firstMatchIndex([/\bmid\b/, /\bmiddle\b/]) },
-  ].filter((entry) => entry.index >= 0);
-
-  if (!matches.length) return undefined;
-
-  matches.sort((first, second) => first.index - second.index);
-  return matches[0].label;
-}
-
-function inferRoleSeniorityLabel(
-  title: string,
-  slug?: string,
-): string | undefined {
-  const fromTitle = detectSeniorityLabelInText(normalizeSearchText(title));
-  if (fromTitle) return fromTitle;
-
-  const slugAsText = (slug ?? "").replace(/-/g, " ");
-  return detectSeniorityLabelInText(normalizeSearchText(slugAsText));
-}
-
-function getRoleSeniorityBadge(
-  title: string,
-  precomputedDisplaySeniority?: string,
-  slug?: string,
-): string | undefined {
-  const persisted = precomputedDisplaySeniority?.trim();
-  if (persisted) return persisted.toUpperCase();
-  return inferRoleSeniorityLabel(title, slug);
-}
-
-function toRoleIntroPreview(value: string): string {
-  return value
-    .replace(/\[(.*?)\]\((.*?)\)/g, "$1")
-    .replace(/^#{1,6}\s+/gm, "")
-    .replace(/^\s*[-–—]{2,}\s*/gm, "")
-    .replace(/^\s*[-*+]\s+/gm, "")
-    .replace(/^\s*\d+\.\s+/gm, "")
-    .replace(/[*_`~]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function isGenericRoleSummary(value: string): boolean {
-  const normalized = normalizeSearchText(value);
-  if (!normalized || normalized.length < 20) return true;
-  return (
-    normalized === "missao do cargo" ||
-    normalized === "descricao da vaga" ||
-    normalized === "detalhes da vaga" ||
-    normalized === "the role" ||
-    normalized === "role summary" ||
-    normalized === "summary" ||
-    normalized === "about the role" ||
-    normalized === "sobre a vaga"
-  );
-}
-
-function firstMeaningfulMarkdownLine(markdown?: string): string {
-  if (!markdown?.trim()) return "";
-  const lines = markdown
-    .split("\n")
-    .map((line) => toRoleIntroPreview(line))
-    .filter(Boolean);
-  return lines.find((line) => !isGenericRoleSummary(line)) ?? "";
-}
-
-function getRoleCardSummary(
-  role: Pick<
-    CareersRole,
-    "intro" | "roleOneLiner" | "bodyMarkdown" | "about" | "cardSummary"
-  >,
-): string {
-  const persistedSummary = role.cardSummary?.trim();
-  if (persistedSummary) return persistedSummary;
-
-  const candidates = [
-    toRoleIntroPreview(role.intro),
-    toRoleIntroPreview(role.roleOneLiner ?? ""),
-    firstMeaningfulMarkdownLine(role.bodyMarkdown),
-    toRoleIntroPreview(role.about[0] ?? ""),
-  ];
-  return (
-    candidates.find(
-      (candidate) => candidate && !isGenericRoleSummary(candidate),
-    ) ?? "Detalhes da vaga disponíveis na página completa."
-  );
-}
-
-function getRoleCardArea(
-  role: Pick<
-    CareersRole,
-    | "area"
-    | "displayArea"
-    | "title"
-    | "intro"
-    | "roleOneLiner"
-    | "about"
-    | "bodyMarkdown"
-  >,
-): string {
-  const persistedArea = role.displayArea?.trim();
-  if (persistedArea) return persistedArea;
-  return inferRoleArea({
-    area: role.area,
-    title: role.title,
-    intro: role.intro,
-    roleOneLiner: role.roleOneLiner,
-    aboutFirst: role.about?.[0],
-    bodyMarkdown: role.bodyMarkdown,
-  });
-}
-
-function getRoleDisplayCommitment(
-  commitment: string,
-  precomputedDisplayCommitment?: string,
-): string {
-  const persisted = precomputedDisplayCommitment?.trim();
-  if (persisted) return persisted;
-
-  const normalized = normalizeSearchText(commitment);
-  if (normalized === "tempo integral") {
-    return "Segunda a sexta, 09h às 18h";
-  }
-
-  return commitment;
-}
-
 type SeoPayload = {
   title: string;
   description: string;
@@ -1341,22 +718,6 @@ type SeoPayload = {
   imagePath?: string;
   pageSchema?: Record<string, unknown> | Array<Record<string, unknown>> | null;
 };
-
-const hiddenCareerRoleSlugs = new Set<string>([
-  "analista-financeiro-operacional",
-  "designer-ui-ux-pleno",
-  "diretor-de-arte",
-  "gerente-operacional",
-  "rh-operacional",
-  "social-media",
-]);
-const alwaysPublishedCareerRoleSlugs = new Set(["social-media"]);
-
-function filterVisibleCareersRoles<T extends { slug: string }>(
-  roles: T[],
-): T[] {
-  return roles.filter((role) => !hiddenCareerRoleSlugs.has(role.slug));
-}
 
 function truncateWithEllipsis(value: string, maxLength = 160): string {
   const normalized = value.replace(/\s+/g, " ").trim();
@@ -1428,29 +789,6 @@ function upsertJsonLdScript(
   script.textContent = JSON.stringify(payload);
 }
 
-function mapCommitmentToEmploymentType(commitment: string): string {
-  const normalized = normalizeSearchText(commitment);
-  if (/(part time|meio periodo|parttime)/.test(normalized)) return "PART_TIME";
-  if (/(estagio|intern)/.test(normalized)) return "INTERN";
-  if (/(freela|freelance|contract|pj)/.test(normalized)) return "CONTRACTOR";
-  return "FULL_TIME";
-}
-
-function toSchemaDate(value?: string): string | undefined {
-  if (!value) return undefined;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return undefined;
-  return date.toISOString().slice(0, 10);
-}
-
-function parseBrazilianLocation(location: string) {
-  const [city, region] = location.split(",").map((part) => part.trim());
-  return {
-    city: city || location,
-    region: region || undefined,
-  };
-}
-
 function buildOrganizationSchema(): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
@@ -1458,7 +796,7 @@ function buildOrganizationSchema(): Record<string, unknown> {
     name: "ShiftLabs",
     url: `${siteUrl}/`,
     logo: toAbsoluteUrl(seoOrganizationLogoPath),
-    sameAs: careersSocialLinks.map((link) => link.href),
+    sameAs: socialLinks.map((link) => link.href),
   };
 }
 
@@ -1470,93 +808,6 @@ function buildLandingPageSchema(): Record<string, unknown> {
     url: `${siteUrl}/`,
     description: seoDefaultDescription,
     inLanguage: "pt-BR",
-  };
-}
-
-function buildCareersCollectionSchema(
-  roles: CareersRole[],
-): Record<string, unknown> {
-  const sorted = [...filterVisibleCareersRoles(roles)].sort((first, second) =>
-    getDisplayRoleTitle(first.title, first.displayTitle).localeCompare(
-      getDisplayRoleTitle(second.title, second.displayTitle),
-      "pt-BR",
-      {
-        sensitivity: "base",
-      },
-    ),
-  );
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "Vagas ShiftLabs",
-    url: toAbsoluteUrl("/vagas"),
-    description:
-      "Lista de vagas abertas da ShiftLabs para areas de produto, tecnologia, growth, comercial e operacoes.",
-    inLanguage: "pt-BR",
-    mainEntity: {
-      "@type": "ItemList",
-      itemListElement: sorted.map((role, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        name: getDisplayRoleTitle(role.title, role.displayTitle),
-        url: toAbsoluteUrl(`/vagas/${role.slug}`),
-      })),
-    },
-  };
-}
-
-function buildJobPostingSchema(role: CareersRole): Record<string, unknown> {
-  const displayRoleTitle = getDisplayRoleTitle(role.title, role.displayTitle);
-  const displayArea = getRoleCardArea(role);
-  const descriptionHtml = markdownToHtml(roleToMarkdown(role));
-  const normalizedDescription = descriptionHtml
-    ? descriptionHtml
-    : escapeHtml(getRoleCardSummary(role));
-  const isRemoteModel = /(remot|remote)/i.test(role.model);
-  const datePosted = toSchemaDate(role.datePosted ?? role.updatedAt);
-  const location = parseBrazilianLocation(role.location);
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "JobPosting",
-    title: displayRoleTitle,
-    description: normalizedDescription,
-    datePosted,
-    identifier: {
-      "@type": "PropertyValue",
-      name: "ShiftLabs",
-      value: role.slug,
-    },
-    employmentType: mapCommitmentToEmploymentType(role.commitment),
-    hiringOrganization: {
-      "@type": "Organization",
-      name: "ShiftLabs",
-      sameAs: `${siteUrl}/`,
-      logo: toAbsoluteUrl(seoOrganizationLogoPath),
-    },
-    industry: displayArea,
-    workHours: role.commitment,
-    directApply: true,
-    jobLocationType: isRemoteModel ? "TELECOMMUTE" : undefined,
-    applicantLocationRequirements: isRemoteModel
-      ? {
-          "@type": "Country",
-          name: "Brasil",
-        }
-      : undefined,
-    jobLocation: isRemoteModel
-      ? undefined
-      : {
-          "@type": "Place",
-          address: {
-            "@type": "PostalAddress",
-            addressLocality: location.city,
-            addressRegion: location.region,
-            addressCountry: "BR",
-          },
-        },
-    url: toAbsoluteUrl(`/vagas/${role.slug}`),
   };
 }
 
@@ -1600,779 +851,7 @@ function applySeoPayload(payload: SeoPayload): void {
   upsertJsonLdScript("page", payload.pageSchema ?? null);
 }
 
-function rowToCareersRole(row: CareersRoleRow): CareersRole {
-  const about = toTextArray(row.about);
-  const responsibilities = toTextArray(row.responsibilities);
-  const requirements = toTextArray(row.requirements);
-  const stack = toTextArray(row.stack);
-  const process = toTextArray(row.process);
-  const joinUs = toTextArray(row.join_us);
-  const area = inferRoleArea({
-    area: row.area,
-    title: row.title,
-    intro: row.intro,
-    roleOneLiner: row.role_one_liner ?? undefined,
-    aboutFirst: about[0],
-    bodyMarkdown: row.body_markdown ?? undefined,
-  });
-
-  return {
-    slug: row.slug,
-    title: row.title,
-    displayTitle: row.display_title?.trim() || undefined,
-    displaySeniority: row.display_seniority?.trim() || undefined,
-    displayCommitment:
-      row.display_commitment?.trim() ||
-      getRoleDisplayCommitment(row.commitment),
-    location: row.location,
-    commitment: row.commitment,
-    model: row.model,
-    area,
-    displayArea: row.display_area?.trim() || area,
-    intro: row.intro,
-    cardSummary: row.card_summary?.trim() || undefined,
-    roleOneLiner: row.role_one_liner ?? undefined,
-    about,
-    responsibilities,
-    requirements,
-    stack,
-    process,
-    whyTitle: row.why_title ?? undefined,
-    roleTitle: row.role_title ?? undefined,
-    doTitle: row.do_title ?? undefined,
-    bringTitle: row.bring_title ?? undefined,
-    stackTitle: row.stack_title ?? undefined,
-    processTitle: row.process_title ?? undefined,
-    joinTitle: row.join_title ?? undefined,
-    joinUs,
-    bodyMarkdown: row.body_markdown ?? undefined,
-    datePosted: row.created_at,
-    updatedAt: row.updated_at,
-  };
-}
-
-function roleToCareersRowPayload(role: CareersRole) {
-  const area = inferRoleArea({
-    area: role.area,
-    title: role.title,
-    intro: role.intro,
-    roleOneLiner: role.roleOneLiner,
-    aboutFirst: role.about[0],
-    bodyMarkdown: role.bodyMarkdown,
-  });
-
-  return {
-    slug: role.slug,
-    title: role.title,
-    location: role.location,
-    commitment: role.commitment,
-    model: role.model,
-    area,
-    intro: role.intro,
-    role_one_liner: role.roleOneLiner ?? null,
-    body_markdown: role.bodyMarkdown ?? null,
-    about: role.about ?? [],
-    responsibilities: role.responsibilities ?? [],
-    requirements: role.requirements ?? [],
-    stack: role.stack ?? [],
-    process: role.process ?? [],
-    why_title: role.whyTitle ?? null,
-    role_title: role.roleTitle ?? null,
-    do_title: role.doTitle ?? null,
-    bring_title: role.bringTitle ?? null,
-    stack_title: role.stackTitle ?? null,
-    process_title: role.processTitle ?? null,
-    join_title: role.joinTitle ?? null,
-    join_us: role.joinUs ?? [],
-    is_published: true,
-  };
-}
-
-function slugifyRole(value: string): string {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80);
-}
-
-function splitEditorList(value: string): string[] {
-  return value
-    .split("\n")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
-function joinEditorList(items?: string[]): string {
-  return items?.join("\n") ?? "";
-}
-
-function toOptionalTrimmed(value: string): string | undefined {
-  const trimmed = value.trim();
-  return trimmed ? trimmed : undefined;
-}
-
-function extractIntroFromMarkdown(markdown: string): string | undefined {
-  const lines = markdown
-    .split("\n")
-    .map((line) =>
-      line
-        .trim()
-        .replace(/^#{1,6}\s+/, "")
-        .replace(/^[-*]\s+/, "")
-        .replace(/^\d+\.\s+/, ""),
-    )
-    .filter(Boolean);
-  return lines[0];
-}
-
-function roleToMarkdown(role: CareersRole): string {
-  if (role.bodyMarkdown?.trim()) return role.bodyMarkdown.trim();
-
-  const blocks: string[] = [];
-
-  if (role.about.length) {
-    blocks.push(`## ${role.whyTitle ?? "Why ShiftLabs?"}`);
-    blocks.push(...role.about);
-  }
-
-  if (role.intro || role.roleOneLiner) {
-    blocks.push(`## ${role.roleTitle ?? "The Role"}`);
-    if (role.intro) blocks.push(role.intro);
-    if (role.roleOneLiner) blocks.push(role.roleOneLiner);
-  }
-
-  if (role.responsibilities.length) {
-    blocks.push(`## ${role.doTitle ?? "What you'll do"}`);
-    blocks.push(...role.responsibilities.map((item) => `- ${item}`));
-  }
-
-  if (role.requirements.length) {
-    blocks.push(`## ${role.bringTitle ?? "What you'll bring"}`);
-    blocks.push(...role.requirements.map((item) => `- ${item}`));
-  }
-
-  if (role.stack.length) {
-    blocks.push(`## ${role.stackTitle ?? "Stack"}`);
-    blocks.push(...role.stack.map((item) => `- ${item}`));
-  }
-
-  if (role.process.length) {
-    blocks.push(`## ${role.processTitle ?? "Hiring process"}`);
-    blocks.push(...role.process.map((item, index) => `${index + 1}. ${item}`));
-  }
-
-  if (role.joinUs?.length) {
-    blocks.push(`## ${role.joinTitle ?? "Join Us"}`);
-    blocks.push(...role.joinUs);
-  }
-
-  return blocks.join("\n\n");
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
-function stripInlineMarkdown(value: string): string {
-  return value
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, "$1")
-    .replace(/[*_`~]/g, "")
-    .trim();
-}
-
-type StyledRoleSectionHeading = {
-  canonical: string;
-  patterns: RegExp[];
-};
-
-const styledRoleSectionHeadings: StyledRoleSectionHeading[] = [
-  {
-    canonical: "Missão do cargo",
-    patterns: [/\bmissao do cargo\b/],
-  },
-  {
-    canonical: "Responsabilidades no dia a dia",
-    patterns: [/\bresponsabilidades (no|do|de) dia a dia\b/],
-  },
-  {
-    canonical: "Perfil esperado",
-    patterns: [/\bperfil esperado\b/],
-  },
-  {
-    canonical: "O que esperamos nos primeiros 60–90 dias",
-    patterns: [/\bo que esperamos nos primeiros 60(?: a)? 90 dias\b/],
-  },
-];
-
-function resolveStyledRoleSectionHeading(rawHeading: string): string | null {
-  const normalized = normalizeSearchText(stripInlineMarkdown(rawHeading));
-  for (const entry of styledRoleSectionHeadings) {
-    if (entry.patterns.some((pattern) => pattern.test(normalized))) {
-      return entry.canonical;
-    }
-  }
-  return null;
-}
-
-function isStyledRoleSectionHeading(rawHeading: string): boolean {
-  return resolveStyledRoleSectionHeading(rawHeading) !== null;
-}
-
-function formatRoleSectionHeading(rawHeading: string): string {
-  const canonicalHeading = resolveStyledRoleSectionHeading(rawHeading);
-  const heading = (canonicalHeading ?? stripInlineMarkdown(rawHeading))
-    .replace(/^\/+/, "")
-    .replace(/[:–—-]+$/g, "")
-    .trim();
-  return `/${heading.toLocaleUpperCase("pt-BR")}`;
-}
-
-function inlineMarkdownToHtml(value: string): string {
-  const links: Array<{ token: string; html: string }> = [];
-  const withTokens = value.replace(
-    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-    (_match, label: string, url: string) => {
-      const token = `@@LINKTOKEN${links.length}@@`;
-      links.push({
-        token,
-        html: `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`,
-      });
-      return token;
-    },
-  );
-
-  let html = escapeHtml(withTokens)
-    .replace(/`([^`]+)`/g, "<code>$1</code>")
-    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-    .replace(/__([^_]+)__/g, "<strong>$1</strong>")
-    .replace(/\*([^*]+)\*/g, "<em>$1</em>")
-    .replace(/_([^_]+)_/g, "<em>$1</em>");
-
-  for (const link of links) {
-    html = html.replace(link.token, link.html);
-  }
-
-  return html;
-}
-
-function markdownToHtml(markdown: string): string {
-  const lines = markdown.replace(/\r\n?/g, "\n").split("\n");
-  const html: string[] = [];
-  let index = 0;
-
-  const isBlank = (line: string) => line.trim().length === 0;
-
-  while (index < lines.length) {
-    const current = lines[index];
-    const trimmed = current.trim();
-
-    if (isBlank(current)) {
-      index += 1;
-      continue;
-    }
-
-    const headingMatch = trimmed.match(/^(#{1,6})\s+(.+)$/);
-    if (headingMatch) {
-      const level = Math.min(6, headingMatch[1].length);
-      const headingText = headingMatch[2].trim();
-      if (isStyledRoleSectionHeading(headingText)) {
-        html.push(
-          `<h2 class="role-section-label" style="font-family: var(--font-system-mono);">${escapeHtml(formatRoleSectionHeading(headingText))}</h2>`,
-        );
-      } else {
-        html.push(
-          `<h${level}>${inlineMarkdownToHtml(headingText)}</h${level}>`,
-        );
-      }
-      index += 1;
-      continue;
-    }
-
-    if (/^[-*]\s+/.test(trimmed)) {
-      const items: string[] = [];
-      while (index < lines.length && /^[-*]\s+/.test(lines[index].trim())) {
-        items.push(lines[index].trim().replace(/^[-*]\s+/, ""));
-        index += 1;
-      }
-      html.push(
-        `<ul>${items.map((item) => `<li>${inlineMarkdownToHtml(item)}</li>`).join("")}</ul>`,
-      );
-      continue;
-    }
-
-    if (/^\d+\.\s+/.test(trimmed)) {
-      const items: string[] = [];
-      while (index < lines.length && /^\d+\.\s+/.test(lines[index].trim())) {
-        items.push(lines[index].trim().replace(/^\d+\.\s+/, ""));
-        index += 1;
-      }
-      html.push(
-        `<ol>${items.map((item) => `<li>${inlineMarkdownToHtml(item)}</li>`).join("")}</ol>`,
-      );
-      continue;
-    }
-
-    const paragraph: string[] = [];
-    while (
-      index < lines.length &&
-      !isBlank(lines[index]) &&
-      !/^(#{1,6})\s+/.test(lines[index].trim()) &&
-      !/^[-*]\s+/.test(lines[index].trim()) &&
-      !/^\d+\.\s+/.test(lines[index].trim())
-    ) {
-      paragraph.push(lines[index].trim());
-      index += 1;
-    }
-    if (paragraph.length === 1 && isStyledRoleSectionHeading(paragraph[0])) {
-      html.push(
-        `<h2 class="role-section-label" style="font-family: var(--font-system-mono);">${escapeHtml(formatRoleSectionHeading(paragraph[0]))}</h2>`,
-      );
-    } else {
-      html.push(`<p>${inlineMarkdownToHtml(paragraph.join(" "))}</p>`);
-    }
-  }
-
-  return html.join("");
-}
-
-function normalizeCareersRole(raw: unknown): CareersRole | null {
-  if (!raw || typeof raw !== "object") return null;
-  const entry = raw as Partial<CareersRole>;
-  if (
-    !entry.slug ||
-    !entry.title ||
-    !entry.location ||
-    !entry.commitment ||
-    !entry.model ||
-    !entry.area ||
-    !entry.intro
-  ) {
-    return null;
-  }
-  const toList = (value: unknown) =>
-    Array.isArray(value)
-      ? value.filter(
-          (item): item is string =>
-            typeof item === "string" && item.trim().length > 0,
-        )
-      : [];
-  const about = toList(entry.about);
-  const responsibilities = toList(entry.responsibilities);
-  const requirements = toList(entry.requirements);
-  const stack = toList(entry.stack);
-  const process = toList(entry.process);
-  const joinUs = toList(entry.joinUs);
-  const area = inferRoleArea({
-    area: entry.area,
-    title: entry.title,
-    intro: entry.intro,
-    roleOneLiner: entry.roleOneLiner,
-    aboutFirst: about[0],
-    bodyMarkdown: entry.bodyMarkdown,
-  });
-
-  return {
-    slug: entry.slug.trim(),
-    title: entry.title.trim(),
-    displayTitle: getDisplayRoleTitle(entry.title.trim()),
-    displaySeniority: getRoleSeniorityBadge(
-      entry.title.trim(),
-      undefined,
-      entry.slug.trim(),
-    ),
-    displayCommitment: getRoleDisplayCommitment(entry.commitment.trim()),
-    location: entry.location.trim(),
-    commitment: entry.commitment.trim(),
-    model: entry.model.trim(),
-    area,
-    displayArea: area,
-    intro: entry.intro.trim(),
-    cardSummary: getRoleCardSummary({
-      intro: entry.intro.trim(),
-      roleOneLiner: entry.roleOneLiner?.trim() || undefined,
-      bodyMarkdown: entry.bodyMarkdown?.trim() || undefined,
-      about,
-      cardSummary: undefined,
-    }),
-    roleOneLiner: entry.roleOneLiner?.trim() || undefined,
-    about,
-    responsibilities,
-    requirements,
-    stack,
-    process,
-    whyTitle: entry.whyTitle?.trim() || undefined,
-    roleTitle: entry.roleTitle?.trim() || undefined,
-    doTitle: entry.doTitle?.trim() || undefined,
-    bringTitle: entry.bringTitle?.trim() || undefined,
-    stackTitle: entry.stackTitle?.trim() || undefined,
-    processTitle: entry.processTitle?.trim() || undefined,
-    joinTitle: entry.joinTitle?.trim() || undefined,
-    joinUs,
-    bodyMarkdown: entry.bodyMarkdown?.trim() || undefined,
-  };
-}
-
-type CareersEditorFormState = {
-  slug: string;
-  title: string;
-  location: string;
-  commitment: string;
-  model: string;
-  area: string;
-  intro: string;
-  roleOneLiner: string;
-  about: string;
-  responsibilities: string;
-  requirements: string;
-  stack: string;
-  process: string;
-  whyTitle: string;
-  roleTitle: string;
-  doTitle: string;
-  bringTitle: string;
-  stackTitle: string;
-  processTitle: string;
-  joinTitle: string;
-  joinUs: string;
-  bodyMarkdown: string;
-};
-
-function createEditorFormState(role?: CareersRole): CareersEditorFormState {
-  return {
-    slug: role?.slug ?? "",
-    title: role?.title ?? "",
-    location: role?.location ?? "Remoto, Brasil",
-    commitment: role?.commitment ?? "Tempo integral",
-    model: role?.model ?? "Remoto",
-    area: role?.area ?? "",
-    intro: role?.intro ?? "",
-    roleOneLiner: role?.roleOneLiner ?? "",
-    about: joinEditorList(role?.about),
-    responsibilities: joinEditorList(role?.responsibilities),
-    requirements: joinEditorList(role?.requirements),
-    stack: joinEditorList(role?.stack),
-    process: joinEditorList(role?.process),
-    whyTitle: role?.whyTitle ?? "",
-    roleTitle: role?.roleTitle ?? "",
-    doTitle: role?.doTitle ?? "",
-    bringTitle: role?.bringTitle ?? "",
-    stackTitle: role?.stackTitle ?? "",
-    processTitle: role?.processTitle ?? "",
-    joinTitle: role?.joinTitle ?? "",
-    joinUs: joinEditorList(role?.joinUs),
-    bodyMarkdown: role ? roleToMarkdown(role) : "",
-  };
-}
-
-const defaultCareersRoles: CareersRole[] = [
-  {
-    slug: "ai-software-engineer",
-    title: "AI Software Engineer",
-    location: "Belgrade, Serbia & San Francisco, CA",
-    commitment: "Full-time",
-    model: "On-site",
-    area: "AI research, back-end engineering, and orchestration",
-    intro:
-      "We're looking for an AI Software Engineer to build the intelligence layer of Wonder. You'll turn research and experimentation into production-ready systems.",
-    roleOneLiner:
-      "In one sentence: Train, tune, and orchestrate AI systems that help people design in real time.",
-    whyTitle: "Why Wonder?",
-    roleTitle: "The Role",
-    doTitle: "What you'll do",
-    bringTitle: "What we're looking for",
-    stackTitle: "Our Tech Stack",
-    processTitle: "How we hire",
-    joinTitle: "Join Us",
-    about: [
-      "Wonder is an AI-native design tool that bridges the gap between idea and experience. Today's tools stop at static mock-ups - Wonder goes further, letting designers shape how products behave and respond through an intelligent, interactive canvas. It's not about designing screens. It's about designing experiences - dynamic, contextual, and powered by AI from the start.",
-      "We're building the next generation of design software where AI is not an assistant sitting on the side - it's a co-creator. Think next-generation interface design, but smarter.",
-      "We're a small, talent-dense team building a generation-defining company. We value autonomy, ownership, high velocity, and low-ego collaboration. We seek out people who care deeply, ship fast, and are eager to make a dent in the world. No corporate bureaucracy - just engineers who care deeply about craft, performance, and building things that feel magical.",
-    ],
-    responsibilities: [
-      "Fine-tune and evaluate models that power Wonder's design generation and iteration loop.",
-      "Build and improve context retrieval engines and agentic flows that understand user intent.",
-      "Collaborate closely with other engineers to integrate AI seamlessly into Wonder's creative canvas.",
-      "Explore, benchmark, and push the limits of emerging open and proprietary models.",
-      "Shape early technical culture, coding standards, and long-term architecture decisions.",
-    ],
-    requirements: [
-      "Led or contributed AI / LLM systems at top AI labs or fast-moving startups.",
-      "Deep understanding of transformer architectures, fine-tuning, retrieval-augmented generation (RAG), and agentic workflows.",
-      "Experience managing the end-to-end lifecycle of ML models, including data preparation, experiment tracking, and performance monitoring.",
-      "Software development experience, specifically back-end or infrastructure engineering.",
-    ],
-    stack: [
-      "Frontend: Svelte 5, TypeScript, Tailwind",
-      "Backend: Golang",
-      "Infra: GCP, Firebase, Amazon Bedrock, Azure AI Foundry",
-      "Always exploring what's next",
-    ],
-    process: [
-      "Apply for the position.",
-      "Join an initial exploratory call.",
-      "Go through a technical interview focused on problem-solving and creativity.",
-      "Meet the team and talk about what we could build together.",
-    ],
-    joinUs: [
-      "Wonder is a well-funded startup where you'll get stock options and a salary based on your expertise.",
-      "We love working together in person and often organize team-building events. If you want to help shape the future of design - where AI isn't an add-on but the foundation - join us. Come build the next chapter of creative software at Wonder.",
-      "P.S. - We're equal opportunity employers who believe diverse teams build better products.",
-    ],
-  },
-  {
-    slug: "product-strategist",
-    title: "Product Strategist",
-    location: "Remoto, Brasil",
-    commitment: "Tempo integral",
-    model: "Remoto",
-    area: "Produto",
-    intro:
-      "Buscamos alguém para estruturar direção de produto com visão de negócio, pesquisa e entregas orientadas a impacto.",
-    about: [
-      "A função conecta discovery, priorização e execução para que produto deixe de ser uma sequência de pedidos e vire sistema de crescimento.",
-      "Você vai trabalhar com times multidisciplinares para alinhar proposta de valor, roadmap e decisões de escopo com evidência real.",
-    ],
-    responsibilities: [
-      "Conduzir discovery contínuo com usuários e stakeholders.",
-      "Definir estratégias de produto orientadas por resultado de negócio.",
-      "Priorizar roadmap com critérios claros e transparentes.",
-      "Garantir qualidade de handoff entre produto, design e engenharia.",
-      "Acompanhar métricas de adoção, retenção e valor entregue.",
-    ],
-    requirements: [
-      "Experiência em produto digital B2B ou B2C.",
-      "Domínio de técnicas de discovery e experimentação.",
-      "Capacidade analítica para suportar priorização com dados.",
-      "Excelente escrita e facilitação de discussões estratégicas.",
-    ],
-    stack: ["Figma", "Amplitude", "Mixpanel", "Notion", "Linear"],
-    process: [
-      "Triagem inicial.",
-      "Entrevista com Product Lead.",
-      "Case de priorização de roadmap.",
-      "Conversa final com founders.",
-    ],
-  },
-  {
-    slug: "tech-lead-systems",
-    title: "Tech Lead (Systems)",
-    location: "São Paulo, BR",
-    commitment: "Tempo integral",
-    model: "Híbrido",
-    area: "Tecnologia",
-    intro:
-      "A vaga é para liderança técnica com foco em arquitetura, qualidade de entrega e decisões de engenharia com impacto no negócio.",
-    about: [
-      "Você será responsável por orientar o desenho técnico das soluções e elevar o nível de execução dos squads.",
-      "Procuramos alguém que mantenha alta barra de engenharia sem perder pragmatismo em ambientes de crescimento rápido.",
-    ],
-    responsibilities: [
-      "Definir arquitetura de soluções escaláveis e sustentáveis.",
-      "Liderar code reviews e padrões de qualidade técnica.",
-      "Apoiar planejamento técnico e desdobramento de iniciativas.",
-      "Atuar como ponte entre necessidades de negócio e decisões de engenharia.",
-      "Mentorar devs e fortalecer cultura técnica do time.",
-    ],
-    requirements: [
-      "Experiência sólida com liderança técnica em produtos digitais.",
-      "Base forte em backend, integrações e desenho de sistemas.",
-      "Capacidade de priorizar dívida técnica com racional de negócio.",
-      "Boa comunicação e tomada de decisão em cenários de pressão.",
-    ],
-    stack: ["TypeScript", "Node.js", "PostgreSQL", "AWS", "Docker"],
-    process: [
-      "Screening técnico.",
-      "Entrevista com Engineering Lead.",
-      "Case de arquitetura.",
-      "Entrevista final cultural e de liderança.",
-    ],
-  },
-  {
-    slug: "growth-systems-analyst",
-    title: "Growth Systems Analyst",
-    location: "Remoto, Brasil",
-    commitment: "Tempo integral",
-    model: "Remoto",
-    area: "Growth",
-    intro:
-      "Você vai desenhar e operar sistemas de growth com foco em previsibilidade de aquisição, ativação e retenção.",
-    about: [
-      "A posição combina visão analítica e execução operacional para criar mecanismos de crescimento consistentes.",
-      "Você atuará na interseção entre marketing, produto e vendas, organizando dados e processos para acelerar decisões.",
-    ],
-    responsibilities: [
-      "Estruturar funis de growth com métricas de ponta a ponta.",
-      "Definir rotinas e dashboards para acompanhamento semanal.",
-      "Conduzir experimentos de aquisição e conversão.",
-      "Mapear gargalos operacionais e propor automações.",
-      "Trabalhar com squads para transformar aprendizado em playbooks.",
-    ],
-    requirements: [
-      "Experiência com growth analytics e operação de funil.",
-      "Conhecimento de métricas como CAC, LTV, retenção e conversão.",
-      "Capacidade de análise quantitativa e organização de hipóteses.",
-      "Perfil colaborativo para atuar com times de diferentes áreas.",
-    ],
-    stack: ["GA4", "HubSpot", "Looker Studio", "SQL", "Zapier"],
-    process: [
-      "Triagem e conversa inicial.",
-      "Entrevista de contexto e problema.",
-      "Case prático de growth.",
-      "Entrevista final e proposta.",
-    ],
-  },
-  {
-    slug: "social-media",
-    title: "Social Media",
-    location: "João Pessoa, PB",
-    commitment: "Tempo integral",
-    model: "Presencial",
-    area: "Growth",
-    intro:
-      "Buscamos uma pessoa de Social Media para planejar, produzir e operar calendário de conteúdo com foco em distribuição, posicionamento e geração de demanda.",
-    roleOneLiner:
-      "Em uma frase: transformar estratégia de conteúdo em rotina de publicação com impacto real em marca e demanda.",
-    whyTitle: "Sobre a vaga",
-    roleTitle: "A função",
-    doTitle: "O que você vai fazer",
-    bringTitle: "O que buscamos",
-    stackTitle: "Stack de operação",
-    processTitle: "Como será o processo",
-    about: [
-      "Você vai cuidar da estratégia editorial e da operação diária dos canais sociais da ShiftLabs, conectando conteúdo com objetivos de marca e negócio.",
-      "A posição pede execução consistente, senso criativo e disciplina analítica para transformar aprendizado em rotina de publicação.",
-    ],
-    responsibilities: [
-      "Definir calendário editorial e pautas semanais.",
-      "Produzir copy e publicar conteúdos em múltiplos canais.",
-      "Acompanhar métricas de alcance, engajamento e geração de oportunidades.",
-      "Trabalhar com design e vídeo para transformar insights em peças de conteúdo.",
-      "Refinar tom de voz, formatos e rituais de publicação continuamente.",
-    ],
-    requirements: [
-      "Experiência com operação de social media em B2B ou serviços digitais.",
-      "Boa escrita, repertório criativo e senso estético.",
-      "Capacidade analítica para aprender com métricas e ajustar estratégia.",
-      "Organização para manter constância de publicação com qualidade.",
-    ],
-    stack: ["Instagram", "LinkedIn", "CapCut", "Canva", "Notion"],
-    process: [
-      "Triagem inicial de perfil e portfólio.",
-      "Entrevista de contexto com time de growth.",
-      "Teste prático de calendário e copy.",
-      "Conversa final com liderança.",
-    ],
-    bodyMarkdown: `Missão do cargo
-
-Você será responsável por transformar estratégia de conteúdo em operação consistente de social media, conectando posicionamento de marca, distribuição e geração de demanda em cada canal.
-
-Responsabilidades no dia a dia
-
-- Definir calendário editorial e pautas semanais com foco em consistência.
-- Produzir copy e publicar conteúdos em múltiplos canais.
-- Trabalhar junto com design e vídeo para transformar ideias em peças de conteúdo.
-- Acompanhar métricas de alcance, engajamento e geração de oportunidades.
-- Refinar continuamente tom de voz, formatos e rituais de publicação.
-- Organizar aprendizados e decisões em playbooks de conteúdo.
-
-Perfil esperado
-
-- Experiência com operação de social media em B2B ou serviços digitais.
-- Boa escrita, repertório criativo e senso estético.
-- Capacidade analítica para aprender com métricas e ajustar estratégia.
-- Organização para manter constância de publicação com qualidade.
-- Vivência prática com Instagram, LinkedIn e fluxos de produção de conteúdo.
-
-O que esperamos nos primeiros 60 a 90 dias
-
-- Estruturar e executar um calendário editorial previsível.
-- Consolidar linha editorial e linguagem da marca nos canais.
-- Definir rotina de acompanhamento de métricas e ciclo de otimização.
-- Evoluir a operação com playbooks e processos replicáveis.`,
-  },
-];
-
-function isClosedCareerRole(role: CareersRole): boolean {
-  const normalizedText = normalizeSearchText([
-    role.title,
-    role.displayTitle ?? "",
-    role.intro,
-    role.roleOneLiner ?? "",
-    role.cardSummary ?? "",
-    role.bodyMarkdown ?? "",
-  ].join(" "));
-  return (
-    normalizedText.includes("vaga encerrada") ||
-    normalizedText.includes("vaga fechada") ||
-    normalizedText.includes("position closed") ||
-    normalizedText.includes("opportunity closed")
-  );
-}
-
-function hasStyledRoleDescription(role: CareersRole): boolean {
-  const normalizedBody = normalizeSearchText(role.bodyMarkdown ?? "");
-  if (!normalizedBody) return false;
-  return (
-    /\bmissao do cargo\b/.test(normalizedBody) &&
-    /\bresponsabilidades (no|do|de) dia a dia\b/.test(normalizedBody) &&
-    /\bperfil esperado\b/.test(normalizedBody)
-  );
-}
-
-function mergeAlwaysPublishedCareersRoles(roles: CareersRole[]): CareersRole[] {
-  const mergedBySlug = new Map<string, CareersRole>();
-  for (const role of roles) {
-    if (hiddenCareerRoleSlugs.has(role.slug)) continue;
-    mergedBySlug.set(role.slug, role);
-  }
-  for (const role of defaultCareersRoles) {
-    if (hiddenCareerRoleSlugs.has(role.slug)) continue;
-    if (!alwaysPublishedCareerRoleSlugs.has(role.slug)) continue;
-    const existingRole = mergedBySlug.get(role.slug);
-    const shouldReplaceWithFallback =
-      !existingRole ||
-      isClosedCareerRole(existingRole) ||
-      (role.slug === "social-media" && !hasStyledRoleDescription(existingRole));
-    if (shouldReplaceWithFallback) {
-      mergedBySlug.set(role.slug, role);
-    }
-  }
-  return Array.from(mergedBySlug.values());
-}
-
-const fallbackCareersRoles =
-  mergeAlwaysPublishedCareersRoles(defaultCareersRoles);
-
-function getPreloadedCareersRoles(): CareersRole[] {
-  if (typeof document === "undefined") return [];
-
-  const preloadedRolesElement = document.getElementById(
-    "shiftlabs-careers-roles",
-  );
-  if (!preloadedRolesElement?.textContent) return [];
-
-  try {
-    const parsed = JSON.parse(preloadedRolesElement.textContent);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
-      (role): role is CareersRole =>
-        typeof role?.slug === "string" && typeof role?.title === "string",
-    );
-  } catch (error) {
-    console.error("Erro ao carregar vagas pré-renderizadas:", error);
-    return [];
-  }
-}
-
-type CaseLogoKey = "menux" | "cortex";
+const contactEmail = "hello@shiftlabs.sh";
 
 type HeroContactFormState = {
   name: string;
@@ -2397,13 +876,11 @@ const initialHeroContactFormState: HeroContactFormState = {
 
 /* ════════════════════════════════════════════ */
 function LandingPage() {
-  const [activeCaseLogo, setActiveCaseLogo] = useState<CaseLogoKey>("menux");
   const [isHeaderCondensed, setIsHeaderCondensed] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [heroContactForm, setHeroContactForm] = useState<HeroContactFormState>(
     initialHeroContactFormState,
   );
-  const [isContactSubmitting, setIsContactSubmitting] = useState(false);
   const [heroContactFeedback, setHeroContactFeedback] =
     useState<HeroContactFeedback | null>(null);
   const isContactSuccess = heroContactFeedback?.type === "success";
@@ -2445,11 +922,8 @@ function LandingPage() {
     setHeroContactFeedback(null);
   };
 
-  const submitHeroContactForm = async (
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
+  const submitHeroContactForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (isContactSubmitting) return;
 
     const name = heroContactForm.name.trim();
     const whatsapp = heroContactForm.whatsapp.trim();
@@ -2460,48 +934,25 @@ function LandingPage() {
     if (!name || !whatsapp || !email || !company || !subject) {
       setHeroContactFeedback({
         type: "error",
-        message: "Preencha todos os campos para enviar.",
+        message: "Preencha todos os campos para continuar.",
       });
       return;
     }
 
-    const supabase = await getSupabaseClient();
-
-    if (!supabase) {
-      setHeroContactFeedback({
-        type: "error",
-        message:
-          "Não conseguimos enviar pelo formulário agora. Tente novamente em instantes ou fale com a gente pelo Instagram.",
-      });
-      return;
-    }
-
-    setIsContactSubmitting(true);
-    setHeroContactFeedback(null);
-    const { error } = await supabase.from("contact_leads").insert({
-      name,
-      whatsapp,
-      email,
-      company,
+    const mailBody = [
+      `Nome: ${name}`,
+      `WhatsApp: ${whatsapp}`,
+      `E-mail: ${email}`,
+      `Empresa: ${company}`,
+      "",
       subject,
-      source_page:
-        typeof window !== "undefined" ? window.location.pathname : "/",
-      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-    });
-    setIsContactSubmitting(false);
+    ].join("\n");
 
-    if (error) {
-      setHeroContactFeedback({
-        type: "error",
-        message: "Não foi possível enviar agora. Tente novamente.",
-      });
-      return;
-    }
+    window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(`Contato pelo site - ${company}`)}&body=${encodeURIComponent(mailBody)}`;
 
-    setHeroContactForm(initialHeroContactFormState);
     setHeroContactFeedback({
       type: "success",
-      message: "Contato enviado. Retornaremos em até 2 dias úteis.",
+      message: `Se o seu e-mail não abrir, escreva direto para ${contactEmail}.`,
     });
   };
 
@@ -2619,17 +1070,6 @@ function LandingPage() {
                   aria-hidden
                   className="hidden lg:block h-4 w-px bg-[#d6dace]"
                 />
-                <a
-                  href="/vagas"
-                  className="inline-flex min-h-[44px] items-center px-1.5 sm:px-2 text-[#5f644c] hover:text-[#101700] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#101700] text-[13px] sm:text-[14px]"
-                  style={{
-                    fontFamily: mono,
-                    fontWeight: 400,
-                    lineHeight: "normal",
-                  }}
-                >
-                  /VAGAS
-                </a>
                 <button
                   type="button"
                   onClick={openContactModal}
@@ -2662,14 +1102,14 @@ function LandingPage() {
                 <div className="flex flex-col gap-12 max-w-[540px]">
                   <div className="flex flex-col gap-6">
                     <SectionLabel>
-                      /Engenharia para crescimento previsível
+                      /Engenharia de negócios, da ideia à escala
                     </SectionLabel>
                     <SectionTitle
                       as="h1"
                       className="text-[32px]"
                     >
-                      <span className="block">{`Não construímos ideias. `}</span>
-                      <span className="block">Estruturamos negócios.</span>
+                      <span className="block">{`Tiramos negócios do papel. `}</span>
+                      <span className="block">Estruturamos os que já existem.</span>
                     </SectionTitle>
                   </div>
                   <p
@@ -2677,9 +1117,9 @@ function LandingPage() {
                     className="text-[#5f644c] text-[14px] md:text-[16px] max-w-[343px]"
                     style={{ fontFamily: body, lineHeight: 1.333 }}
                   >
-                    A ShiftLabs transforma operações confusas e produtos mal
-                    estruturados em negócios organizados, previsíveis e
-                    escaláveis.
+                    A ShiftLabs transforma ideias em negócios reais, até a
+                    entrega ao primeiro cliente, e organiza empresas prontas
+                    para crescer com previsibilidade.
                   </p>
                 </div>
                 <div className="mt-8 lg:mt-0">
@@ -2706,17 +1146,39 @@ function LandingPage() {
         <div data-reveal="section" className="border-b border-[#d6dace]">
           <div className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] py-12">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-              <div className="flex flex-col gap-6 max-w-[405px]">
-                <SectionLabel>/Negócios próprios</SectionLabel>
+              <div className="flex flex-col gap-6 max-w-[640px]">
+                <SectionLabel>/Feitos do zero</SectionLabel>
                 <SectionTitle as="h2" className="text-[32px]">
-                  Plataformas e operações próprias, coordenadas pela mesma
-                  engenharia.
+                  Plataformas e sistemas feitos do zero com a engenharia e o
+                  framework da ShiftLabs.
                 </SectionTitle>
               </div>
-              <div className="flex flex-wrap items-center gap-6 md:gap-12">
-                <MenuxLogo />
-                <CortexLogo />
-              </div>
+            </div>
+          </div>
+          <div className="logo-marquee border-t border-[#d6dace]">
+            <div className="logo-marquee-track">
+              {[...ecosystemMarqueeItems, ...ecosystemMarqueeItems].map(
+                ({ name, href, Logo }, index) => {
+                  const isClone = index >= ecosystemSites.length;
+                  return (
+                    <a
+                      key={`${name}-${index}`}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={
+                        isClone ? undefined : `Abrir site da ${name} em nova aba`
+                      }
+                      aria-hidden={isClone || undefined}
+                      tabIndex={isClone ? -1 : undefined}
+                      data-clone={isClone || undefined}
+                      className="logo-marquee-item focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#101700]"
+                    >
+                      <Logo />
+                    </a>
+                  );
+                },
+              )}
             </div>
           </div>
         </div>
@@ -2753,7 +1215,7 @@ function LandingPage() {
                   as="h2"
                   className="text-[32px]"
                 >
-                  Crescer não é o problema. Crescer desorganizado é.
+                  Negócios travam em dois momentos: antes de nascer e depois de crescer.
                 </SectionTitle>
               </div>
               <p
@@ -2761,8 +1223,9 @@ function LandingPage() {
                 className="text-[#5f644c] text-[14px] md:text-[16px] max-w-[335px]"
                 style={{ fontFamily: body, lineHeight: 1.4 }}
               >
-                A maioria das empresas cresce mais rápido do que sua própria
-                estrutura consegue sustentar.
+                Ideias param por falta de método, validação e time. Empresas
+                prontas perdem força quando a estrutura não acompanha o
+                crescimento.
               </p>
             </div>
           </div>
@@ -2822,11 +1285,93 @@ function LandingPage() {
                   lineHeight: "normal",
                 }}
               >
-                O resultado não é visível no início. É fragmentação. E
-                fragmentação não quebra no dia um. Ela corrói aos poucos
-                empresas que “estavam indo bem”.
+                Antes do primeiro cliente, o risco é construir a coisa errada.
+                Depois dele, é crescer sobre uma base que não aguenta. A
+                ShiftLabs atua nos dois momentos.
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* ===== CAMINHOS ===== */}
+        <div
+          id="caminhos"
+          data-reveal="section"
+          className="border-b border-[#d6dace] scroll-mt-[96px]"
+        >
+          <div className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] py-12">
+            <div className="flex flex-col gap-6 max-w-[560px]">
+              <SectionLabel>/Dois caminhos</SectionLabel>
+              <SectionTitle as="h2" className="text-[32px]">
+                Do zero ou do que já existe, cuidamos do caminho inteiro.
+              </SectionTitle>
+            </div>
+          </div>
+        </div>
+
+        <div data-reveal="section" className="border-b border-[#d6dace]">
+          <div className="max-w-[1512px] mx-auto flex relative">
+            <XlHelper />
+            <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 border-x border-[#d6dace]">
+              {pathTracks.map((track, index) => (
+                <div
+                  key={track.label}
+                  className={`flex flex-col gap-8 p-6 ${
+                    index > 0
+                      ? "border-t border-[#d6dace] md:border-t-0 md:border-l"
+                      : ""
+                  }`}
+                >
+                  <div className="flex flex-col gap-3">
+                    <p
+                      data-reveal="text"
+                      className="text-[#5f644c] text-[12px] lowercase"
+                      style={{ fontFamily: mono }}
+                    >
+                      {track.label}
+                    </p>
+                    <h3
+                      data-reveal="text"
+                      className="text-[#101700] text-[20px] md:text-[24px]"
+                      style={{
+                        fontFamily: display,
+                        fontWeight: 500,
+                        letterSpacing: titleTracking,
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {track.title}
+                    </h3>
+                    <p
+                      data-reveal="text"
+                      className="text-[#5f644c] text-[14px] md:text-[16px]"
+                      style={{ fontFamily: body, lineHeight: 1.4 }}
+                    >
+                      {track.desc}
+                    </p>
+                  </div>
+                  <ol className="flex flex-col">
+                    {track.steps.map((step, stepIndex) => (
+                      <li
+                        key={step}
+                        className="flex gap-3 border-t border-[#d6dace] py-3 text-[#101700] text-[14px] md:text-[16px]"
+                        style={{ fontFamily: body, lineHeight: 1.4 }}
+                      >
+                        <span
+                          className="shrink-0 pt-[3px] text-[#5f644c] text-[12px]"
+                          style={{ fontFamily: mono }}
+                        >
+                          {`/0${stepIndex + 1}`}
+                        </span>
+                        {step}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              ))}
+            </div>
+            <XlHelper />
+            <SectionBorderTicks positions={twoColumnTickPositions} />
           </div>
         </div>
 
@@ -2854,7 +1399,7 @@ function LandingPage() {
                     textShadow: audienceTextHalo,
                   }}
                 >
-                  Estrutura que acompanha crescimento.
+                  Da primeira ideia à próxima fase.
                 </h2>
               </div>
             </div>
@@ -2910,7 +1455,7 @@ function LandingPage() {
                 as="h2"
                 className="text-[32px]"
               >
-                Do caos a sistemas coordenados.
+                Da ideia ou do caos a sistemas coordenados.
               </SectionTitle>
             </div>
             <p
@@ -2957,8 +1502,8 @@ function LandingPage() {
                   as="h2"
                   className="text-[32px]"
                 >
-                  <span className="block">Como estruturamos </span>
-                  <span className="block">negócios.</span>
+                  <span className="block">Como construímos e </span>
+                  <span className="block">estruturamos negócios.</span>
                 </SectionTitle>
               </div>
               <p
@@ -2972,8 +1517,8 @@ function LandingPage() {
                 >
                   Somos a engenharia estrutural do negócio.
                 </span>{" "}
-                Trabalhamos na interseção de produto, tecnologia, comercial,
-                operações, growth e inteligência artificial.
+                Da ideia à operação, trabalhamos na interseção de produto,
+                tecnologia, comercial, growth e inteligência artificial.
               </p>
             </div>
           </div>
@@ -3026,13 +1571,41 @@ function LandingPage() {
           <SectionBorderTicks positions={fourColumnTickPositions} />
         </div>
 
-        {/* ===== SERVICES QUOTE ===== */}
-        <div data-reveal="section" className="border-t border-[#d6dace]">
-          <div className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] py-12">
-            <div className="flex justify-end">
+        {/* ===== FRAMEWORK ===== */}
+        <div data-reveal="section" className="border-y border-[#d6dace]">
+          <div className="max-w-[1512px] mx-auto flex">
+            <div className="hidden xl:block w-[192px] shrink-0 border-y border-[#d6dace]" />
+            <div className="flex-1 min-w-0 bg-[#b4eb38] px-6 py-16 flex flex-col items-center gap-12">
+              <div className="flex flex-col items-center gap-6 w-full text-center max-w-[640px]">
+                <p
+                  data-reveal="text"
+                  className="text-[#3d4f0a] text-[12px] lowercase"
+                  style={{ fontFamily: mono }}
+                >
+                  /Crescimento previsível
+                </p>
+                <h2
+                  data-reveal="title"
+                  className="text-[#101700] text-[length:clamp(14px,calc(6vw-5px),32px)] whitespace-nowrap"
+                  style={{ fontFamily: heading, fontWeight: 500, letterSpacing: titleTracking }}
+                >
+                  Framework de Engenharia de Negócios™
+                </h2>
+                <p
+                  data-reveal="text"
+                  className="text-[#3d4f0a] text-[14px] md:text-[16px] max-w-[343px]"
+                  style={{
+                    fontFamily: heading,
+                    fontWeight: 400,
+                    lineHeight: 1.1,
+                  }}
+                >
+                  Do zero ou de uma empresa pronta, cada projeto segue camadas:
+                </p>
+              </div>
+              <FrameworkLayers />
               <p
-                data-reveal="text"
-                className="text-[#101700] text-[18px] md:text-[20px] lg:text-[24px] max-w-[221px]"
+                className="framework-outcome text-center text-balance text-[18px] md:text-[20px] lg:text-[24px]"
                 style={{
                   fontFamily: display,
                   letterSpacing: titleTracking,
@@ -3042,63 +1615,6 @@ function LandingPage() {
               >
                 Decisão deixa de ser opinião e passa a ser engenharia.
               </p>
-            </div>
-          </div>
-        </div>
-
-        {/* ===== FRAMEWORK (DARK) ===== */}
-        <div data-reveal="section" className="border-y border-[#d6dace]">
-          <div className="max-w-[1512px] mx-auto flex">
-            <div className="hidden xl:block w-[192px] shrink-0 border-y border-[#d6dace]" />
-            <div className="flex-1 bg-[#101700] px-6 py-16 flex flex-col items-center gap-12">
-              <div className="flex flex-col items-center gap-6 text-center max-w-[450px]">
-                <p
-                  data-reveal="text"
-                  className="text-[#b6bea1] text-[12px] lowercase"
-                  style={{ fontFamily: mono }}
-                >
-                  /Crescimento previsível
-                </p>
-                <h2
-                  data-reveal="title"
-                  className="text-[#f2f3ef] text-[32px]"
-                  style={{ fontFamily: heading, fontWeight: 500, letterSpacing: titleTracking }}
-                >
-                  Framework de Engenharia de Negócios™
-                </h2>
-                <p
-                  data-reveal="text"
-                  className="text-[#b6bea1] text-[14px] md:text-[16px] max-w-[343px]"
-                  style={{
-                    fontFamily: heading,
-                    fontWeight: 400,
-                    lineHeight: 1.1,
-                  }}
-                >
-                  Estruturamos cada projeto em camadas:
-                </p>
-              </div>
-              <div className="framework-layer-track flex flex-wrap items-start justify-center gap-8 md:gap-10 lg:gap-12">
-                {frameworkLayers.map((layer) => (
-                  <div
-                    key={layer.label}
-                    className={`framework-layer flex flex-col items-center gap-6 ${layer.widthClass}`}
-                  >
-                    <div className="framework-layer-orb w-[85px] h-[85px] rounded-full border border-[#b6bea1] flex items-center justify-center">
-                      <span className="framework-layer-icon">
-                        <layer.Icon />
-                      </span>
-                    </div>
-                    <p
-                      data-reveal="text"
-                      className="text-[#b6bea1] text-[14px] md:text-[16px] text-center"
-                      style={{ fontFamily: body, lineHeight: 1.3 }}
-                    >
-                      {layer.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
             </div>
             <div className="hidden xl:block w-[192px] shrink-0 border-y border-[#d6dace]" />
           </div>
@@ -3117,7 +1633,7 @@ function LandingPage() {
                 as="h2"
                 className="text-[32px]"
               >
-                Da primeira conversa à execução coordenada.
+                Da primeira conversa à entrega.
               </SectionTitle>
             </div>
             <p
@@ -3125,7 +1641,7 @@ function LandingPage() {
               className="text-[#5f644c] text-[14px] md:text-[16px] max-w-[420px]"
               style={{ fontFamily: body, lineHeight: 1.4 }}
             >
-              Antes de sair construindo, entendemos onde o negócio trava,
+              Antes de sair construindo, entendemos em que fase o negócio está,
               desenhamos a arquitetura de execução e colocamos produto,
               tecnologia, crescimento e operação para trabalhar no mesmo sistema.
             </p>
@@ -3188,7 +1704,7 @@ function LandingPage() {
               as="h2"
               className="text-[32px]"
             >
-              Onde a estratégia virou sistema.
+              Plataformas feitas do zero com a nossa engenharia.
             </SectionTitle>
           </div>
         </div>
@@ -3196,212 +1712,146 @@ function LandingPage() {
         <div data-reveal="section" className="border-y border-[#d6dace]">
           <div className="max-w-[1512px] mx-auto flex relative">
             <XlHelper />
-            <div className="flex flex-col lg:flex-row flex-1 min-w-0">
-              <div className="flex flex-col w-full lg:w-1/2 border-x border-b lg:border-b-0 border-[#d6dace]">
-                {/* Case 1 */}
-                <div
-                  className="flex flex-col justify-between p-6 min-h-[270px] lg:min-h-[330px]"
-                  onMouseEnter={() => setActiveCaseLogo("menux")}
-                  onClick={() => setActiveCaseLogo("menux")}
-                >
-                  <MenuxLogo />
-                  <div className="flex flex-col gap-4 mt-6">
-                    <h3
-                      data-reveal="text"
-                      className="text-[#101700] text-[14px] md:text-[16px]"
-                      style={{ fontFamily: display, fontWeight: 500, letterSpacing: titleTracking }}
-                    >
-                      Tecnologia aplicada à experiência de restaurante.
-                    </h3>
-                    <div className="flex flex-col gap-3">
-                      <p
-                        data-reveal="text"
-                        className="text-[#5f644c] text-[13px] md:text-[14px] max-w-[460px]"
-                        style={{ fontFamily: body, lineHeight: 1.4 }}
-                      >
-                        <span className="text-[#101700]">Contexto: </span>
-                        restaurantes operam com cliente, atendimento, equipe,
-                        gestão e decisão diária acontecendo ao mesmo tempo.
-                      </p>
-                      <p
-                        data-reveal="text"
-                        className="text-[#5f644c] text-[13px] md:text-[14px] max-w-[460px]"
-                        style={{ fontFamily: body, lineHeight: 1.4 }}
-                      >
-                        <span className="text-[#101700]">Efeito: </span>
-                        Menux aproxima cliente, equipe e gestor para reduzir
-                        fricção entre atendimento, operação e tomada de decisão.
-                      </p>
-                      <p
-                        data-reveal="text"
-                        className="text-[#5f644c] text-[13px] md:text-[14px] max-w-[460px]"
-                        style={{ fontFamily: body, lineHeight: 1.4 }}
-                      >
-                        <span className="text-[#101700]">Capacidade: </span>
-                        produto operacional com experiência, dados e rotina de
-                        gestão conectados.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                {/* Case 2 */}
-                <div
-                  className="flex flex-col justify-between p-6 min-h-[270px] lg:min-h-[330px] border-t border-[#d6dace]"
-                  onMouseEnter={() => setActiveCaseLogo("cortex")}
-                  onClick={() => setActiveCaseLogo("cortex")}
-                >
-                  <CortexLogo />
-                  <div className="flex flex-col gap-4 mt-6">
-                    <h3
-                      data-reveal="text"
-                      className="text-[#101700] text-[14px] md:text-[16px]"
-                      style={{ fontFamily: display, fontWeight: 500, letterSpacing: titleTracking }}
-                    >
-                      Coordenação organizacional para empresas em crescimento.
-                    </h3>
-                    <div className="flex flex-col gap-3">
-                      <p
-                        data-reveal="text"
-                        className="text-[#5f644c] text-[13px] md:text-[14px] max-w-[460px]"
-                        style={{ fontFamily: body, lineHeight: 1.4 }}
-                      >
-                        <span className="text-[#101700]">Contexto: </span>
-                        empresas em crescimento acumulam informação, prioridades
-                        e responsabilidades em pontos diferentes da operação.
-                      </p>
-                      <p
-                        data-reveal="text"
-                        className="text-[#5f644c] text-[13px] md:text-[14px] max-w-[460px]"
-                        style={{ fontFamily: body, lineHeight: 1.4 }}
-                      >
-                        <span className="text-[#101700]">Efeito: </span>
-                        Cortex conecta informação, prioridades e execução para
-                        dar mais visibilidade entre áreas.
-                      </p>
-                      <p
-                        data-reveal="text"
-                        className="text-[#5f644c] text-[13px] md:text-[14px] max-w-[460px]"
-                        style={{ fontFamily: body, lineHeight: 1.4 }}
-                      >
-                        <span className="text-[#101700]">Capacidade: </span>
-                        sistemas internos, dados e operação sustentando
-                        crescimento com coordenação.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* Case image */}
-              <div className="flex items-center justify-center p-6 w-full lg:w-1/2 min-h-[300px] lg:min-h-[660px] border-x lg:border-l-0 border-[#d6dace]">
-                <div className="relative bg-white w-full max-w-[532px] aspect-[532/430] overflow-hidden">
-                  <img
-                    src="/case-logos/logo-menux.svg"
-                    alt="Logo menux"
-                    className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
-                      activeCaseLogo === "menux" ? "opacity-100" : "opacity-0"
+            <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 border-x border-[#d6dace]">
+              {caseStudies.map(
+                (
+                  { name, Logo, href, domain, title, context, effect, capability },
+                  index,
+                ) => (
+                  <article
+                    key={name}
+                    className={`relative flex flex-col gap-6 p-6 min-h-[270px] lg:min-h-[330px] transition-colors hover:bg-[#ecefe7] ${
+                      index > 0 ? "border-t border-[#d6dace]" : ""
+                    } ${index === 1 ? "md:border-t-0" : ""} ${
+                      index % 2 === 1 ? "md:border-l" : ""
                     }`}
-                  />
-                  <img
-                    src="/case-logos/logo-cortex.svg"
-                    alt="Logo cortex"
-                    className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
-                      activeCaseLogo === "cortex" ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
-                </div>
-              </div>
+                  >
+                    <div className="flex h-[30px] items-center justify-between gap-4">
+                      <Logo />
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#5f644c] text-[12px] lowercase underline-offset-4 hover:underline after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:-outline-offset-2 focus-visible:after:outline-[#101700]"
+                        style={{ fontFamily: mono }}
+                      >
+                        {domain} <span aria-hidden>↗</span>
+                        <span className="sr-only"> (abre em nova aba)</span>
+                      </a>
+                    </div>
+                    <div className="flex flex-col gap-4">
+                      <h3
+                        data-reveal="text"
+                        className="text-[#101700] text-[14px] md:text-[16px]"
+                        style={{
+                          fontFamily: display,
+                          fontWeight: 500,
+                          letterSpacing: titleTracking,
+                        }}
+                      >
+                        {title}
+                      </h3>
+                      <div className="flex flex-col gap-3">
+                        {[
+                          ["Contexto: ", context],
+                          ["Efeito: ", effect],
+                          ["Capacidade: ", capability],
+                        ].map(([label, text]) => (
+                          <p
+                            key={label}
+                            data-reveal="text"
+                            className="text-[#5f644c] text-[13px] md:text-[14px] max-w-[460px]"
+                            style={{ fontFamily: body, lineHeight: 1.4 }}
+                          >
+                            <span className="text-[#101700]">{label}</span>
+                            {text}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  </article>
+                ),
+              )}
             </div>
             <XlHelper />
-            <SectionBorderTicks
-              positions={twoColumnTickPositions}
-            />
+            <SectionBorderTicks positions={twoColumnTickPositions} />
           </div>
         </div>
 
         {/* ===== WHAT MAKES US DIFFERENT ===== */}
         <div
           data-reveal="section"
-          className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] py-9 flex flex-col items-center text-center gap-8"
+          className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] pt-16 pb-9"
         >
-          <div className="flex flex-col items-center gap-8 max-w-[430px]">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 lg:gap-12">
+            <div className="flex flex-col gap-8 max-w-[649px]">
+              <SectionLabel>/Por que a ShiftLabs</SectionLabel>
+              <SectionTitle as="h2" className="text-[32px]">
+                Um time só, da ideia à escala.
+              </SectionTitle>
+            </div>
             <p
               data-reveal="text"
-              className="text-[#5f644c] text-[12px] lowercase"
-              style={{ fontFamily: mono }}
+              className="text-[#5f644c] text-[14px] md:text-[16px] max-w-[338px]"
+              style={{ fontFamily: body, lineHeight: 1.4 }}
             >
-              /Não somos para quem quer apenas “uma landing page”.
+              Quando design, código e marketing são contratados separados,
+              ninguém responde pelo resultado. Na ShiftLabs, as três frentes
+              andam juntas.
             </p>
-            <SectionTitle as="h2" className="text-[32px] text-center">
-              O que torna a ShiftLabs diferente
-            </SectionTitle>
           </div>
         </div>
 
-        {/* Thesis statement */}
-        <div
-          data-reveal="section"
-          className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] pb-12 md:pb-16 flex justify-center"
-        >
-          <p
-            data-reveal="title"
-            className="text-center text-balance text-[32px] leading-[1.1]"
-            style={{ fontFamily: heading, fontWeight: 500, letterSpacing: titleTracking }}
-          >
-            <span className="block text-[#5f644c]">{thesisLead}</span>
-            <span className="block text-[#101700]">{thesisClose}</span>
-          </p>
-        </div>
-
-        {/* Feature tags */}
-        <div data-reveal="section" className="border-y border-[#d6dace]">
+        <div data-reveal="section" className="border-t border-[#d6dace]">
           <div className="max-w-[1512px] mx-auto flex relative">
             <XlHelper />
-            <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 border-x border-[#d6dace]">
-              {featureItems.map((item, index) => (
+            <div className="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-3 border-x border-[#d6dace]">
+              {coordinationItems.map(({ before, after }, index) => (
                 <div
-                  key={item}
-                  className={`flex items-end p-6 min-h-[100px] md:h-[118px] ${
-                    index > 0 ? "border-t border-[#d6dace]" : ""
-                  } ${index > 0 ? "sm:border-t-0 sm:border-l sm:border-[#d6dace]" : ""}`}
+                  key={before}
+                  className={`flex flex-col justify-between gap-6 p-6 sm:min-h-[200px] md:min-h-[220px] ${
+                    index > 0
+                      ? "border-t border-[#d6dace] sm:border-t-0 sm:border-l"
+                      : ""
+                  }`}
                 >
                   <p
                     data-reveal="text"
-                    className="text-[#101700] text-[14px] md:text-[16px]"
+                    className="text-[#5f644c] text-[14px] md:text-[16px] line-through"
+                    style={{ fontFamily: body, lineHeight: 1.3 }}
+                  >
+                    {before}
+                  </p>
+                  <p
+                    data-reveal="text"
+                    className="text-[#101700] text-[18px] md:text-[20px]"
                     style={{
                       fontFamily: heading,
                       letterSpacing: titleTracking,
                       fontWeight: 500,
-                      lineHeight: "normal",
+                      lineHeight: 1.2,
                     }}
                   >
-                    {item}
+                    {after}
                   </p>
                 </div>
               ))}
             </div>
             <XlHelper />
-            <SectionBorderTicks
-              positions={threeColumnTickPositions}
-            />
+            <SectionBorderTicks positions={threeColumnTickPositions} />
           </div>
-        </div>
-
-        {/* Coordination message */}
-        <div
-          data-reveal="section"
-          className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] py-9 flex justify-center"
-        >
-          <SectionTitle as="h2" className="text-[32px] text-center ">
-            A ShiftLabs entrega coordenação.
-          </SectionTitle>
         </div>
 
         {/* ===== CTA ===== */}
         <div data-reveal="section" className="border-y border-[#d6dace]">
           <div className="max-w-[1512px] mx-auto flex relative">
             <XlHelper className="border-r border-[#d6dace]" />
-            <div className="flex flex-col lg:flex-row flex-1 min-w-0 bg-[#b4eb38]">
-              <div className="flex flex-col justify-between p-6 w-full lg:w-1/2 min-h-[360px] lg:h-[462px]">
+            <div className="relative flex flex-col lg:flex-row flex-1 min-w-0 overflow-hidden bg-[#b4eb38]">
+              <AsciiStarfield
+                className="absolute inset-0 hidden lg:block [mask-image:linear-gradient(90deg,transparent_38%,black_72%)]"
+                color="#456300"
+              />
+              <div className="relative flex flex-col justify-between p-6 w-full lg:w-1/2 min-h-[360px] lg:h-[462px]">
                 <div className="flex flex-col gap-6 max-w-[450px]">
                   <p
                     data-reveal="text"
@@ -3414,7 +1864,7 @@ function LandingPage() {
                     as="h2"
                     className="text-[32px]"
                   >
-                    Vamos estruturar o que sua empresa precisa executar agora?
+                    Por onde começamos: pela sua ideia ou pela sua empresa?
                   </SectionTitle>
                 </div>
                 <p
@@ -3422,62 +1872,24 @@ function LandingPage() {
                   className="text-[#456300] text-[14px] md:text-[16px] max-w-[360px] mt-8"
                   style={{ fontFamily: body, lineHeight: 1.4 }}
                 >
-                  Se o crescimento já depende de muitas frentes ao mesmo tempo,
-                  a primeira conversa serve para entender onde o sistema trava e
-                  qual arquitetura pode destravar a execução.
+                  A primeira conversa serve para entender em que fase você está
+                  e qual é o caminho até o próximo resultado: o primeiro cliente
+                  ou uma operação que cresce com previsibilidade.
                 </p>
               </div>
-              <div className="flex items-end justify-end p-6 w-full lg:w-1/2 min-h-[120px] lg:h-[462px]">
+              <div className="relative flex items-end justify-end p-6 w-full lg:w-1/2 min-h-[120px] lg:h-[462px]">
                 <button
                   type="button"
                   onClick={openContactModal}
                   className="inline-flex min-h-[36px] items-center bg-[#101700] text-[#f2f3ef] px-3 py-2 text-[12px] uppercase cursor-pointer transition-[background-color,transform] hover:bg-[#263600] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#101700]"
                   style={{ fontFamily: mono }}
                 >
-                  iniciar diagnóstico
+                  iniciar conversa
                 </button>
               </div>
             </div>
             <XlHelper className="border-l border-[#d6dace]" />
             <SectionBorderTicks positions={edgeTickPositions} />
-          </div>
-        </div>
-
-        {/* ===== VAGAS ===== */}
-        <div data-reveal="section" className="border-b border-[#d6dace]">
-          <div className="max-w-[1512px] mx-auto flex relative">
-            <XlHelper className="border-r border-[#d6dace]" />
-            <div className="flex flex-1 min-w-0 flex-col gap-6 p-6 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex flex-col gap-2">
-                <p
-                  className="text-[#5f644c] text-[12px] lowercase"
-                  style={{ fontFamily: mono }}
-                >
-                  /vagas
-                </p>
-                <p
-                  className="text-[#101700] text-[20px] md:text-[24px]"
-                  style={{ fontFamily: display, fontWeight: 500, lineHeight: 1.2 }}
-                >
-                  Estamos contratando.
-                </p>
-                <p
-                  className="text-[#5f644c] text-[14px] md:text-[16px]"
-                  style={{ fontFamily: body, lineHeight: 1.3 }}
-                >
-                  Venha estruturar negócios com a gente.
-                </p>
-              </div>
-              <a
-                href="/vagas"
-                className="inline-flex min-h-[36px] shrink-0 items-center self-start sm:self-auto border border-[#d6dace] px-3 py-2 text-[#101700] text-[12px] uppercase transition-[background-color,border-color,color,transform] hover:border-[#101700] hover:bg-[#101700] hover:text-[#f2f3ef] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#101700]"
-                style={{ fontFamily: mono }}
-              >
-                ver vagas abertas
-              </a>
-            </div>
-            <XlHelper className="border-l border-[#d6dace]" />
-            <SectionBorderTicks positions={edgeTickPositions} showTop={false} />
           </div>
         </div>
 
@@ -3497,8 +1909,8 @@ function LandingPage() {
               className="text-[#5f644c] text-[14px] md:text-[16px]"
               style={{ fontFamily: body, lineHeight: 1.3 }}
             >
-              Arquitetamos produto, tecnologia, comercial e operação em fluxos
-              coordenados, com inteligência aplicada de ponta a ponta.
+              Tiramos negócios do papel e estruturamos empresas prontas, com
+              produto, tecnologia, comercial e operação coordenados.
             </p>
             <p
               data-reveal="text"
@@ -3543,13 +1955,6 @@ function LandingPage() {
               >
                 /empresa
               </p>
-              <a
-                href="/vagas"
-                className="inline-flex min-h-[32px] items-center text-[#5f644c] hover:text-[#101700] transition-colors text-[14px] md:text-[16px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#101700]"
-                style={{ fontFamily: body, lineHeight: 1.3 }}
-              >
-                Vagas
-              </a>
               <button
                 type="button"
                 onClick={openContactModal}
@@ -3611,12 +2016,11 @@ function LandingPage() {
                   className="text-[#5f644c] text-[12px] lowercase"
                   style={{ fontFamily: mono }}
                 >
-                  {isContactSuccess ? "/contato enviado" : "/contato"}
+                  /contato
                 </p>
                 <button
                   type="button"
                   onClick={closeContactModal}
-                  disabled={isContactSubmitting}
                   className="inline-flex min-h-[36px] items-center border border-[#d6dace] px-3 py-2 text-[12px] uppercase text-[#5f644c] hover:text-[#101700]"
                   style={{ fontFamily: mono, lineHeight: "normal" }}
                 >
@@ -3632,9 +2036,7 @@ function LandingPage() {
                   lineHeight: "normal",
                 }}
               >
-                {isContactSuccess
-                  ? "Contato confirmado"
-                  : "Fale com a ShiftLabs"}
+                {isContactSuccess ? "Mensagem pronta" : "Fale com a ShiftLabs"}
               </p>
             </div>
 
@@ -3652,7 +2054,7 @@ function LandingPage() {
                             className="text-[12px] lowercase text-[#5f644c]"
                             style={{ fontFamily: mono }}
                           >
-                            /envio concluído
+                            /falta um passo
                           </p>
                           <p
                             className="text-[25px] md:text-[36px] text-[#101700]"
@@ -3663,7 +2065,7 @@ function LandingPage() {
                               lineHeight: 1.03,
                             }}
                           >
-                            Obrigado. Sua mensagem chegou.
+                            Sua mensagem está pronta no e-mail.
                           </p>
                         </div>
                       </div>
@@ -3671,7 +2073,7 @@ function LandingPage() {
                         className="shiftlabs-success-chip"
                         style={{ fontFamily: mono }}
                       >
-                        STATUS: RECEBIDO
+                        STATUS: PRONTA
                       </span>
                     </div>
 
@@ -3694,7 +2096,7 @@ function LandingPage() {
                           className="mt-1 text-[14px] text-[#101700]"
                           style={{ fontFamily: body, lineHeight: 1.3 }}
                         >
-                          Lead registrado no nosso pipeline.
+                          Abrimos seu app de e-mail com tudo preenchido.
                         </p>
                       </div>
                       <div className="shiftlabs-success-step border border-[#d6dace] p-3">
@@ -3708,7 +2110,7 @@ function LandingPage() {
                           className="mt-1 text-[14px] text-[#101700]"
                           style={{ fontFamily: body, lineHeight: 1.3 }}
                         >
-                          Time de estratégia valida contexto e objetivo.
+                          Confira a mensagem e clique em enviar.
                         </p>
                       </div>
                       <div className="shiftlabs-success-step border border-[#d6dace] p-3">
@@ -3722,7 +2124,7 @@ function LandingPage() {
                           className="mt-1 text-[14px] text-[#101700]"
                           style={{ fontFamily: body, lineHeight: 1.3 }}
                         >
-                          Retorno em breve para alinhar próximos passos.
+                          Retornaremos em até 2 dias úteis.
                         </p>
                       </div>
                     </div>
@@ -3736,7 +2138,7 @@ function LandingPage() {
                         className="inline-flex min-h-[36px] items-center border border-[#d6dace] px-3 py-2 text-[12px] uppercase text-[#5f644c] hover:text-[#101700]"
                         style={{ fontFamily: mono, lineHeight: "normal" }}
                       >
-                        enviar novo contato
+                        voltar ao formulário
                       </button>
                     </div>
                   </div>
@@ -3849,6 +2251,7 @@ function LandingPage() {
                   className="mt-5 text-[12px] text-[#5f644c]"
                   style={{ fontFamily: body, lineHeight: 1.3 }}
                 >
+                  Ao continuar, abrimos seu e-mail com a mensagem pronta.
                   Usaremos seus dados apenas para responder seu contato.
                 </p>
 
@@ -3856,7 +2259,6 @@ function LandingPage() {
                   <button
                     type="button"
                     onClick={closeContactModal}
-                    disabled={isContactSubmitting}
                     className="inline-flex min-h-[36px] items-center border border-[#d6dace] px-3 py-2 text-[12px] uppercase text-[#5f644c] hover:text-[#101700]"
                     style={{ fontFamily: mono, lineHeight: "normal" }}
                   >
@@ -3864,11 +2266,10 @@ function LandingPage() {
                   </button>
                   <button
                     type="submit"
-                    disabled={isContactSubmitting}
                     className="inline-flex min-h-[36px] items-center bg-[#101700] px-3 py-2 text-[12px] uppercase text-[#f2f3ef]"
                     style={{ fontFamily: mono, lineHeight: "normal" }}
                   >
-                    {isContactSubmitting ? "enviando..." : "enviar contato"}
+                    continuar no e-mail
                   </button>
                 </div>
                 {isContactError ? (
@@ -3890,3063 +2291,15 @@ function LandingPage() {
   );
 }
 
-function CareersHeader() {
-  return (
-    <header className="fixed left-0 top-0 z-[120] w-full border-b border-[#d6dace] bg-[#f2f3ef]">
-      <div className="mx-auto flex h-[66px] w-full max-w-[1512px] items-center justify-between px-6 py-4 md:px-8">
-        <a
-          href="/"
-          aria-label="ShiftLabs"
-          title="ShiftLabs"
-          className="inline-flex min-h-[44px] items-center py-1"
-        >
-          <ShiftLabsIcon />
-        </a>
-        <div className="flex items-center gap-2.5">
-          <a
-            href="/vagas"
-            className="inline-flex min-h-[44px] items-center px-2 text-[16px] text-[#5f644c] transition-colors hover:text-[#101700]"
-            style={{ fontFamily: body, fontWeight: 400, lineHeight: "normal" }}
-          >
-            Vagas
-          </a>
-          <a
-            href="https://instagram.com/shiftlabs.br"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex min-h-[44px] items-center px-2 text-[16px] text-[#5f644c] transition-colors hover:text-[#101700]"
-            style={{ fontFamily: body, fontWeight: 400, lineHeight: "normal" }}
-          >
-            @shiftlabs.br
-          </a>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-function RoleMetaPill({ children }: { children: React.ReactNode }) {
-  return (
-    <span
-      className="inline-flex items-center justify-center border border-[#d6dace] bg-[#ecefe7] px-2.5 py-1.5 text-[12px] text-[#5f644c] md:px-3 md:py-2 md:text-[14px]"
-      style={{ fontFamily: body, fontWeight: 400, lineHeight: "normal" }}
-    >
-      {children}
-    </span>
-  );
-}
-
-function RoleSeniorityBadge({ label }: { label: string }) {
-  return (
-    <span
-      className="inline-flex items-center justify-center self-center border border-[#d6dace] bg-[#f2f3ef] px-3 py-2 text-[13px] text-[#5f644c] uppercase md:text-[14px]"
-      style={{ fontFamily: body, lineHeight: "normal" }}
-    >
-      {label}
-    </span>
-  );
-}
-
-function RoleContentSection({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  const usesLabelStyle = isStyledRoleSectionHeading(title);
-  const renderedTitle = usesLabelStyle
-    ? formatRoleSectionHeading(title)
-    : title;
-
-  return (
-    <section className="pt-6 md:pt-7">
-      <h2
-        className={
-          usesLabelStyle
-            ? "text-[12px] text-[#5f644c] lowercase tracking-[0.02em]"
-            : "text-[24px] text-[#101700]"
-        }
-        style={{
-          fontFamily: usesLabelStyle ? mono : heading,
-          letterSpacing: usesLabelStyle ? undefined : titleTracking,
-          fontWeight: usesLabelStyle ? 400 : 500,
-          lineHeight: usesLabelStyle ? 1.1 : 1.08,
-        }}
-      >
-        {renderedTitle}
-      </h2>
-      <div aria-hidden className="mt-3 h-px w-full bg-[#d6dace]" />
-      <div className="mt-4">{children}</div>
-    </section>
-  );
-}
-
-function MarkdownBody({ markdown }: { markdown: string }) {
-  const html = useMemo(() => markdownToHtml(markdown), [markdown]);
-
-  return (
-    <div
-      className="pt-2 text-[16px] text-[#101700] leading-[1.42] [&_h1]:mt-7 [&_h1]:text-[28px] [&_h1]:font-medium [&_h2]:mt-7 [&_h2]:text-[24px] [&_h2]:font-medium [&_h3]:mt-6 [&_h3]:text-[20px] [&_h3]:font-medium [&_strong]:font-semibold [&_h2.role-section-label]:mt-12 [&_h2.role-section-label]:text-[12px] [&_h2.role-section-label]:font-normal [&_h2.role-section-label]:lowercase [&_h2.role-section-label]:tracking-[0.02em] [&_h2.role-section-label]:text-[#5f644c] [&_h2.role-section-label]:leading-[1.1] [&_h3.role-section-label]:mt-12 [&_h3.role-section-label]:text-[12px] [&_h3.role-section-label]:font-normal [&_h3.role-section-label]:lowercase [&_h3.role-section-label]:tracking-[0.02em] [&_h3.role-section-label]:text-[#5f644c] [&_h3.role-section-label]:leading-[1.1] [&_p]:m-0 [&_p+p]:mt-3 [&_p+ul]:mt-3 [&_p+ol]:mt-3 [&_p+h2.role-section-label]:mt-12 [&_p+h3.role-section-label]:mt-12 [&_ul]:m-0 [&_ul]:list-disc [&_ul]:pl-6 [&_ul+*]:mt-3 [&_ul+h2.role-section-label]:mt-12 [&_ul+h3.role-section-label]:mt-12 [&_ol]:m-0 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol+*]:mt-3 [&_ol+h2.role-section-label]:mt-12 [&_ol+h3.role-section-label]:mt-12 [&_li]:mb-2 [&_li:last-child]:mb-0 [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:opacity-80 [&_code]:rounded-none [&_code]:border [&_code]:border-[#d6dace] [&_code]:bg-[#ecefe7] [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-[14px]"
-      style={{ fontFamily: body }}
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
-  );
-}
-
-type RoleApplicationFormState = {
-  name: string;
-  email: string;
-  whatsapp: string;
-  portfolio: string;
-  message: string;
-  experienceFit: string;
-  availabilityWindow: string;
-  workModelAlignment: string;
-  aiFluency: string;
-};
-
-type RoleApplicationFeedback = {
-  type: "success" | "error";
-  message: string;
-};
-
-const initialRoleApplicationFormState: RoleApplicationFormState = {
-  name: "",
-  email: "",
-  whatsapp: "",
-  portfolio: "",
-  message: "",
-  experienceFit: "",
-  availabilityWindow: "",
-  workModelAlignment: "",
-  aiFluency: "",
-};
-
-type RoleApplicationOption = {
-  value: string;
-  label: string;
-};
-
-const roleApplicationExperienceOptions: RoleApplicationOption[] = [
-  {
-    value: "alta",
-    label: "Já atuei diretamente com responsabilidades similares.",
-  },
-  {
-    value: "media",
-    label: "Tenho experiência parcial e consigo executar com autonomia.",
-  },
-  {
-    value: "transicao",
-    label: "Estou em transição e aprendendo rápido para essa função.",
-  },
-];
-
-const roleApplicationAvailabilityOptions: RoleApplicationOption[] = [
-  { value: "imediata", label: "Posso iniciar imediatamente." },
-  { value: "15_dias", label: "Posso iniciar em até 15 dias." },
-  { value: "30_dias", label: "Posso iniciar em até 30 dias." },
-  { value: "a_combinar", label: "Preciso combinar prazo de início." },
-];
-
-const roleApplicationModelOptions: RoleApplicationOption[] = [
-  { value: "alinhado", label: "Estou alinhado(a) com o modelo da vaga." },
-  { value: "hibrido", label: "Prefiro híbrido." },
-  { value: "remoto", label: "Prefiro remoto." },
-  { value: "presencial", label: "Prefiro presencial." },
-];
-
-const roleApplicationAiOptions: RoleApplicationOption[] = [
-  { value: "avancado", label: "Uso IA diariamente no meu fluxo de trabalho." },
-  { value: "intermediario", label: "Uso IA ocasionalmente em tarefas pontuais." },
-  { value: "basico", label: "Ainda estou começando com IA." },
-];
-
-function getRoleApplicationOptionLabel(
-  options: RoleApplicationOption[],
-  value: string,
-): string {
-  return options.find((option) => option.value === value)?.label ?? "Não informado";
-}
-
-function CareerRolePage({ role }: { role: CareersRole }) {
-  const [isHeaderCondensed, setIsHeaderCondensed] = useState(false);
-  const displayRoleTitle = getDisplayRoleTitle(role.title, role.displayTitle);
-  const seniorityBadge = getRoleSeniorityBadge(
-    role.title,
-    role.displaySeniority,
-    role.slug,
-  );
-  const displayCommitment = getRoleDisplayCommitment(
-    role.commitment,
-    role.displayCommitment,
-  );
-  const displayArea = getRoleCardArea(role);
-  const roleSummary = getRoleCardSummary(role);
-  const applyPageHref = `/vagas/${role.slug}/candidatar`;
-
-  useEffect(() => {
-    let rafId = 0;
-
-    const updateHeaderMode = () => {
-      const shouldCondense = window.scrollY > 28 && window.innerWidth >= 1024;
-      setIsHeaderCondensed((current) =>
-        current === shouldCondense ? current : shouldCondense,
-      );
-    };
-
-    const scheduleHeaderUpdate = () => {
-      if (rafId) return;
-      rafId = window.requestAnimationFrame(() => {
-        rafId = 0;
-        updateHeaderMode();
-      });
-    };
-
-    updateHeaderMode();
-    window.addEventListener("scroll", scheduleHeaderUpdate, { passive: true });
-    window.addEventListener("resize", scheduleHeaderUpdate);
-    return () => {
-      window.removeEventListener("scroll", scheduleHeaderUpdate);
-      window.removeEventListener("resize", scheduleHeaderUpdate);
-      if (rafId) {
-        window.cancelAnimationFrame(rafId);
-      }
-    };
-  }, []);
-
-  return (
-    <div className="bg-[#f2f3ef] min-h-screen w-full overflow-x-hidden pt-[72px]">
-      <div
-        className={`fixed inset-x-0 top-0 z-50 transition-[padding] duration-300 ease-out ${
-          isHeaderCondensed ? "pt-3" : "pt-0"
-        }`}
-      >
-        <div
-          className={
-            isHeaderCondensed ? "mx-auto w-full max-w-[1040px] px-4" : "w-full"
-          }
-        >
-          <header
-            className={`transition-all duration-300 ease-out ${
-              isHeaderCondensed
-                ? "border border-[#d6dace] bg-[#f2f3ef]"
-                : "border-b border-[#d6dace] bg-[#f2f3ef]"
-            }`}
-          >
-            <div
-              className={`mx-auto h-[72px] flex items-center justify-between gap-6 transition-[padding,max-width] duration-300 ease-out ${
-                isHeaderCondensed
-                  ? "max-w-none px-6"
-                  : "max-w-[1512px] px-6 xl:px-[192px]"
-              }`}
-            >
-              <a
-                href="/"
-                aria-label="ShiftLabs"
-                title="ShiftLabs"
-                className="inline-flex min-h-[44px] items-center gap-2 py-1"
-              >
-                <ShiftLabsIcon />
-                <ShiftLabsWordmark />
-              </a>
-              <div className="flex items-center gap-4 md:gap-6">
-                <a
-                  href="/vagas"
-                  className="inline-flex min-h-[44px] items-center px-2 text-[#101700] transition-colors text-[14px]"
-                  style={{
-                    fontFamily: mono,
-                    fontWeight: 400,
-                    lineHeight: "normal",
-                  }}
-                >
-                  /VAGAS
-                </a>
-                <span aria-hidden className="h-4 w-px bg-[#d6dace]" />
-                <div className="flex items-center gap-3 md:gap-4">
-                  {careersSocialLinks.map(({ name, href, Icon }) => (
-                    <a
-                      key={`careers-role-header-${name}`}
-                      href={href}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={name}
-                      className="inline-flex h-11 w-11 items-center justify-center opacity-70 hover:opacity-100 transition-opacity"
-                    >
-                      <Icon />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </header>
-        </div>
-      </div>
-
-      <main className="text-[#101700]">
-        <div className="border-y border-[#d6dace]">
-          <div className="max-w-[1512px] mx-auto flex relative">
-            <XlHelper className="border-r border-[#d6dace]" />
-            <div className="flex-1 border-x border-[#d6dace]">
-              <article className="flex min-h-[360px] flex-col justify-between gap-8 p-6 md:p-8 xl:p-10">
-                <div className="flex flex-col gap-4 max-w-[880px]">
-                  <a
-                    href="/vagas"
-                    aria-label="Voltar para vagas"
-                    title="Voltar para vagas"
-                    className="inline-flex h-11 w-11 items-center justify-center border border-[#d6dace] text-[#5f644c] hover:text-[#101700] transition-colors"
-                  >
-                    <CareersBackIcon />
-                  </a>
-                  <p
-                    className="text-[#5f644c] text-[12px] lowercase"
-                    style={{ fontFamily: mono }}
-                  >
-                    /{displayArea}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-3 md:gap-4">
-                    <h1
-                      className="text-[#101700] text-[32px] md:text-[44px] lg:text-[56px] leading-[1.03]"
-                      style={{ fontFamily: display, fontWeight: 500, letterSpacing: titleTracking }}
-                    >
-                      {displayRoleTitle}
-                    </h1>
-                    {seniorityBadge ? (
-                      <RoleSeniorityBadge label={seniorityBadge} />
-                    ) : null}
-                  </div>
-                  <p
-                    className="text-[#5f644c] text-[18px] md:text-[24px] max-w-[980px]"
-                    style={{ fontFamily: body, lineHeight: 1.3 }}
-                  >
-                    {roleSummary}
-                  </p>
-                </div>
-
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-wrap gap-2">
-                    <span
-                      className="inline-flex items-center gap-2 border border-[#d6dace] px-3 py-2 text-[13px] md:text-[14px] text-[#5f644c]"
-                      style={{ fontFamily: body, lineHeight: "normal" }}
-                    >
-                      <CareersLocationIcon />
-                      {role.location}
-                    </span>
-                    <span
-                      className="inline-flex items-center gap-2 border border-[#d6dace] px-3 py-2 text-[13px] md:text-[14px] text-[#5f644c]"
-                      style={{ fontFamily: body, lineHeight: "normal" }}
-                    >
-                      <CareersClockIcon />
-                      {displayCommitment}
-                    </span>
-                    <span
-                      className="inline-flex items-center gap-2 border border-[#d6dace] px-3 py-2 text-[13px] md:text-[14px] text-[#5f644c]"
-                      style={{ fontFamily: body, lineHeight: "normal" }}
-                    >
-                      <CareersWorkModeIcon />
-                      {role.model}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-3">
-                    <a
-                      href="/vagas"
-                      className="inline-flex min-h-[36px] items-center border border-[#101700] text-[#101700] px-3 py-2 text-[12px] uppercase"
-                      style={{ fontFamily: mono, lineHeight: "normal" }}
-                    >
-                      ver outras vagas
-                    </a>
-                    <a
-                      href={applyPageHref}
-                      className="inline-flex min-h-[36px] items-center bg-[#101700] text-[#f2f3ef] px-3 py-2 text-[12px] uppercase"
-                      style={{ fontFamily: mono, lineHeight: "normal" }}
-                    >
-                      candidatar-se
-                    </a>
-                  </div>
-                </div>
-              </article>
-            </div>
-            <XlHelper className="border-l border-[#d6dace]" />
-            <SectionBorderTicks positions={edgeTickPositions} />
-          </div>
-        </div>
-
-        <div className="border-b border-[#d6dace]">
-          <div className="max-w-[1512px] mx-auto flex relative">
-            <XlHelper className="border-r border-[#d6dace]" />
-            <article className="flex-1 border-x border-[#d6dace] px-6 md:px-8 xl:px-10 py-10 md:py-12">
-              <div className="mx-auto w-full max-w-[1080px]">
-                {role.bodyMarkdown?.trim() ? (
-                  <MarkdownBody markdown={role.bodyMarkdown} />
-                ) : (
-                  <>
-                    <RoleContentSection
-                      title={role.whyTitle ?? "Why ShiftLabs?"}
-                    >
-                      <div className="flex flex-col gap-3">
-                        {role.about.map((paragraph) => (
-                          <p
-                            key={paragraph}
-                            className="text-[16px] text-[#101700]"
-                            style={{
-                              fontFamily: body,
-                              fontWeight: 400,
-                              lineHeight: 1.42,
-                            }}
-                          >
-                            {paragraph}
-                          </p>
-                        ))}
-                      </div>
-                    </RoleContentSection>
-
-                    <RoleContentSection title={role.roleTitle ?? "The Role"}>
-                      <div className="flex flex-col gap-3">
-                        <p
-                          className="text-[16px] text-[#101700]"
-                          style={{
-                            fontFamily: body,
-                            fontWeight: 400,
-                            lineHeight: 1.42,
-                          }}
-                        >
-                          {role.intro}
-                        </p>
-                        <p
-                          className="text-[16px] text-[#101700]"
-                          style={{
-                            fontFamily: body,
-                            fontWeight: 400,
-                            lineHeight: 1.42,
-                          }}
-                        >
-                          {role.roleOneLiner ??
-                            `Área de atuação: ${role.area}.`}
-                        </p>
-                      </div>
-                    </RoleContentSection>
-
-                    <RoleContentSection
-                      title={role.doTitle ?? "What you'll do"}
-                    >
-                      <ul className="m-0 list-disc pl-6">
-                        {role.responsibilities.map((item) => (
-                          <li
-                            key={item}
-                            className="mb-2 text-[16px] text-[#101700] last:mb-0"
-                            style={{
-                              fontFamily: body,
-                              fontWeight: 400,
-                              lineHeight: 1.42,
-                            }}
-                          >
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </RoleContentSection>
-
-                    <RoleContentSection
-                      title={role.bringTitle ?? "What you'll bring"}
-                    >
-                      <ul className="m-0 list-disc pl-6">
-                        {role.requirements.map((item) => (
-                          <li
-                            key={item}
-                            className="mb-2 text-[16px] text-[#101700] last:mb-0"
-                            style={{
-                              fontFamily: body,
-                              fontWeight: 400,
-                              lineHeight: 1.42,
-                            }}
-                          >
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </RoleContentSection>
-
-                    <RoleContentSection title={role.stackTitle ?? "Stack"}>
-                      <div className="flex flex-wrap gap-2">
-                        {role.stack.map((tool) => (
-                          <RoleMetaPill key={tool}>{tool}</RoleMetaPill>
-                        ))}
-                      </div>
-                    </RoleContentSection>
-
-                    <RoleContentSection
-                      title={role.processTitle ?? "Hiring process"}
-                    >
-                      <ol className="m-0 list-decimal pl-6">
-                        {role.process.map((step) => (
-                          <li
-                            key={step}
-                            className="mb-2 text-[16px] text-[#101700] last:mb-0"
-                            style={{
-                              fontFamily: body,
-                              fontWeight: 400,
-                              lineHeight: 1.42,
-                            }}
-                          >
-                            {step}
-                          </li>
-                        ))}
-                      </ol>
-                    </RoleContentSection>
-
-                    {role.joinUs?.length ? (
-                      <RoleContentSection title={role.joinTitle ?? "Join Us"}>
-                        <div className="flex flex-col gap-3">
-                          {role.joinUs.map((paragraph) => (
-                            <p
-                              key={paragraph}
-                              className="text-[16px] text-[#101700]"
-                              style={{
-                                fontFamily: body,
-                                fontWeight: 400,
-                                lineHeight: 1.42,
-                              }}
-                            >
-                              {paragraph}
-                            </p>
-                          ))}
-                        </div>
-                      </RoleContentSection>
-                    ) : null}
-                  </>
-                )}
-              </div>
-            </article>
-            <XlHelper className="border-l border-[#d6dace]" />
-            <SectionBorderTicks positions={edgeTickPositions} />
-          </div>
-        </div>
-
-        <div className="border-y border-[#d6dace] mt-16">
-          <div className="max-w-[1512px] mx-auto flex relative">
-            <XlHelper className="border-r border-[#d6dace]" />
-            <div className="flex flex-col lg:flex-row flex-1 min-w-0 bg-[#b4eb38]">
-              <div className="flex flex-col justify-between p-6 w-full lg:w-1/2 min-h-[300px] lg:h-[360px]">
-                <div className="flex flex-col gap-6 max-w-[450px]">
-                  <p
-                    className="text-[#456300] text-[12px] lowercase"
-                    style={{ fontFamily: mono }}
-                  >
-                    /Próximo passo
-                  </p>
-                  <div
-                    className="text-[#101700] text-[28px] md:text-[36px] lg:text-[40px]"
-                    style={{
-                      fontFamily: heading,
-                      letterSpacing: titleTracking,
-                      fontWeight: 500,
-                      lineHeight: "normal",
-                    }}
-                  >
-                    Curtiu essa vaga?
-                  </div>
-                </div>
-                <p
-                  className="text-[#456300] text-[14px] md:text-[16px] max-w-[390px] mt-8"
-                  style={{ fontFamily: body, lineHeight: 1.3 }}
-                >
-                  Candidate-se agora ou explore outras oportunidades abertas no
-                  time.
-                </p>
-              </div>
-              <div className="flex items-end justify-end p-6 w-full lg:w-1/2 min-h-[120px] lg:h-[360px] gap-3">
-                <a
-                  href="/vagas"
-                  className="inline-flex min-h-[36px] items-center border border-[#101700] text-[#101700] px-3 py-2 text-[12px] uppercase"
-                  style={{ fontFamily: mono, lineHeight: "normal" }}
-                >
-                  ver outras vagas
-                </a>
-                <a
-                  href={applyPageHref}
-                  className="inline-flex min-h-[36px] items-center bg-[#101700] text-[#f2f3ef] px-3 py-2 text-[12px] uppercase"
-                  style={{ fontFamily: mono, lineHeight: "normal" }}
-                >
-                  candidatar-se
-                </a>
-              </div>
-            </div>
-            <XlHelper className="border-l border-[#d6dace]" />
-            <SectionBorderTicks positions={edgeTickPositions} />
-          </div>
-        </div>
-
-        <div className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] py-9">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 pb-9">
-            <div className="flex flex-col gap-8 max-w-[356px]">
-              <ShiftLabsIcon />
-              <p
-                className="text-[#5f644c] text-[14px] md:text-[16px]"
-                style={{ fontFamily: body, lineHeight: 1.3 }}
-              >
-                Construímos estruturas para produto, tecnologia, comercial e
-                operação evoluírem no mesmo ritmo.
-              </p>
-              <p
-                className="text-[#5f644c] text-[14px] md:text-[16px]"
-                style={{ fontFamily: body, lineHeight: 1.3 }}
-              >
-                <span
-                  className="text-[#101700]"
-                  style={{ fontFamily: display, fontWeight: 500 }}
-                >
-                  © 2026 ShiftLabs.
-                </span>
-                <span> Todos os direitos reservados.</span>
-              </p>
-            </div>
-            <div className="flex flex-col gap-6">
-              <p
-                className="text-[#5f644c] text-[12px] lowercase"
-                style={{ fontFamily: mono }}
-              >
-                /social
-              </p>
-              <div className="flex items-center gap-5">
-                {careersSocialLinks.map(({ name, href, Icon }) => (
-                  <a
-                    key={`careers-role-footer-${name}`}
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex min-h-[44px] items-center gap-2 py-1"
-                  >
-                    <Icon />
-                    <span
-                      className="text-[#5f644c] text-[14px] md:text-[16px]"
-                      style={{ fontFamily: body, lineHeight: 1.3 }}
-                    >
-                      {name}
-                    </span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-          <div className="pt-9">
-            <BigWordmark />
-          </div>
-        </div>
-      </main>
-
-    </div>
-  );
-}
-
-function CareerRoleApplyPage({ role }: { role: CareersRole }) {
-  const [isHeaderCondensed, setIsHeaderCondensed] = useState(false);
-  const [formState, setFormState] = useState<RoleApplicationFormState>(
-    initialRoleApplicationFormState,
-  );
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [feedback, setFeedback] = useState<RoleApplicationFeedback | null>(null);
-  const displayRoleTitle = getDisplayRoleTitle(role.title, role.displayTitle);
-  const displayCommitment = getRoleDisplayCommitment(
-    role.commitment,
-    role.displayCommitment,
-  );
-  const displayArea = getRoleCardArea(role);
-  const roleSummary = getRoleCardSummary(role);
-  const roleHref = `/vagas/${role.slug}`;
-  const applyHref = `mailto:careers@shiftlabs.digital?subject=${encodeURIComponent(`Candidatura - ${displayRoleTitle}`)}`;
-  const isFeedbackSuccess = feedback?.type === "success";
-
-  const updateField = (field: keyof RoleApplicationFormState, value: string) => {
-    let formattedValue = value;
-    if (field === "whatsapp") {
-      if (value.startsWith("+")) {
-        const digits = value.replace(/\D/g, "");
-        formattedValue = "+" + digits.slice(0, 15);
-      } else {
-        let digits = value.replace(/\D/g, "");
-        if (digits.length > 11) digits = digits.slice(0, 11);
-        if (digits.length > 2) digits = `(${digits.slice(0, 2)}) ` + digits.slice(2);
-        if (digits.length > 10) digits = digits.slice(0, 10) + "-" + digits.slice(10);
-        formattedValue = digits;
-      }
-    } else if (field === "email") {
-      formattedValue = value.replace(/\s/g, "").toLowerCase();
-    }
-    setFormState((current) => ({ ...current, [field]: formattedValue }));
-  };
-
-  const submitApplication = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (isSubmitting) return;
-
-    const name = formState.name.trim();
-    const email = formState.email.trim();
-    const whatsapp = formState.whatsapp.trim();
-    const portfolio = formState.portfolio.trim();
-    const message = formState.message.trim();
-    const experienceFit = formState.experienceFit;
-    const availabilityWindow = formState.availabilityWindow;
-    const workModelAlignment = formState.workModelAlignment;
-    const aiFluency = formState.aiFluency;
-
-    if (!name || !email || !whatsapp) {
-      setFeedback({
-        type: "error",
-        message: "Preencha nome, e-mail e WhatsApp para enviar.",
-      });
-      return;
-    }
-
-    if (
-      !experienceFit ||
-      !availabilityWindow ||
-      !workModelAlignment ||
-      !aiFluency
-    ) {
-      setFeedback({
-        type: "error",
-        message: "Responda todas as perguntas de alinhamento para enviar.",
-      });
-      return;
-    }
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      setFeedback({ type: "error", message: "Informe um e-mail válido." });
-      return;
-    }
-
-    const experienceFitLabel = getRoleApplicationOptionLabel(
-      roleApplicationExperienceOptions,
-      experienceFit,
-    );
-    const availabilityWindowLabel = getRoleApplicationOptionLabel(
-      roleApplicationAvailabilityOptions,
-      availabilityWindow,
-    );
-    const workModelAlignmentLabel = getRoleApplicationOptionLabel(
-      roleApplicationModelOptions,
-      workModelAlignment,
-    );
-    const aiFluencyLabel = getRoleApplicationOptionLabel(
-      roleApplicationAiOptions,
-      aiFluency,
-    );
-
-    const fallbackMailtoBody = [
-      `Vaga: ${displayRoleTitle}`,
-      `Nome: ${name}`,
-      `E-mail: ${email}`,
-      `WhatsApp: ${whatsapp}`,
-      `LinkedIn/Portfólio: ${portfolio || "Não informado"}`,
-      "",
-      "Perguntas da vaga:",
-      `Aderência: ${experienceFitLabel}`,
-      `Disponibilidade: ${availabilityWindowLabel}`,
-      `Modelo de trabalho: ${workModelAlignmentLabel}`,
-      `Fluência com IA: ${aiFluencyLabel}`,
-      "",
-      "Mensagem:",
-      message || "Sem mensagem adicional.",
-    ].join("\n");
-
-    const supabase = await getSupabaseClient();
-
-    if (!supabase) {
-      if (typeof window !== "undefined") {
-        window.location.href = `${applyHref}&body=${encodeURIComponent(fallbackMailtoBody)}`;
-      }
-      setFeedback({
-        type: "success",
-        message: "Abrimos seu cliente de e-mail para concluir a candidatura.",
-      });
-      return;
-    }
-
-    const subjectParts = [`Candidatura - ${displayRoleTitle}`];
-    if (portfolio) subjectParts.push(`Portfolio: ${portfolio}`);
-    subjectParts.push(`Aderência: ${experienceFitLabel}`);
-    subjectParts.push(`Disponibilidade: ${availabilityWindowLabel}`);
-    subjectParts.push(`Modelo: ${workModelAlignmentLabel}`);
-    subjectParts.push(`IA: ${aiFluencyLabel}`);
-    if (message) subjectParts.push(`Mensagem: ${message}`);
-    const subject = subjectParts.join(" | ").slice(0, 1000);
-
-    setIsSubmitting(true);
-    setFeedback(null);
-    const { error } = await supabase.from("contact_leads").insert({
-      name,
-      whatsapp,
-      email,
-      company: `Candidato - ${displayRoleTitle}`,
-      subject,
-      source_page:
-        typeof window !== "undefined"
-          ? `${window.location.pathname}#candidatura`
-          : `/vagas/${role.slug}/candidatar`,
-      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-    });
-    setIsSubmitting(false);
-
-    if (error) {
-      setFeedback({
-        type: "error",
-        message: "Não foi possível enviar agora. Tente novamente.",
-      });
-      return;
-    }
-
-    setFormState(initialRoleApplicationFormState);
-    setFeedback({
-      type: "success",
-      message: "Candidatura enviada. Retornamos em até 5 dias úteis.",
-    });
-  };
-
-  useEffect(() => {
-    let rafId = 0;
-
-    const updateHeaderMode = () => {
-      const shouldCondense = window.scrollY > 28 && window.innerWidth >= 1024;
-      setIsHeaderCondensed((current) =>
-        current === shouldCondense ? current : shouldCondense,
-      );
-    };
-
-    const scheduleHeaderUpdate = () => {
-      if (rafId) return;
-      rafId = window.requestAnimationFrame(() => {
-        rafId = 0;
-        updateHeaderMode();
-      });
-    };
-
-    updateHeaderMode();
-    window.addEventListener("scroll", scheduleHeaderUpdate, { passive: true });
-    window.addEventListener("resize", scheduleHeaderUpdate);
-    return () => {
-      window.removeEventListener("scroll", scheduleHeaderUpdate);
-      window.removeEventListener("resize", scheduleHeaderUpdate);
-      if (rafId) window.cancelAnimationFrame(rafId);
-    };
-  }, []);
-
-  return (
-    <div className="bg-[#f2f3ef] min-h-screen w-full overflow-x-hidden pt-[72px]">
-      <div
-        className={`fixed inset-x-0 top-0 z-50 transition-[padding] duration-300 ease-out ${
-          isHeaderCondensed ? "pt-3" : "pt-0"
-        }`}
-      >
-        <div
-          className={
-            isHeaderCondensed ? "mx-auto w-full max-w-[1040px] px-4" : "w-full"
-          }
-        >
-          <header
-            className={`transition-all duration-300 ease-out ${
-              isHeaderCondensed
-                ? "border border-[#d6dace] bg-[#f2f3ef]"
-                : "border-b border-[#d6dace] bg-[#f2f3ef]"
-            }`}
-          >
-            <div
-              className={`mx-auto h-[72px] flex items-center justify-between gap-6 transition-[padding,max-width] duration-300 ease-out ${
-                isHeaderCondensed
-                  ? "max-w-none px-6"
-                  : "max-w-[1512px] px-6 xl:px-[192px]"
-              }`}
-            >
-              <a
-                href="/"
-                aria-label="ShiftLabs"
-                title="ShiftLabs"
-                className="inline-flex min-h-[44px] items-center gap-2 py-1"
-              >
-                <ShiftLabsIcon />
-                <ShiftLabsWordmark />
-              </a>
-              <div className="flex items-center gap-4 md:gap-6">
-                <a
-                  href="/vagas"
-                  className="inline-flex min-h-[44px] items-center px-2 text-[#101700] transition-colors text-[14px]"
-                  style={{ fontFamily: mono, fontWeight: 400, lineHeight: "normal" }}
-                >
-                  /VAGAS
-                </a>
-                <span aria-hidden className="h-4 w-px bg-[#d6dace]" />
-                <div className="flex items-center gap-3 md:gap-4">
-                  {careersSocialLinks.map(({ name, href, Icon }) => (
-                    <a
-                      key={`careers-apply-header-${name}`}
-                      href={href}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={name}
-                      className="inline-flex h-11 w-11 items-center justify-center opacity-70 hover:opacity-100 transition-opacity"
-                    >
-                      <Icon />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </header>
-        </div>
-      </div>
-
-      <main className="text-[#101700]">
-        <div className="border-y border-[#d6dace]">
-          <div className="max-w-[1512px] mx-auto flex relative">
-            <XlHelper className="border-r border-[#d6dace]" />
-            <div className="flex-1 border-x border-[#d6dace] flex flex-col xl:flex-row">
-              <article className="w-full xl:w-[40%] border-b border-[#d6dace] p-6 md:p-8 xl:border-b-0 xl:border-r xl:p-10">
-                <a
-                  href={roleHref}
-                  aria-label="Voltar para vaga"
-                  title="Voltar para vaga"
-                  className="inline-flex h-11 w-11 items-center justify-center border border-[#d6dace] text-[#5f644c] hover:text-[#101700] transition-colors"
-                >
-                  <CareersBackIcon />
-                </a>
-                <p
-                  className="mt-6 text-[12px] lowercase text-[#5f644c]"
-                  style={{ fontFamily: mono }}
-                >
-                  /candidatura
-                </p>
-                <h1
-                  className="mt-3 text-[32px] leading-[1.03] md:text-[44px] lg:text-[52px]"
-                  style={{ fontFamily: display, fontWeight: 500, letterSpacing: titleTracking }}
-                >
-                  {displayRoleTitle}
-                </h1>
-                <p
-                  className="mt-4 text-[16px] text-[#5f644c] md:text-[18px]"
-                  style={{ fontFamily: body, lineHeight: 1.35 }}
-                >
-                  {roleSummary}
-                </p>
-
-                <div className="mt-6 flex flex-wrap gap-2">
-                  <span
-                    className="inline-flex items-center gap-2 border border-[#d6dace] px-3 py-2 text-[13px] md:text-[14px] text-[#5f644c]"
-                    style={{ fontFamily: body, lineHeight: "normal" }}
-                  >
-                    <CareersLocationIcon />
-                    {role.location}
-                  </span>
-                  <span
-                    className="inline-flex items-center gap-2 border border-[#d6dace] px-3 py-2 text-[13px] md:text-[14px] text-[#5f644c]"
-                    style={{ fontFamily: body, lineHeight: "normal" }}
-                  >
-                    <CareersClockIcon />
-                    {displayCommitment}
-                  </span>
-                  <span
-                    className="inline-flex items-center gap-2 border border-[#d6dace] px-3 py-2 text-[13px] md:text-[14px] text-[#5f644c]"
-                    style={{ fontFamily: body, lineHeight: "normal" }}
-                  >
-                    <CareersWorkModeIcon />
-                    {role.model}
-                  </span>
-                </div>
-
-                <div className="mt-8 border border-[#d6dace] bg-[#ecefe7]">
-                  <div className="border-b border-[#d6dace] px-4 py-3 md:px-5">
-                    <p
-                      className="text-[12px] lowercase text-[#5f644c]"
-                      style={{ fontFamily: mono }}
-                    >
-                      /como funciona
-                    </p>
-                    <p
-                      className="mt-1 text-[18px] text-[#101700] md:text-[20px]"
-                      style={{ fontFamily: heading, fontWeight: 500, letterSpacing: titleTracking }}
-                    >
-                      Processo rápido e direto
-                    </p>
-                  </div>
-                  <ol className="m-0 list-none p-0">
-                    <li className="border-b border-[#d6dace] px-4 py-3 md:px-5">
-                      <p
-                        className="text-[12px] lowercase text-[#5f644c]"
-                        style={{ fontFamily: mono }}
-                      >
-                        /passo 01
-                      </p>
-                      <p
-                        className="mt-1 text-[14px] text-[#101700]"
-                        style={{ fontFamily: body, lineHeight: 1.3 }}
-                      >
-                        Preencha os dados essenciais e envie sua candidatura.
-                      </p>
-                    </li>
-                    <li className="border-b border-[#d6dace] px-4 py-3 md:px-5">
-                      <p
-                        className="text-[12px] lowercase text-[#5f644c]"
-                        style={{ fontFamily: mono }}
-                      >
-                        /passo 02
-                      </p>
-                      <p
-                        className="mt-1 text-[14px] text-[#101700]"
-                        style={{ fontFamily: body, lineHeight: 1.3 }}
-                      >
-                        Nosso time revisa seu perfil com foco em {displayArea}.
-                      </p>
-                    </li>
-                    <li className="px-4 py-3 md:px-5">
-                      <p
-                        className="text-[12px] lowercase text-[#5f644c]"
-                        style={{ fontFamily: mono }}
-                      >
-                        /passo 03
-                      </p>
-                      <p
-                        className="mt-1 text-[14px] text-[#101700]"
-                        style={{ fontFamily: body, lineHeight: 1.3 }}
-                      >
-                        Retornamos em até 5 dias úteis com os próximos passos.
-                      </p>
-                    </li>
-                  </ol>
-                </div>
-              </article>
-
-              <section className="flex-1 p-6 md:p-8 xl:p-10">
-                <div className="border border-[#d6dace] bg-[#f2f3ef]">
-                  <div className="border-b border-[#d6dace] px-4 py-3 md:px-5">
-                    <p
-                      className="text-[12px] lowercase text-[#5f644c]"
-                      style={{ fontFamily: mono }}
-                    >
-                      /formulário
-                    </p>
-                    <h2
-                      className="mt-1 text-[24px] text-[#101700] md:text-[30px]"
-                      style={{
-                        fontFamily: heading,
-                        letterSpacing: titleTracking,
-                        fontWeight: 500,
-                        lineHeight: "normal",
-                      }}
-                    >
-                      Enviar candidatura
-                    </h2>
-                    <p
-                      className="mt-2 text-[14px] text-[#5f644c]"
-                      style={{ fontFamily: body, lineHeight: 1.3 }}
-                    >
-                      Campos com * são obrigatórios.
-                    </p>
-                  </div>
-
-                  <form
-                    onSubmit={(event) => {
-                      void submitApplication(event);
-                    }}
-                  >
-                    <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 md:gap-5 md:p-5">
-                      <label className="flex flex-col gap-1.5">
-                        <span
-                          className="text-[13px] text-[#5f644c]"
-                          style={{ fontFamily: body }}
-                        >
-                          Nome completo *
-                        </span>
-                        <input
-                          type="text"
-                          required
-                          autoComplete="name"
-                          placeholder="Seu nome"
-                          value={formState.name}
-                          onChange={(event) =>
-                            updateField("name", event.target.value)
-                          }
-                          className="h-11 border border-[#d6dace] bg-[#f2f3ef] px-3 text-[14px] text-[#101700] outline-none focus:border-[#5f644c]"
-                          style={{ fontFamily: body }}
-                        />
-                      </label>
-
-                      <label className="flex flex-col gap-1.5">
-                        <span
-                          className="text-[13px] text-[#5f644c]"
-                          style={{ fontFamily: body }}
-                        >
-                          E-mail *
-                        </span>
-                        <input
-                          type="email"
-                          required
-                          autoComplete="email"
-                          placeholder="nome@exemplo.com"
-                          value={formState.email}
-                          onChange={(event) =>
-                            updateField("email", event.target.value)
-                          }
-                          className="h-11 border border-[#d6dace] bg-[#f2f3ef] px-3 text-[14px] text-[#101700] outline-none focus:border-[#5f644c]"
-                          style={{ fontFamily: body }}
-                        />
-                      </label>
-
-                      <label className="flex flex-col gap-1.5">
-                        <span
-                          className="text-[13px] text-[#5f644c]"
-                          style={{ fontFamily: body }}
-                        >
-                          WhatsApp *
-                        </span>
-                        <input
-                          type="tel"
-                          required
-                          autoComplete="tel"
-                          placeholder="(83) 99999-9999"
-                          value={formState.whatsapp}
-                          onChange={(event) =>
-                            updateField("whatsapp", event.target.value)
-                          }
-                          className="h-11 border border-[#d6dace] bg-[#f2f3ef] px-3 text-[14px] text-[#101700] outline-none focus:border-[#5f644c]"
-                          style={{ fontFamily: body }}
-                        />
-                      </label>
-
-                      <label className="flex flex-col gap-1.5">
-                        <span
-                          className="text-[13px] text-[#5f644c]"
-                          style={{ fontFamily: body }}
-                        >
-                          LinkedIn ou portfólio
-                        </span>
-                        <input
-                          type="text"
-                          placeholder="linkedin.com/in/seu-nome ou portfolio.com"
-                          value={formState.portfolio}
-                          onChange={(event) =>
-                            updateField("portfolio", event.target.value)
-                          }
-                          className="h-11 border border-[#d6dace] bg-[#f2f3ef] px-3 text-[14px] text-[#101700] outline-none focus:border-[#5f644c]"
-                          style={{ fontFamily: body }}
-                        />
-                      </label>
-                    </div>
-
-                    <div className="border-b border-[#d6dace]">
-                      <div className="border-b border-[#d6dace] px-4 py-3 md:px-5">
-                        <p
-                          className="text-[12px] lowercase text-[#5f644c]"
-                          style={{ fontFamily: mono }}
-                        >
-                          /perguntas da vaga
-                        </p>
-                        <p
-                          className="mt-1 text-[14px] text-[#5f644c]"
-                          style={{ fontFamily: body, lineHeight: 1.3 }}
-                        >
-                          Perguntas de alinhamento inicial para entendermos seu
-                          momento, disponibilidade e forma de trabalho.
-                        </p>
-                      </div>
-                      <div className="grid grid-cols-1 gap-4 p-4 md:gap-5 md:p-5">
-                        <fieldset className="border border-[#d6dace] p-3 md:p-4">
-                          <legend
-                            className="px-1 text-[13px] text-[#5f644c]"
-                            style={{ fontFamily: body }}
-                          >
-                            1. Qual sua aderência às responsabilidades da vaga?
-                            *
-                          </legend>
-                          <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                            {roleApplicationExperienceOptions.map((option) => {
-                              const isSelected =
-                                formState.experienceFit === option.value;
-                              return (
-                                <label
-                                  key={`experience-fit-${option.value}`}
-                                  className={`cursor-pointer border px-3 py-2 text-[13px] transition-colors ${
-                                    isSelected
-                                      ? "border-[#101700] bg-[#ecefe7] text-[#101700]"
-                                      : "border-[#d6dace] bg-[#f2f3ef] text-[#5f644c] hover:text-[#101700]"
-                                  }`}
-                                  style={{ fontFamily: body, lineHeight: 1.3 }}
-                                >
-                                  <input
-                                    type="radio"
-                                    name="experience-fit"
-                                    value={option.value}
-                                    checked={isSelected}
-                                    onChange={(event) =>
-                                      updateField(
-                                        "experienceFit",
-                                        event.target.value,
-                                      )
-                                    }
-                                    className="sr-only"
-                                  />
-                                  {option.label}
-                                </label>
-                              );
-                            })}
-                          </div>
-                        </fieldset>
-
-                        <fieldset className="border border-[#d6dace] p-3 md:p-4">
-                          <legend
-                            className="px-1 text-[13px] text-[#5f644c]"
-                            style={{ fontFamily: body }}
-                          >
-                            2. Qual sua disponibilidade para início? *
-                          </legend>
-                          <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                            {roleApplicationAvailabilityOptions.map((option) => {
-                              const isSelected =
-                                formState.availabilityWindow === option.value;
-                              return (
-                                <label
-                                  key={`availability-window-${option.value}`}
-                                  className={`cursor-pointer border px-3 py-2 text-[13px] transition-colors ${
-                                    isSelected
-                                      ? "border-[#101700] bg-[#ecefe7] text-[#101700]"
-                                      : "border-[#d6dace] bg-[#f2f3ef] text-[#5f644c] hover:text-[#101700]"
-                                  }`}
-                                  style={{ fontFamily: body, lineHeight: 1.3 }}
-                                >
-                                  <input
-                                    type="radio"
-                                    name="availability-window"
-                                    value={option.value}
-                                    checked={isSelected}
-                                    onChange={(event) =>
-                                      updateField(
-                                        "availabilityWindow",
-                                        event.target.value,
-                                      )
-                                    }
-                                    className="sr-only"
-                                  />
-                                  {option.label}
-                                </label>
-                              );
-                            })}
-                          </div>
-                        </fieldset>
-
-                        <fieldset className="border border-[#d6dace] p-3 md:p-4">
-                          <legend
-                            className="px-1 text-[13px] text-[#5f644c]"
-                            style={{ fontFamily: body }}
-                          >
-                            3. Sobre o modelo de trabalho desta vaga, você está:
-                            *
-                          </legend>
-                          <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                            {roleApplicationModelOptions.map((option) => {
-                              const isSelected =
-                                formState.workModelAlignment === option.value;
-                              return (
-                                <label
-                                  key={`work-model-alignment-${option.value}`}
-                                  className={`cursor-pointer border px-3 py-2 text-[13px] transition-colors ${
-                                    isSelected
-                                      ? "border-[#101700] bg-[#ecefe7] text-[#101700]"
-                                      : "border-[#d6dace] bg-[#f2f3ef] text-[#5f644c] hover:text-[#101700]"
-                                  }`}
-                                  style={{ fontFamily: body, lineHeight: 1.3 }}
-                                >
-                                  <input
-                                    type="radio"
-                                    name="work-model-alignment"
-                                    value={option.value}
-                                    checked={isSelected}
-                                    onChange={(event) =>
-                                      updateField(
-                                        "workModelAlignment",
-                                        event.target.value,
-                                      )
-                                    }
-                                    className="sr-only"
-                                  />
-                                  {option.label}
-                                </label>
-                              );
-                            })}
-                          </div>
-                        </fieldset>
-
-                        <fieldset className="border border-[#d6dace] p-3 md:p-4">
-                          <legend
-                            className="px-1 text-[13px] text-[#5f644c]"
-                            style={{ fontFamily: body }}
-                          >
-                            4. Qual seu nível de fluência no uso de IA no trabalho?
-                            *
-                          </legend>
-                          <div className="mt-3 grid grid-cols-1 gap-2">
-                            {roleApplicationAiOptions.map((option) => {
-                              const isSelected =
-                                formState.aiFluency === option.value;
-                              return (
-                                <label
-                                  key={`ai-fluency-${option.value}`}
-                                  className={`cursor-pointer border px-3 py-2 text-[13px] transition-colors ${
-                                    isSelected
-                                      ? "border-[#101700] bg-[#ecefe7] text-[#101700]"
-                                      : "border-[#d6dace] bg-[#f2f3ef] text-[#5f644c] hover:text-[#101700]"
-                                  }`}
-                                  style={{ fontFamily: body, lineHeight: 1.3 }}
-                                >
-                                  <input
-                                    type="radio"
-                                    name="ai-fluency"
-                                    value={option.value}
-                                    checked={isSelected}
-                                    onChange={(event) =>
-                                      updateField("aiFluency", event.target.value)
-                                    }
-                                    className="sr-only"
-                                  />
-                                  {option.label}
-                                </label>
-                              );
-                            })}
-                          </div>
-                        </fieldset>
-                      </div>
-                    </div>
-
-                    <div className="border-b border-[#d6dace] p-4 md:p-5">
-                      <label className="flex flex-col gap-1.5">
-                        <span
-                          className="text-[13px] text-[#5f644c]"
-                          style={{ fontFamily: body }}
-                        >
-                          Conte como sua experiência pode gerar impacto nesta vaga
-                        </span>
-                        <textarea
-                          rows={5}
-                          value={formState.message}
-                          onChange={(event) =>
-                            updateField("message", event.target.value)
-                          }
-                          placeholder="Resumo objetivo do impacto que você pode gerar, com exemplos."
-                          className="min-h-[130px] border border-[#d6dace] bg-[#f2f3ef] px-3 py-3 text-[14px] text-[#101700] outline-none focus:border-[#5f644c]"
-                          style={{ fontFamily: body, lineHeight: 1.4 }}
-                        />
-                        <p
-                          className="text-[12px] text-[#5f644c]"
-                          style={{ fontFamily: body, lineHeight: 1.3 }}
-                        >
-                          Use este espaço para conectar sua trajetória ao desafio da vaga.
-                        </p>
-                      </label>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-3 border-t border-[#d6dace] p-4 md:p-5">
-                      <p
-                        className="w-full text-[12px] text-[#5f644c]"
-                        style={{ fontFamily: body, lineHeight: 1.3 }}
-                      >
-                        Usaremos seus dados apenas para avaliar sua candidatura.
-                        Não compartilhamos seu perfil fora do processo seletivo.
-                      </p>
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="inline-flex min-h-[36px] items-center bg-[#101700] px-3 py-2 text-[12px] uppercase text-[#f2f3ef] disabled:cursor-not-allowed disabled:opacity-70"
-                        style={{ fontFamily: mono, lineHeight: "normal" }}
-                      >
-                        {isSubmitting ? "enviando..." : "enviar candidatura"}
-                      </button>
-                      <a
-                        href={roleHref}
-                        className="inline-flex min-h-[36px] items-center border border-[#d6dace] px-3 py-2 text-[12px] uppercase text-[#5f644c] hover:text-[#101700]"
-                        style={{ fontFamily: mono, lineHeight: "normal" }}
-                      >
-                        voltar para vaga
-                      </a>
-                      {feedback ? (
-                        <p
-                          className={`w-full border px-3 py-2 text-[13px] ${
-                            isFeedbackSuccess
-                              ? "border-[#b6cf88] bg-[#eaf3d5] text-[#456300]"
-                              : "border-[#e4b6b6] bg-[#f8e6e6] text-[#9f2b2b]"
-                          }`}
-                          style={{ fontFamily: body, lineHeight: 1.3 }}
-                          aria-live="polite"
-                        >
-                          {feedback.message}
-                        </p>
-                      ) : null}
-                    </div>
-                  </form>
-                </div>
-              </section>
-            </div>
-            <XlHelper className="border-l border-[#d6dace]" />
-            <SectionBorderTicks positions={edgeTickPositions} />
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-}
-
-function CareersEditorPage({
-  roles,
-  isLoadingRoles,
-  isAuthenticated,
-  authLoading,
-  onSignIn,
-  onSignOut,
-  onSaveRole,
-  onDeleteRole,
-  onRefreshRoles,
-}: {
-  roles: CareersRole[];
-  isLoadingRoles: boolean;
-  isAuthenticated: boolean;
-  authLoading: boolean;
-  onSignIn: (
-    email: string,
-    password: string,
-  ) => Promise<{ ok: boolean; message?: string }>;
-  onSignOut: () => Promise<void>;
-  onSaveRole: (
-    role: CareersRole,
-    previousSlug?: string,
-  ) => Promise<{ ok: boolean; message?: string }>;
-  onDeleteRole: (slug: string) => Promise<{ ok: boolean; message?: string }>;
-  onRefreshRoles: () => Promise<void>;
-}) {
-  const careersBorder = "border-[#d6dace]";
-  const [formState, setFormState] = useState<CareersEditorFormState>(() =>
-    createEditorFormState(),
-  );
-  const [authState, setAuthState] = useState({ email: "", password: "" });
-  const [editingSlug, setEditingSlug] = useState<string | null>(null);
-  const [feedback, setFeedback] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
-  const [isAuthSubmitting, setIsAuthSubmitting] = useState(false);
-  const [isSaveSubmitting, setIsSaveSubmitting] = useState(false);
-  const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const baseRoleSlugSet = useMemo(
-    () => new Set(defaultCareersRoles.map((role) => role.slug)),
-    [],
-  );
-  const orderedRoles = useMemo(
-    () => [...roles].sort((a, b) => a.title.localeCompare(b.title, "pt-BR")),
-    [roles],
-  );
-
-  const setFieldValue = (
-    field: keyof CareersEditorFormState,
-    value: string,
-  ) => {
-    setFormState((current) => ({
-      ...current,
-      [field]: value,
-    }));
-  };
-
-  const resetEditor = () => {
-    setEditingSlug(null);
-    setFormState(createEditorFormState());
-    setFeedback(null);
-  };
-
-  const startEditing = (role: CareersRole) => {
-    setEditingSlug(role.slug);
-    setFormState(createEditorFormState(role));
-    setFeedback(null);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleDelete = async (slug: string) => {
-    const isConfirmed = window.confirm("Excluir esta vaga?");
-    if (!isConfirmed) return;
-    setDeletingSlug(slug);
-    const result = await onDeleteRole(slug);
-    setDeletingSlug(null);
-    if (!result.ok) {
-      setFeedback({
-        type: "error",
-        message: result.message ?? "Não foi possível excluir a vaga.",
-      });
-      return;
-    }
-    if (editingSlug === slug) {
-      resetEditor();
-    }
-    setFeedback({
-      type: "success",
-      message: "Vaga removida com sucesso.",
-    });
-  };
-
-  const handleSave = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const title = formState.title.trim();
-    const location = formState.location.trim();
-    const commitment = formState.commitment.trim();
-    const model = formState.model.trim();
-    const area = formState.area.trim() || "Geral";
-    const bodyMarkdown = formState.bodyMarkdown.trim();
-    const intro =
-      formState.intro.trim() ||
-      extractIntroFromMarkdown(bodyMarkdown) ||
-      "Descrição da vaga.";
-    const slug = toOptionalTrimmed(formState.slug) ?? slugifyRole(title);
-
-    if (!title || !location || !commitment || !model || !slug) {
-      setFeedback({
-        type: "error",
-        message:
-          "Preencha os campos obrigatórios: título, localização, regime e modelo.",
-      });
-      return;
-    }
-
-    if (!bodyMarkdown && !intro) {
-      setFeedback({
-        type: "error",
-        message: "Preencha o corpo em Markdown ou o resumo da vaga.",
-      });
-      return;
-    }
-
-    const hasDuplicateSlug = roles.some(
-      (role) => role.slug === slug && role.slug !== editingSlug,
-    );
-    if (hasDuplicateSlug) {
-      setFeedback({
-        type: "error",
-        message: "Já existe uma vaga com esse slug. Use outro slug.",
-      });
-      return;
-    }
-
-    const nextRole: CareersRole = {
-      slug,
-      title,
-      location,
-      commitment,
-      model,
-      area,
-      intro,
-      roleOneLiner: toOptionalTrimmed(formState.roleOneLiner),
-      about: splitEditorList(formState.about),
-      responsibilities: splitEditorList(formState.responsibilities),
-      requirements: splitEditorList(formState.requirements),
-      stack: splitEditorList(formState.stack),
-      process: splitEditorList(formState.process),
-      whyTitle: toOptionalTrimmed(formState.whyTitle),
-      roleTitle: toOptionalTrimmed(formState.roleTitle),
-      doTitle: toOptionalTrimmed(formState.doTitle),
-      bringTitle: toOptionalTrimmed(formState.bringTitle),
-      stackTitle: toOptionalTrimmed(formState.stackTitle),
-      processTitle: toOptionalTrimmed(formState.processTitle),
-      joinTitle: toOptionalTrimmed(formState.joinTitle),
-      joinUs: splitEditorList(formState.joinUs),
-      bodyMarkdown: toOptionalTrimmed(bodyMarkdown),
-    };
-
-    setIsSaveSubmitting(true);
-    const result = await onSaveRole(nextRole, editingSlug ?? undefined);
-    setIsSaveSubmitting(false);
-    if (!result.ok) {
-      setFeedback({
-        type: "error",
-        message: result.message ?? "Não foi possível salvar a vaga.",
-      });
-      return;
-    }
-    setEditingSlug(nextRole.slug);
-    setFormState(createEditorFormState(nextRole));
-    setFeedback({
-      type: "success",
-      message: "Vaga salva. Ela já aparece em /vagas e na página interna.",
-    });
-  };
-
-  const handleSignInSubmit = async (
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
-    event.preventDefault();
-    const email = authState.email.trim();
-    const password = authState.password;
-    if (!email || !password) {
-      setFeedback({
-        type: "error",
-        message: "Preencha e-mail e senha para entrar.",
-      });
-      return;
-    }
-    setIsAuthSubmitting(true);
-    const result = await onSignIn(email, password);
-    setIsAuthSubmitting(false);
-    if (!result.ok) {
-      setFeedback({
-        type: "error",
-        message: result.message ?? "Falha ao autenticar.",
-      });
-      return;
-    }
-    setFeedback({ type: "success", message: "Login realizado com sucesso." });
-  };
-
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    await onRefreshRoles();
-    setIsRefreshing(false);
-  };
-
-  return (
-    <div className="relative min-h-screen w-full overflow-x-hidden bg-[#f2f3ef] text-[#101700]">
-      <CareersHeader />
-
-      <main
-        className={`mt-[66px] min-h-[calc(100vh-66px)] border-y ${careersBorder}`}
-      >
-        <section className={`border-b ${careersBorder}`}>
-          <div className="max-w-[1512px] mx-auto px-6 md:px-8 py-6 md:py-8">
-            <h1
-              className="text-[30px] text-[#101700] md:text-[32px]"
-              style={{
-                fontFamily: heading,
-                letterSpacing: titleTracking,
-                fontWeight: 500,
-                lineHeight: "normal",
-              }}
-            >
-              Editor de Vagas
-            </h1>
-            <p
-              className="mt-2 text-[14px] text-[#5f644c] md:text-[16px]"
-              style={{ fontFamily: body, lineHeight: 1.3 }}
-            >
-              Crie, edite e remova vagas. As alterações são salvas no Supabase e
-              ficam disponíveis para todos.
-            </p>
-          </div>
-        </section>
-
-        {!hasSupabaseConfig ? (
-          <div className="max-w-[1512px] mx-auto px-6 py-8 md:px-8 md:py-10">
-            <div className={`border ${careersBorder} p-5 md:p-6`}>
-              <p
-                className="text-[15px] text-[#9f2b2b]"
-                style={{ fontFamily: body }}
-              >
-                Configure `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` para
-                usar o editor persistente.
-              </p>
-            </div>
-          </div>
-        ) : null}
-
-        {hasSupabaseConfig && authLoading ? (
-          <div className="max-w-[1512px] mx-auto px-6 py-8 md:px-8 md:py-10">
-            <div
-              className={`mx-auto w-full max-w-[460px] border ${careersBorder} bg-[#f2f3ef] p-5`}
-            >
-              <p
-                className="text-[14px] text-[#5f644c]"
-                style={{ fontFamily: body }}
-              >
-                Verificando sessão...
-              </p>
-            </div>
-          </div>
-        ) : null}
-
-        {hasSupabaseConfig && !isAuthenticated && !authLoading ? (
-          <div className="max-w-[1512px] mx-auto px-6 py-8 md:px-8 md:py-10">
-            <form
-              onSubmit={handleSignInSubmit}
-              className={`mx-auto w-full max-w-[460px] border ${careersBorder} bg-[#f2f3ef]`}
-            >
-              <div className={`border-b ${careersBorder} px-5 py-4`}>
-                <h2
-                  className="text-[20px] text-[#101700]"
-                  style={{ fontFamily: heading, fontWeight: 500, letterSpacing: titleTracking }}
-                >
-                  Entrar no editor
-                </h2>
-              </div>
-              <div className="grid grid-cols-1 gap-4 p-5">
-                <label className="flex flex-col gap-1.5">
-                  <span
-                    className="text-[13px] text-[#5f644c]"
-                    style={{ fontFamily: body }}
-                  >
-                    E-mail
-                  </span>
-                  <input
-                    type="email"
-                    autoComplete="email"
-                    value={authState.email}
-                    onChange={(event) =>
-                      setAuthState((current) => ({
-                        ...current,
-                        email: event.target.value,
-                      }))
-                    }
-                    className="h-11 border border-[#d6dace] bg-[#f2f3ef] px-3 text-[14px] text-[#101700] outline-none focus:border-[#5f644c]"
-                    style={{ fontFamily: body }}
-                  />
-                </label>
-                <label className="flex flex-col gap-1.5">
-                  <span
-                    className="text-[13px] text-[#5f644c]"
-                    style={{ fontFamily: body }}
-                  >
-                    Senha
-                  </span>
-                  <input
-                    type="password"
-                    autoComplete="current-password"
-                    value={authState.password}
-                    onChange={(event) =>
-                      setAuthState((current) => ({
-                        ...current,
-                        password: event.target.value,
-                      }))
-                    }
-                    className="h-11 border border-[#d6dace] bg-[#f2f3ef] px-3 text-[14px] text-[#101700] outline-none focus:border-[#5f644c]"
-                    style={{ fontFamily: body }}
-                  />
-                </label>
-              </div>
-              <div
-                className={`flex flex-wrap items-center gap-3 border-t ${careersBorder} p-5`}
-              >
-                <button
-                  type="submit"
-                  disabled={isAuthSubmitting || authLoading}
-                  className="inline-flex bg-[#101700] px-3 py-2 text-[12px] uppercase text-[#f2f3ef] disabled:cursor-not-allowed disabled:opacity-70"
-                  style={{ fontFamily: mono, lineHeight: "normal" }}
-                >
-                  {isAuthSubmitting || authLoading ? "Entrando..." : "Entrar"}
-                </button>
-                {feedback ? (
-                  <p
-                    className={`text-[13px] ${feedback.type === "error" ? "text-[#9f2b2b]" : "text-[#5f644c]"}`}
-                    style={{ fontFamily: body }}
-                  >
-                    {feedback.message}
-                  </p>
-                ) : null}
-              </div>
-            </form>
-          </div>
-        ) : null}
-
-        {hasSupabaseConfig && isAuthenticated ? (
-          <div className="max-w-[1512px] mx-auto px-6 py-6 md:px-8 md:py-8">
-            <div className="mb-4 flex flex-wrap items-center gap-2 md:mb-5">
-              <button
-                type="button"
-                onClick={handleRefresh}
-                disabled={isRefreshing || isLoadingRoles}
-                className="inline-flex border border-[#d6dace] px-3 py-2 text-[12px] uppercase text-[#5f644c] hover:text-[#101700] disabled:cursor-not-allowed disabled:opacity-70"
-                style={{ fontFamily: mono }}
-              >
-                {isRefreshing || isLoadingRoles
-                  ? "Atualizando..."
-                  : "Atualizar lista"}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  void onSignOut();
-                }}
-                className="inline-flex border border-[#d6dace] px-3 py-2 text-[12px] uppercase text-[#5f644c] hover:text-[#101700]"
-                style={{ fontFamily: mono }}
-              >
-                Sair
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1fr)_400px]">
-              <form
-                onSubmit={(event) => {
-                  void handleSave(event);
-                }}
-                className={`border ${careersBorder} bg-[#f2f3ef]`}
-              >
-                <div className={`border-b ${careersBorder} px-4 py-3 md:px-5`}>
-                  <h2
-                    className="text-[18px] text-[#101700] md:text-[20px]"
-                    style={{ fontFamily: heading, fontWeight: 500, letterSpacing: titleTracking }}
-                  >
-                    {editingSlug ? "Editar vaga" : "Nova vaga"}
-                  </h2>
-                </div>
-                <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 md:gap-5 md:p-5">
-                  <label className="flex flex-col gap-1.5">
-                    <span
-                      className="text-[13px] text-[#5f644c]"
-                      style={{ fontFamily: body }}
-                    >
-                      Título *
-                    </span>
-                    <input
-                      value={formState.title}
-                      onChange={(event) =>
-                        setFieldValue("title", event.target.value)
-                      }
-                      className="h-10 border border-[#d6dace] bg-[#f2f3ef] px-3 text-[14px] text-[#101700] outline-none focus:border-[#5f644c]"
-                      style={{ fontFamily: body }}
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1.5">
-                    <span
-                      className="text-[13px] text-[#5f644c]"
-                      style={{ fontFamily: body }}
-                    >
-                      Slug (opcional)
-                    </span>
-                    <input
-                      value={formState.slug}
-                      onChange={(event) =>
-                        setFieldValue("slug", event.target.value)
-                      }
-                      placeholder="gerado automaticamente"
-                      className="h-10 border border-[#d6dace] bg-[#f2f3ef] px-3 text-[14px] text-[#101700] outline-none focus:border-[#5f644c]"
-                      style={{ fontFamily: mono }}
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1.5">
-                    <span
-                      className="text-[13px] text-[#5f644c]"
-                      style={{ fontFamily: body }}
-                    >
-                      Localização *
-                    </span>
-                    <input
-                      value={formState.location}
-                      onChange={(event) =>
-                        setFieldValue("location", event.target.value)
-                      }
-                      className="h-10 border border-[#d6dace] bg-[#f2f3ef] px-3 text-[14px] text-[#101700] outline-none focus:border-[#5f644c]"
-                      style={{ fontFamily: body }}
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1.5">
-                    <span
-                      className="text-[13px] text-[#5f644c]"
-                      style={{ fontFamily: body }}
-                    >
-                      Regime *
-                    </span>
-                    <input
-                      value={formState.commitment}
-                      onChange={(event) =>
-                        setFieldValue("commitment", event.target.value)
-                      }
-                      className="h-10 border border-[#d6dace] bg-[#f2f3ef] px-3 text-[14px] text-[#101700] outline-none focus:border-[#5f644c]"
-                      style={{ fontFamily: body }}
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1.5">
-                    <span
-                      className="text-[13px] text-[#5f644c]"
-                      style={{ fontFamily: body }}
-                    >
-                      Modelo *
-                    </span>
-                    <input
-                      value={formState.model}
-                      onChange={(event) =>
-                        setFieldValue("model", event.target.value)
-                      }
-                      className="h-10 border border-[#d6dace] bg-[#f2f3ef] px-3 text-[14px] text-[#101700] outline-none focus:border-[#5f644c]"
-                      style={{ fontFamily: body }}
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1.5">
-                    <span
-                      className="text-[13px] text-[#5f644c]"
-                      style={{ fontFamily: body }}
-                    >
-                      Área (opcional)
-                    </span>
-                    <input
-                      value={formState.area}
-                      onChange={(event) =>
-                        setFieldValue("area", event.target.value)
-                      }
-                      className="h-10 border border-[#d6dace] bg-[#f2f3ef] px-3 text-[14px] text-[#101700] outline-none focus:border-[#5f644c]"
-                      style={{ fontFamily: body }}
-                    />
-                  </label>
-                </div>
-
-                <div className={`border-y ${careersBorder} p-4 md:p-5`}>
-                  <label className="flex flex-col gap-1.5">
-                    <span
-                      className="text-[13px] text-[#5f644c]"
-                      style={{ fontFamily: body }}
-                    >
-                      Corpo da vaga (Markdown)
-                    </span>
-                    <textarea
-                      value={formState.bodyMarkdown}
-                      onChange={(event) =>
-                        setFieldValue("bodyMarkdown", event.target.value)
-                      }
-                      rows={22}
-                      placeholder={
-                        "## Why ShiftLabs?\nCole aqui o texto em Markdown do Notion.\n\n## What you'll do\n- Item 1\n- Item 2"
-                      }
-                      className="min-h-[460px] border border-[#d6dace] bg-[#f2f3ef] px-3 py-3 text-[14px] text-[#101700] outline-none focus:border-[#5f644c]"
-                      style={{ fontFamily: body, lineHeight: 1.45 }}
-                    />
-                    <p
-                      className="text-[12px] text-[#5f644c]"
-                      style={{ fontFamily: body }}
-                    >
-                      Aceita títulos (`##`), listas (`-` e `1.`), negrito
-                      (`**texto**`), itálico (`*texto*`) e links
-                      (`[texto](url)`).
-                    </p>
-                  </label>
-                </div>
-
-                <div
-                  className={`flex flex-wrap items-center gap-3 border-t ${careersBorder} p-4 md:p-5`}
-                >
-                  <button
-                    type="submit"
-                    disabled={isSaveSubmitting}
-                    className="inline-flex bg-[#101700] px-3 py-2 text-[12px] uppercase text-[#f2f3ef] disabled:cursor-not-allowed disabled:opacity-70"
-                    style={{ fontFamily: mono, lineHeight: "normal" }}
-                  >
-                    {isSaveSubmitting ? "Salvando..." : "Salvar vaga"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={resetEditor}
-                    className="inline-flex border border-[#d6dace] px-3 py-2 text-[12px] uppercase text-[#5f644c]"
-                    style={{ fontFamily: mono, lineHeight: "normal" }}
-                  >
-                    Limpar
-                  </button>
-                  {feedback ? (
-                    <p
-                      className={`text-[13px] ${feedback.type === "error" ? "text-[#9f2b2b]" : "text-[#5f644c]"}`}
-                      style={{ fontFamily: body }}
-                    >
-                      {feedback.message}
-                    </p>
-                  ) : null}
-                </div>
-              </form>
-
-              <aside className={`border ${careersBorder} bg-[#f2f3ef]`}>
-                <div className={`border-b ${careersBorder} px-4 py-3 md:px-5`}>
-                  <h2
-                    className="text-[18px] text-[#101700] md:text-[20px]"
-                    style={{ fontFamily: heading, fontWeight: 500, letterSpacing: titleTracking }}
-                  >
-                    Vagas cadastradas
-                  </h2>
-                </div>
-                {isLoadingRoles ? (
-                  <p
-                    className="p-4 text-[13px] text-[#5f644c] md:p-5"
-                    style={{ fontFamily: body }}
-                  >
-                    Carregando vagas...
-                  </p>
-                ) : null}
-                {!isLoadingRoles && !orderedRoles.length ? (
-                  <p
-                    className="p-4 text-[13px] text-[#5f644c] md:p-5"
-                    style={{ fontFamily: body }}
-                  >
-                    Nenhuma vaga cadastrada.
-                  </p>
-                ) : null}
-                <ul className="m-0 max-h-[840px] list-none overflow-y-auto p-0">
-                  {orderedRoles.map((role) => {
-                    const isBase = baseRoleSlugSet.has(role.slug);
-                    return (
-                      <li
-                        key={role.slug}
-                        className={`border-b ${careersBorder} p-4 last:border-b-0 md:p-5`}
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <p
-                              className="text-[18px] text-[#101700]"
-                              style={{ fontFamily: heading, fontWeight: 500, letterSpacing: titleTracking }}
-                            >
-                              {role.title}
-                            </p>
-                            <p
-                              className="mt-1 text-[12px] text-[#5f644c]"
-                              style={{ fontFamily: mono }}
-                            >
-                              /{role.slug}
-                            </p>
-                          </div>
-                          <span
-                            className={`inline-flex px-2 py-1 text-[11px] uppercase ${isBase ? "bg-[#f2f3ef] text-[#5f644c] border border-[#d6dace]" : "bg-[#ecefe7] text-[#101700]"}`}
-                            style={{ fontFamily: mono }}
-                          >
-                            {isBase ? "base" : "custom"}
-                          </span>
-                        </div>
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            onClick={() => startEditing(role)}
-                            className="inline-flex border border-[#d6dace] px-3 py-2 text-[12px] uppercase text-[#5f644c] hover:text-[#101700]"
-                            style={{ fontFamily: mono }}
-                          >
-                            Editar
-                          </button>
-                          <button
-                            type="button"
-                            disabled={deletingSlug === role.slug}
-                            onClick={() => {
-                              void handleDelete(role.slug);
-                            }}
-                            className="inline-flex border border-[#d6dace] px-3 py-2 text-[12px] uppercase text-[#9f2b2b] hover:bg-[#f3e2e2] disabled:cursor-not-allowed disabled:opacity-70"
-                            style={{ fontFamily: mono }}
-                          >
-                            {deletingSlug === role.slug
-                              ? "Excluindo..."
-                              : "Excluir"}
-                          </button>
-                          <a
-                            href={`/vagas/${role.slug}`}
-                            className="inline-flex border border-[#d6dace] px-3 py-2 text-[12px] uppercase text-[#5f644c] hover:text-[#101700]"
-                            style={{ fontFamily: mono }}
-                          >
-                            Ver página
-                          </a>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </aside>
-            </div>
-          </div>
-        ) : null}
-      </main>
-    </div>
-  );
-}
-
-function CareersPage({
-  roles,
-  isLoading = false,
-}: {
-  roles: CareersRole[];
-  isLoading?: boolean;
-}) {
-  const [isHeaderCondensed, setIsHeaderCondensed] = useState(false);
-  const sortedRoles = useMemo(
-    () =>
-      [...roles].sort((first, second) =>
-        getDisplayRoleTitle(first.title, first.displayTitle).localeCompare(
-          getDisplayRoleTitle(second.title, second.displayTitle),
-          "pt-BR",
-          {
-            sensitivity: "base",
-          },
-        ),
-      ),
-    [roles],
-  );
-
-  useEffect(() => {
-    let rafId = 0;
-
-    const updateHeaderMode = () => {
-      const shouldCondense = window.scrollY > 28 && window.innerWidth >= 1024;
-      setIsHeaderCondensed((current) =>
-        current === shouldCondense ? current : shouldCondense,
-      );
-    };
-
-    const scheduleHeaderUpdate = () => {
-      if (rafId) return;
-      rafId = window.requestAnimationFrame(() => {
-        rafId = 0;
-        updateHeaderMode();
-      });
-    };
-
-    updateHeaderMode();
-    window.addEventListener("scroll", scheduleHeaderUpdate, { passive: true });
-    window.addEventListener("resize", scheduleHeaderUpdate);
-    return () => {
-      window.removeEventListener("scroll", scheduleHeaderUpdate);
-      window.removeEventListener("resize", scheduleHeaderUpdate);
-      if (rafId) {
-        window.cancelAnimationFrame(rafId);
-      }
-    };
-  }, []);
-
-  return (
-    <div className="bg-[#f2f3ef] min-h-screen w-full overflow-x-hidden pt-[72px]">
-      <div
-        className={`fixed inset-x-0 top-0 z-50 transition-[padding] duration-300 ease-out ${
-          isHeaderCondensed ? "pt-3" : "pt-0"
-        }`}
-      >
-        <div
-          className={
-            isHeaderCondensed ? "mx-auto w-full max-w-[1040px] px-4" : "w-full"
-          }
-        >
-          <header
-            className={`transition-all duration-300 ease-out ${
-              isHeaderCondensed
-                ? "border border-[#d6dace] bg-[#f2f3ef]"
-                : "border-b border-[#d6dace] bg-[#f2f3ef]"
-            }`}
-          >
-            <div
-              className={`mx-auto h-[72px] flex items-center justify-between gap-6 transition-[padding,max-width] duration-300 ease-out ${
-                isHeaderCondensed
-                  ? "max-w-none px-6"
-                  : "max-w-[1512px] px-6 xl:px-[192px]"
-              }`}
-            >
-              <a
-                href="/"
-                aria-label="ShiftLabs"
-                title="ShiftLabs"
-                className="inline-flex min-h-[44px] items-center gap-2 py-1"
-              >
-                <ShiftLabsIcon />
-                <ShiftLabsWordmark />
-              </a>
-              <div className="flex items-center gap-4 md:gap-6">
-                <a
-                  href="/vagas"
-                  className="inline-flex min-h-[44px] items-center px-2 text-[#101700] transition-colors text-[14px]"
-                  style={{
-                    fontFamily: mono,
-                    fontWeight: 400,
-                    lineHeight: "normal",
-                  }}
-                >
-                  /VAGAS
-                </a>
-                <span aria-hidden className="h-4 w-px bg-[#d6dace]" />
-                <div className="flex items-center gap-3 md:gap-4">
-                  {careersSocialLinks.map(({ name, href, Icon }) => (
-                    <a
-                      key={`careers-header-${name}`}
-                      href={href}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={name}
-                      className="inline-flex h-11 w-11 items-center justify-center opacity-70 hover:opacity-100 transition-opacity"
-                    >
-                      <Icon />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </header>
-        </div>
-      </div>
-
-      <main className="text-[#101700]">
-        <div className="border-y border-[#d6dace]">
-          <div className="max-w-[1512px] mx-auto flex relative">
-            <XlHelper className="border-r border-[#d6dace]" />
-            <div className="flex flex-col lg:flex-row flex-1 min-w-0">
-              <div className="flex flex-col justify-between p-6 w-full lg:w-1/2 min-h-[300px] lg:h-[462px]">
-                <div className="flex flex-col gap-8 max-w-[520px]">
-                  <p
-                    className="text-[#5f644c] text-[12px] lowercase"
-                    style={{ fontFamily: mono }}
-                  >
-                    /carreiras shiftlabs
-                  </p>
-                  <div
-                    className="text-[#101700] text-[28px] md:text-[36px] lg:text-[40px] leading-[normal]"
-                    style={{ fontFamily: heading, fontWeight: 500, letterSpacing: titleTracking }}
-                  >
-                    Estruture o futuro com a gente.
-                  </div>
-                  <p
-                    className="text-[#5f644c] text-[14px] md:text-[16px] max-w-[420px]"
-                    style={{ fontFamily: body, lineHeight: 1.3 }}
-                  >
-                    Procuramos pessoas que pensam em sistemas, executam com
-                    autonomia e querem construir operações previsíveis em
-                    negócios que crescem rápido.
-                  </p>
-                </div>
-                <div className="mt-8 lg:mt-0">
-                  <a
-                    href="#lista-vagas"
-                    className="inline-flex min-h-[36px] items-center bg-[#101700] text-[#f2f3ef] px-3 py-2 text-[12px] uppercase cursor-pointer"
-                    style={{ fontFamily: mono }}
-                  >
-                    ver vagas abertas
-                  </a>
-                </div>
-              </div>
-
-              <div className="w-full lg:w-1/2 border-t lg:border-t-0 lg:border-l border-[#d6dace] p-6 flex items-center justify-center">
-                <div className="w-full max-w-[532px] border border-[#d6dace]">
-                  <div className="grid grid-cols-2">
-                    <div className="border-b border-r border-[#d6dace] p-6 min-h-[146px] flex flex-col justify-end gap-2">
-                      <p
-                        className="text-[#5f644c] text-[12px] lowercase"
-                        style={{ fontFamily: mono }}
-                      >
-                        /vagas ativas
-                      </p>
-                      <p
-                        className="text-[#101700] text-[36px] md:text-[48px]"
-                        style={{ fontFamily: heading, fontWeight: 500, letterSpacing: titleTracking }}
-                      >
-                        {isLoading ? "..." : roles.length}
-                      </p>
-                    </div>
-                    <div className="border-b border-[#d6dace] p-6 min-h-[146px] flex flex-col justify-end gap-2">
-                      <p
-                        className="text-[#5f644c] text-[12px] lowercase"
-                        style={{ fontFamily: mono }}
-                      >
-                        /foco
-                      </p>
-                      <p
-                        className="text-[#101700] text-[18px] md:text-[24px]"
-                        style={{
-                          fontFamily: heading,
-                          letterSpacing: titleTracking,
-                          fontWeight: 500,
-                          lineHeight: 1.1,
-                        }}
-                      >
-                        Produto, Tecnologia, Growth e Operações
-                      </p>
-                    </div>
-                    <div className="border-r border-[#d6dace] p-6 min-h-[146px] flex flex-col justify-end gap-2">
-                      <p
-                        className="text-[#5f644c] text-[12px] lowercase"
-                        style={{ fontFamily: mono }}
-                      >
-                        /modelo
-                      </p>
-                      <p
-                        className="text-[#101700] text-[18px] md:text-[24px]"
-                        style={{
-                          fontFamily: heading,
-                          letterSpacing: titleTracking,
-                          fontWeight: 500,
-                          lineHeight: 1.1,
-                        }}
-                      >
-                        Times enxutos, autonomia clara
-                      </p>
-                    </div>
-                    <div className="p-6 min-h-[146px] flex flex-col justify-end gap-2">
-                      <p
-                        className="text-[#5f644c] text-[12px] lowercase"
-                        style={{ fontFamily: mono }}
-                      >
-                        /abordagem
-                      </p>
-                      <p
-                        className="text-[#101700] text-[18px] md:text-[24px]"
-                        style={{
-                          fontFamily: heading,
-                          letterSpacing: titleTracking,
-                          fontWeight: 500,
-                          lineHeight: 1.1,
-                        }}
-                      >
-                        Menos burocracia, mais entrega
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <XlHelper className="border-l border-[#d6dace]" />
-            <SectionBorderTicks positions={edgeTickPositions} />
-          </div>
-        </div>
-
-        <div
-          id="lista-vagas"
-          className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] pt-16 pb-9 scroll-mt-[96px]"
-        >
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
-            <div className="flex flex-col gap-6 max-w-[560px]">
-              <p
-                className="text-[#5f644c] text-[12px] lowercase"
-                style={{ fontFamily: mono }}
-              >
-                /vagas abertas
-              </p>
-              <h1
-                className="text-[#101700] text-[28px] md:text-[36px] lg:text-[40px] leading-[normal]"
-                style={{ fontFamily: heading, fontWeight: 500, letterSpacing: titleTracking }}
-              >
-                Onde você entra para construir sistema, não só tarefa.
-              </h1>
-            </div>
-            <p
-              className="text-[#5f644c] text-[14px] md:text-[16px] max-w-[340px]"
-              style={{ fontFamily: body, lineHeight: 1.3 }}
-            >
-              {isLoading
-                ? "Carregando vagas..."
-                : `${roles.length} ${
-                    roles.length === 1
-                      ? "oportunidade disponível"
-                      : "oportunidades disponíveis"
-                  } agora.`}
-            </p>
-          </div>
-        </div>
-
-        {isLoading ? (
-          <div className="border-y border-[#d6dace]">
-            <div className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] py-10">
-              <p
-                className="text-[16px] text-[#5f644c]"
-                style={{ fontFamily: body }}
-              >
-                Carregando vagas...
-              </p>
-            </div>
-          </div>
-        ) : null}
-
-        {!isLoading && !roles.length ? (
-          <div className="border-y border-[#d6dace]">
-            <div className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] py-10">
-              <p
-                className="text-[16px] text-[#5f644c]"
-                style={{ fontFamily: body }}
-              >
-                Nenhuma vaga publicada no momento.
-              </p>
-            </div>
-          </div>
-        ) : null}
-
-        {!isLoading && roles.length ? (
-          <div className="max-w-[1512px] mx-auto flex relative">
-            <XlHelper className="border-t border-[#d6dace]" />
-            <ul className="m-0 p-0 list-none flex-1 grid grid-cols-1 md:grid-cols-2 border-x border-t border-[#d6dace]">
-              {sortedRoles.map((role, index) => {
-                const introPreview = getRoleCardSummary(role);
-                const displayArea = getRoleCardArea(role);
-                const displayRoleTitle = getDisplayRoleTitle(
-                  role.title,
-                  role.displayTitle,
-                );
-                const seniorityBadge = getRoleSeniorityBadge(
-                  role.title,
-                  role.displaySeniority,
-                  role.slug,
-                );
-                return (
-                  <li
-                    key={role.slug}
-                    className={`${
-                      index > 0 ? "border-t border-[#d6dace]" : ""
-                    } ${index % 2 === 1 ? "md:border-l md:border-[#d6dace]" : ""} ${
-                      index >= 2 ? "md:border-t md:border-[#d6dace]" : ""
-                    } ${index === 1 ? "md:border-t-0" : ""}`}
-                  >
-                    <a
-                      href={`/vagas/${role.slug}`}
-                      className="group block h-full transition-colors hover:bg-[#ecefe7]"
-                    >
-                      <article className="flex h-full min-h-[318px] flex-col justify-between gap-8 p-6">
-                        <div className="flex flex-col gap-4">
-                          <p
-                            className="text-[#5f644c] text-[12px] lowercase"
-                            style={{ fontFamily: mono }}
-                          >
-                            /{displayArea}
-                          </p>
-                          <div className="flex flex-wrap items-center gap-2 md:gap-3">
-                            <h2
-                              className="text-[#101700] text-[28px] md:text-[32px] leading-[1.08] transition-transform duration-200 lg:group-hover:translate-x-2"
-                              style={{ fontFamily: display, fontWeight: 500, letterSpacing: titleTracking }}
-                            >
-                              {displayRoleTitle}
-                            </h2>
-                            {seniorityBadge ? (
-                              <RoleSeniorityBadge label={seniorityBadge} />
-                            ) : null}
-                          </div>
-                          <p
-                            className="text-[#5f644c] text-[14px] md:text-[16px] max-w-[480px]"
-                            style={{
-                              fontFamily: body,
-                              lineHeight: 1.3,
-                              display: "-webkit-box",
-                              WebkitBoxOrient: "vertical",
-                              WebkitLineClamp: 3,
-                              overflow: "hidden",
-                            }}
-                            title={introPreview}
-                          >
-                            {introPreview}
-                          </p>
-                        </div>
-
-                        <div className="flex flex-col gap-4">
-                          <div className="flex flex-wrap gap-2">
-                            <span
-                              className="inline-flex items-center gap-2 border border-[#d6dace] px-3 py-2 text-[13px] md:text-[14px] text-[#5f644c]"
-                              style={{ fontFamily: body, lineHeight: "normal" }}
-                            >
-                              <CareersLocationIcon />
-                              {role.location}
-                            </span>
-                            <span
-                              className="inline-flex items-center gap-2 border border-[#d6dace] px-3 py-2 text-[13px] md:text-[14px] text-[#5f644c]"
-                              style={{ fontFamily: body, lineHeight: "normal" }}
-                            >
-                              <CareersWorkModeIcon />
-                              {role.model}
-                            </span>
-                          </div>
-                          <span
-                            className="inline-flex w-fit bg-[#101700] text-[#f2f3ef] px-3 py-2 text-[12px] uppercase"
-                            style={{ fontFamily: mono, lineHeight: "normal" }}
-                          >
-                            ver detalhes
-                          </span>
-                        </div>
-                      </article>
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-            <XlHelper className="border-t border-[#d6dace]" />
-            <SectionBorderTicks
-              positions={twoColumnTickPositions}
-            />
-          </div>
-        ) : null}
-
-        <div className="border-y border-[#d6dace] mt-16">
-          <div className="max-w-[1512px] mx-auto flex relative">
-            <XlHelper className="border-r border-[#d6dace]" />
-            <div className="flex flex-col lg:flex-row flex-1 min-w-0 bg-[#b4eb38]">
-              <div className="flex flex-col justify-between p-6 w-full lg:w-1/2 min-h-[300px] lg:h-[360px]">
-                <div className="flex flex-col gap-6 max-w-[450px]">
-                  <p
-                    className="text-[#456300] text-[12px] lowercase"
-                    style={{ fontFamily: mono }}
-                  >
-                    /Próximo passo
-                  </p>
-                  <div
-                    className="text-[#101700] text-[28px] md:text-[36px] lg:text-[40px]"
-                    style={{
-                      fontFamily: heading,
-                      letterSpacing: titleTracking,
-                      fontWeight: 500,
-                      lineHeight: "normal",
-                    }}
-                  >
-                    Não encontrou a vaga ideal?
-                  </div>
-                </div>
-                <p
-                  className="text-[#456300] text-[14px] md:text-[16px] max-w-[390px] mt-8"
-                  style={{ fontFamily: body, lineHeight: 1.3 }}
-                >
-                  Envie seu perfil e contexto. Se fizer sentido para o momento
-                  da operação, a gente conversa.
-                </p>
-              </div>
-              <div className="flex items-end justify-end p-6 w-full lg:w-1/2 min-h-[120px] lg:h-[360px]">
-                <a
-                  href="mailto:careers@shiftlabs.digital?subject=Candidatura%20ShiftLabs"
-                  className="inline-flex min-h-[36px] items-center bg-[#101700] text-[#f2f3ef] px-3 py-2 text-[12px] uppercase"
-                  style={{ fontFamily: mono, lineHeight: "normal" }}
-                >
-                  enviar perfil
-                </a>
-              </div>
-            </div>
-            <XlHelper className="border-l border-[#d6dace]" />
-            <SectionBorderTicks positions={edgeTickPositions} />
-          </div>
-        </div>
-
-        <div className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] py-9">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 pb-9">
-            <div className="flex flex-col gap-8 max-w-[356px]">
-              <ShiftLabsIcon />
-              <p
-                className="text-[#5f644c] text-[14px] md:text-[16px]"
-                style={{ fontFamily: body, lineHeight: 1.3 }}
-              >
-                Construímos estruturas para produto, tecnologia, comercial e
-                operação evoluírem no mesmo ritmo.
-              </p>
-              <p
-                className="text-[#5f644c] text-[14px] md:text-[16px]"
-                style={{ fontFamily: body, lineHeight: 1.3 }}
-              >
-                <span
-                  className="text-[#101700]"
-                  style={{ fontFamily: display, fontWeight: 500 }}
-                >
-                  © 2026 ShiftLabs.
-                </span>
-                <span> Todos os direitos reservados.</span>
-              </p>
-            </div>
-            <div className="flex flex-col gap-6">
-              <p
-                className="text-[#5f644c] text-[12px] lowercase"
-                style={{ fontFamily: mono }}
-              >
-                /social
-              </p>
-              <div className="flex items-center gap-5">
-                {careersSocialLinks.map(({ name, href, Icon }) => (
-                  <a
-                    key={`careers-footer-${name}`}
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex min-h-[44px] items-center gap-2 py-1"
-                  >
-                    <Icon />
-                    <span
-                      className="text-[#5f644c] text-[14px] md:text-[16px]"
-                      style={{ fontFamily: body, lineHeight: 1.3 }}
-                    >
-                      {name}
-                    </span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-          <div className="pt-9">
-            <BigWordmark />
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-}
-
 export default function App() {
-  const pathname =
-    typeof window !== "undefined"
-      ? window.location.pathname.replace(/\/+$/, "") || "/"
-      : "/";
-  const careersApplyMatch = pathname.match(/^\/vagas\/([^/]+)\/candidatar$/);
-  const isCareersEditorRoute = pathname === "/vagas/editor";
-  const isCareersListRoute = pathname === "/vagas";
-  const isCareersApplyRoute = Boolean(careersApplyMatch);
-  const isCareersRoleRoute =
-    pathname.startsWith("/vagas/") &&
-    !isCareersEditorRoute &&
-    !isCareersApplyRoute;
-  const shouldLoadCareersData =
-    isCareersEditorRoute ||
-    isCareersListRoute ||
-    isCareersRoleRoute ||
-    isCareersApplyRoute;
-  const preloadedCareersRoles = useMemo(getPreloadedCareersRoles, []);
-  const shouldSeedPublicCareersFallback =
-    shouldLoadCareersData &&
-    !isCareersEditorRoute &&
-    preloadedCareersRoles.length > 0;
-
-  const [careersRoles, setCareersRoles] = useState<CareersRole[]>(
-    shouldSeedPublicCareersFallback
-      ? preloadedCareersRoles
-      : !hasSupabaseConfig || !shouldLoadCareersData
-        ? fallbackCareersRoles
-        : [],
-  );
-  const [editorRoles, setEditorRoles] = useState<CareersRole[]>([]);
-  const [isLoadingPublicRoles, setIsLoadingPublicRoles] = useState(
-    hasSupabaseConfig && shouldLoadCareersData && !shouldSeedPublicCareersFallback,
-  );
-  const [isLoadingEditorRoles, setIsLoadingEditorRoles] = useState(false);
-  const [editorSession, setEditorSession] = useState<Session | null>(null);
-  const [authLoading, setAuthLoading] = useState(
-    hasSupabaseConfig && shouldLoadCareersData && isCareersEditorRoute,
-  );
-
-  const fetchPublishedRoles = async ({
-    showLoading = true,
-  }: {
-    showLoading?: boolean;
-  } = {}) => {
-    const supabase = await getSupabaseClient();
-
-    if (!supabase) {
-      setCareersRoles(fallbackCareersRoles);
-      setIsLoadingPublicRoles(false);
-      return;
-    }
-    if (showLoading) {
-      setIsLoadingPublicRoles(true);
-    }
-
-    const abortController = new AbortController();
-    const timeoutId = window.setTimeout(() => {
-      abortController.abort();
-    }, 3500);
-    const { data, error } = await supabase
-      .from("careers_roles")
-      .select("*")
-      .eq("is_published", true)
-      .order("sort_order", { ascending: true })
-      .order("title", { ascending: true })
-      .abortSignal(abortController.signal);
-    window.clearTimeout(timeoutId);
-
-    if (error) {
-      if (!/abort|aborted/i.test(error.message)) {
-        console.error(
-          "Erro ao buscar vagas públicas no Supabase:",
-          error.message,
-        );
-      }
-      setCareersRoles((current) =>
-        current.length ? current : fallbackCareersRoles,
-      );
-      setIsLoadingPublicRoles(false);
-      return;
-    }
-
-    const mapped = ((data ?? []) as CareersRoleRow[]).map(rowToCareersRole);
-    const visibleMapped = filterVisibleCareersRoles(mapped);
-    const mergedVisible = mergeAlwaysPublishedCareersRoles(visibleMapped);
-    setCareersRoles(
-      visibleMapped.length ? mergedVisible : fallbackCareersRoles,
-    );
-    setIsLoadingPublicRoles(false);
-  };
-
-  const fetchEditorRoles = async () => {
-    const supabase = await getSupabaseClient();
-
-    if (!supabase) {
-      setEditorRoles(fallbackCareersRoles);
-      setIsLoadingEditorRoles(false);
-      return;
-    }
-    setIsLoadingEditorRoles(true);
-    const { data, error } = await supabase
-      .from("careers_roles")
-      .select("*")
-      .order("sort_order", { ascending: true })
-      .order("title", { ascending: true });
-
-    if (error) {
-      console.error(
-        "Erro ao buscar vagas do editor no Supabase:",
-        error.message,
-      );
-      setEditorRoles(fallbackCareersRoles);
-      setIsLoadingEditorRoles(false);
-      return;
-    }
-
-    const rows = (data ?? []) as CareersRoleRow[];
-    const hasDisplaySeniorityColumn = rows.some((row) =>
-      Object.prototype.hasOwnProperty.call(row, "display_seniority"),
-    );
-    const hasDisplayCommitmentColumn = rows.some((row) =>
-      Object.prototype.hasOwnProperty.call(row, "display_commitment"),
-    );
-    const rowsNeedingNormalization = rows
-      .map((row) => ({
-        id: row.id,
-        currentArea: row.area,
-        currentDisplayArea: row.display_area?.trim() ?? "",
-        currentDisplayTitle: row.display_title?.trim() ?? "",
-        currentCardSummary: row.card_summary?.trim() ?? "",
-        currentDisplaySeniority: row.display_seniority?.trim() ?? "",
-        currentDisplayCommitment: row.display_commitment?.trim() ?? "",
-        inferredArea: inferRoleArea({
-          area: row.area,
-          title: row.title,
-          intro: row.intro,
-          roleOneLiner: row.role_one_liner ?? undefined,
-          aboutFirst: toTextArray(row.about)[0],
-          bodyMarkdown: row.body_markdown ?? undefined,
-        }),
-        inferredDisplayTitle: getDisplayRoleTitle(row.title),
-        inferredCardSummary: getRoleCardSummary({
-          intro: row.intro,
-          roleOneLiner: row.role_one_liner ?? undefined,
-          bodyMarkdown: row.body_markdown ?? undefined,
-          about: toTextArray(row.about),
-          cardSummary: undefined,
-        }),
-        inferredDisplaySeniority:
-          getRoleSeniorityBadge(row.title, undefined, row.slug) ?? "",
-        inferredDisplayCommitment: getRoleDisplayCommitment(row.commitment),
-      }))
-      .filter(
-        (entry) =>
-          entry.inferredArea !== entry.currentArea ||
-          entry.currentDisplayArea !== entry.inferredArea ||
-          entry.currentDisplayTitle !== entry.inferredDisplayTitle ||
-          entry.currentCardSummary !== entry.inferredCardSummary ||
-          (hasDisplaySeniorityColumn &&
-            entry.currentDisplaySeniority !== entry.inferredDisplaySeniority) ||
-          (hasDisplayCommitmentColumn &&
-            entry.currentDisplayCommitment !== entry.inferredDisplayCommitment),
-      );
-
-    if (rowsNeedingNormalization.length) {
-      const results = await Promise.all(
-        rowsNeedingNormalization.map(async (entry) => {
-          const { error: updateError } = await supabase
-            .from("careers_roles")
-            .update({ area: entry.inferredArea })
-            .eq("id", entry.id);
-          return { ...entry, updateError };
-        }),
-      );
-
-      const failed = results.filter((result) => result.updateError);
-      if (failed.length) {
-        console.error(
-          "Não foi possível atualizar a área de algumas vagas:",
-          failed.map((result) => result.updateError?.message),
-        );
-      } else {
-        void fetchPublishedRoles();
-      }
-    }
-
-    setEditorRoles(
-      mergeAlwaysPublishedCareersRoles(
-        filterVisibleCareersRoles(rows.map(rowToCareersRole)),
-      ),
-    );
-    setIsLoadingEditorRoles(false);
-  };
-
   useEffect(() => {
-    if (!shouldLoadCareersData) {
-      setAuthLoading(false);
-      setIsLoadingPublicRoles(false);
-      setEditorRoles([]);
-      return;
-    }
-
-    let isActive = true;
-    let unsubscribeAuth: (() => void) | undefined;
-
-    const initializeCareers = async () => {
-      const supabase = await getSupabaseClient();
-      if (!isActive) return;
-
-      if (!supabase) {
-        setAuthLoading(false);
-        setIsLoadingPublicRoles(false);
-        setEditorRoles(fallbackCareersRoles);
-        return;
-      }
-
-      if (!isCareersEditorRoute) {
-        setAuthLoading(false);
-        setEditorSession(null);
-        void fetchPublishedRoles({ showLoading: false });
-        return;
-      }
-
-      const { data, error } = await supabase.auth.getSession();
-      if (!isActive) return;
-      if (error) {
-        console.error("Erro ao obter sessão do Supabase:", error.message);
-      }
-      const currentSession = data.session ?? null;
-      setEditorSession(currentSession);
-      setAuthLoading(false);
-      await fetchPublishedRoles();
-      if (currentSession) {
-        await fetchEditorRoles();
-      } else {
-        setEditorRoles([]);
-      }
-      const { data: authData } = supabase.auth.onAuthStateChange(
-        (_event, session) => {
-          if (!isActive) return;
-          setEditorSession(session);
-          setAuthLoading(false);
-          void fetchPublishedRoles();
-          if (session) {
-            void fetchEditorRoles();
-          } else {
-            setEditorRoles([]);
-          }
-        },
-      );
-      unsubscribeAuth = () => authData.subscription.unsubscribe();
-    };
-
-    void initializeCareers();
-
-    return () => {
-      isActive = false;
-      unsubscribeAuth?.();
-    };
-  }, [isCareersEditorRoute, shouldLoadCareersData]);
-
-  const handleSignIn = async (email: string, password: string) => {
-    const supabase = await getSupabaseClient();
-
-    if (!supabase) {
-      return { ok: false, message: "Supabase não está configurado." };
-    }
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) {
-      return { ok: false, message: error.message };
-    }
-    await fetchEditorRoles();
-    return { ok: true };
-  };
-
-  const handleSignOut = async () => {
-    const supabase = await getSupabaseClient();
-
-    if (!supabase) return;
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error("Erro ao sair da sessão do Supabase:", error.message);
-    }
-  };
-
-  const handleSaveRole = async (role: CareersRole, previousSlug?: string) => {
-    const supabase = await getSupabaseClient();
-
-    if (!supabase) {
-      return { ok: false, message: "Supabase não está configurado." };
-    }
-
-    const normalized = normalizeCareersRole(role);
-    if (!normalized) {
-      return { ok: false, message: "Dados de vaga inválidos." };
-    }
-
-    const payload = roleToCareersRowPayload(normalized);
-
-    const { error: upsertError } = await supabase
-      .from("careers_roles")
-      .upsert(payload, { onConflict: "slug" });
-    if (upsertError) {
-      return { ok: false, message: upsertError.message };
-    }
-
-    if (previousSlug && previousSlug !== normalized.slug) {
-      const { error: deletePreviousError } = await supabase
-        .from("careers_roles")
-        .delete()
-        .eq("slug", previousSlug);
-      if (deletePreviousError) {
-        return { ok: false, message: deletePreviousError.message };
-      }
-    }
-
-    await Promise.all([fetchEditorRoles(), fetchPublishedRoles()]);
-    return { ok: true };
-  };
-
-  const handleDeleteRole = async (slug: string) => {
-    const supabase = await getSupabaseClient();
-
-    if (!supabase) {
-      return { ok: false, message: "Supabase não está configurado." };
-    }
-
-    const { error } = await supabase
-      .from("careers_roles")
-      .delete()
-      .eq("slug", slug);
-    if (error) {
-      return { ok: false, message: error.message };
-    }
-
-    await Promise.all([fetchEditorRoles(), fetchPublishedRoles()]);
-    return { ok: true };
-  };
-
-  const handleRefreshRoles = async () => {
-    if (editorSession) {
-      await Promise.all([fetchEditorRoles(), fetchPublishedRoles()]);
-      return;
-    }
-    await fetchPublishedRoles();
-  };
-
-  const roleSlugFromPath = isCareersRoleRoute
-    ? decodeURIComponent(pathname.slice("/vagas/".length))
-    : null;
-  const applyRoleSlugFromPath =
-    isCareersApplyRoute && careersApplyMatch?.[1]
-      ? decodeURIComponent(careersApplyMatch[1])
-      : null;
-  const selectedRoleSlug = isCareersApplyRoute
-    ? applyRoleSlugFromPath
-    : roleSlugFromPath;
-  const selectedRole = selectedRoleSlug
-    ? careersRoles.find((role) => role.slug === selectedRoleSlug)
-    : undefined;
-  const shouldShowRoleLoadingState = Boolean(
-    (isCareersRoleRoute || isCareersApplyRoute) && isLoadingPublicRoles,
-  );
-  const isUnknownRoleRoute = Boolean(
-    (isCareersRoleRoute || isCareersApplyRoute) &&
-    !isLoadingPublicRoles &&
-    selectedRoleSlug &&
-    !selectedRole,
-  );
-
-  useEffect(() => {
-    if (isCareersEditorRoute) {
-      applySeoPayload({
-        title: "Editor de Vagas | ShiftLabs",
-        description:
-          "Painel interno para publicacao e manutencao das vagas da ShiftLabs.",
-        path: "/vagas/editor",
-        noindex: true,
-        pageSchema: null,
-      });
-      return;
-    }
-
-    if (isCareersApplyRoute && selectedRole) {
-      const displayRoleTitle = getDisplayRoleTitle(
-        selectedRole.title,
-        selectedRole.displayTitle,
-      );
-      applySeoPayload({
-        title: `Candidatar-se | ${displayRoleTitle} | ShiftLabs`,
-        description: `Envie sua candidatura para a vaga de ${displayRoleTitle} na ShiftLabs.`,
-        path: `/vagas/${selectedRole.slug}/candidatar`,
-        noindex: true,
-        pageSchema: null,
-      });
-      return;
-    }
-
-    if (isCareersRoleRoute && selectedRole) {
-      const displayRoleTitle = getDisplayRoleTitle(
-        selectedRole.title,
-        selectedRole.displayTitle,
-      );
-      applySeoPayload({
-        title: `${displayRoleTitle} | Vagas ShiftLabs`,
-        description: getRoleCardSummary(selectedRole),
-        path: `/vagas/${selectedRole.slug}`,
-        type: "article",
-        pageSchema: buildJobPostingSchema(selectedRole),
-      });
-      return;
-    }
-
-    if (isCareersListRoute || isCareersRoleRoute || isCareersApplyRoute) {
-      applySeoPayload({
-        title: "Vagas na ShiftLabs | Carreiras",
-        description:
-          "Explore as vagas abertas da ShiftLabs em produto, tecnologia, growth, comercial e operacoes.",
-        path:
-          isCareersRoleRoute || isCareersApplyRoute ? "/vagas" : pathname,
-        noindex: Boolean(isUnknownRoleRoute || shouldShowRoleLoadingState),
-        pageSchema: buildCareersCollectionSchema(careersRoles),
-      });
-      return;
-    }
-
     applySeoPayload({
-      title: "ShiftLabs | Arquitetura de Produto, Tecnologia e Operacao",
+      title: "ShiftLabs | Da Ideia ao Primeiro Cliente e Estrutura para Empresas",
       description: seoDefaultDescription,
       path: "/",
       pageSchema: buildLandingPageSchema(),
     });
-  }, [
-    pathname,
-    isCareersEditorRoute,
-    isCareersListRoute,
-    isCareersApplyRoute,
-    isCareersRoleRoute,
-    isUnknownRoleRoute,
-    shouldShowRoleLoadingState,
-    selectedRole,
-    careersRoles,
-  ]);
-
-  if (isCareersEditorRoute) {
-    return (
-      <CareersEditorPage
-        roles={editorRoles}
-        isLoadingRoles={isLoadingEditorRoles}
-        isAuthenticated={Boolean(editorSession)}
-        authLoading={authLoading}
-        onSignIn={handleSignIn}
-        onSignOut={handleSignOut}
-        onSaveRole={handleSaveRole}
-        onDeleteRole={handleDeleteRole}
-        onRefreshRoles={handleRefreshRoles}
-      />
-    );
-  }
-
-  if (isCareersListRoute) {
-    return (
-      <CareersPage roles={careersRoles} isLoading={isLoadingPublicRoles} />
-    );
-  }
-
-  if (isCareersApplyRoute) {
-    if (shouldShowRoleLoadingState) {
-      return <CareersPage roles={[]} isLoading />;
-    }
-    if (selectedRole) {
-      return <CareerRoleApplyPage role={selectedRole} />;
-    }
-    return <CareersPage roles={careersRoles} />;
-  }
-
-  if (isCareersRoleRoute) {
-    if (shouldShowRoleLoadingState) {
-      return <CareersPage roles={[]} isLoading />;
-    }
-    if (selectedRole) {
-      return <CareerRolePage role={selectedRole} />;
-    }
-    return <CareersPage roles={careersRoles} />;
-  }
+  }, []);
 
   return <LandingPage />;
 }
