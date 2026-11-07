@@ -127,7 +127,19 @@ function findJsonLdEntry(entries, type) {
 }
 
 function validateCommonPage({ route, relativePath, html }) {
-  assertIncludes(html, '<html lang="pt-BR">', `${relativePath}: lang pt-BR ausente`);
+  const expectedLang = route === "/en" ? "en" : "pt-BR";
+  assertIncludes(html, `<html lang="${expectedLang}">`, `${relativePath}: lang ${expectedLang} ausente`);
+  for (const [hreflang, href] of [
+    ["pt-BR", toCanonicalUrl("/")],
+    ["en", toCanonicalUrl("/en")],
+    ["x-default", toCanonicalUrl("/")],
+  ]) {
+    assertIncludes(
+      html,
+      `<link rel="alternate" hreflang="${hreflang}" href="${href}" />`,
+      `${relativePath}: hreflang ${hreflang} ausente`,
+    );
+  }
 
   const title = getTitle(html);
   const description = getMeta(html, "name", "description");
@@ -195,6 +207,19 @@ function validateHome(routeState) {
   assert(findJsonLdEntry(routeState.jsonLdEntries, "WebPage"), "/: WebPage ausente");
 }
 
+function validateEnglishHome(routeState) {
+  assert(
+    routeState.title === "ShiftLabs | From Idea to First Customer, and Structure for Companies",
+    "/en: title incorreto",
+  );
+  assert(routeState.canonical === toCanonicalUrl("/en"), "/en: canonical incorreto");
+  assert(
+    routeState.h1 === "We get businesses off the ground. We structure the ones already running.",
+    "/en: H1 incorreto",
+  );
+  assert(findJsonLdEntry(routeState.jsonLdEntries, "WebPage"), "/en: WebPage ausente");
+}
+
 async function validateRoute(filePath) {
   const route = routeFromIndexFile(filePath);
   const relativePath = path.relative(distDir, filePath).split(path.sep).join("/");
@@ -203,6 +228,8 @@ async function validateRoute(filePath) {
 
   if (route === "/") {
     validateHome(routeState);
+  } else if (route === "/en") {
+    validateEnglishHome(routeState);
   } else {
     assert(routeState.canonical === toCanonicalUrl(route), `${route}: canonical incorreto`);
   }

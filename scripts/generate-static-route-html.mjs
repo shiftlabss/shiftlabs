@@ -112,14 +112,14 @@ function buildOrganizationSchema() {
   };
 }
 
-function buildWebPageSchema(name, description, routePath) {
+function buildWebPageSchema(name, description, routePath, inLanguage) {
   return {
     "@context": "https://schema.org",
     "@type": "WebPage",
     name,
     url: toAbsoluteUrl(routePath),
     description,
-    inLanguage: "pt-BR",
+    inLanguage,
   };
 }
 
@@ -128,6 +128,7 @@ function buildHead({
   description,
   routePath,
   canonicalPath,
+  ogLocale,
   robots,
   type = "website",
   jsonLd = [],
@@ -156,7 +157,7 @@ function buildHead({
         ]
       : []),
     '<meta property="og:site_name" content="ShiftLabs" />',
-    '<meta property="og:locale" content="pt_BR" />',
+    `<meta property="og:locale" content="${escapeHtml(ogLocale)}" />`,
     `<meta property="og:type" content="${escapeHtml(type)}" />`,
     `<meta property="og:title" content="${escapeHtml(title)}" />`,
     `<meta property="og:description" content="${escapeHtml(normalizedDescription)}" />`,
@@ -168,6 +169,9 @@ function buildHead({
     `<meta name="twitter:description" content="${escapeHtml(normalizedDescription)}" />`,
     `<meta name="twitter:image" content="${escapeHtml(imageUrl)}" />`,
     `<link rel="canonical" href="${escapeHtml(canonicalUrl)}" />`,
+    `<link rel="alternate" hreflang="pt-BR" href="${escapeHtml(toAbsoluteUrl("/"))}" />`,
+    `<link rel="alternate" hreflang="en" href="${escapeHtml(toAbsoluteUrl("/en"))}" />`,
+    `<link rel="alternate" hreflang="x-default" href="${escapeHtml(toAbsoluteUrl("/"))}" />`,
     ...jsonLdTags,
     ...preservedAssetTags,
   ];
@@ -191,7 +195,7 @@ const staticShellStyles = {
     "max-width:560px;margin:28px 0 0;color:#5f644c;font-size:clamp(16px,2vw,20px);line-height:1.35;",
 };
 
-function buildStaticLayout({ eyebrow, title, description, bodyHtml = "" }) {
+function buildStaticLayout({ homePath, eyebrow, title, description, bodyHtml = "" }) {
   const safeDescription = description
     ? `<p style="${staticShellStyles.description}">${escapeHtml(description)}</p>`
     : "";
@@ -199,7 +203,7 @@ function buildStaticLayout({ eyebrow, title, description, bodyHtml = "" }) {
   return [
     `<main data-static-route="true" style="${staticShellStyles.main}">`,
     `  <header style="${staticShellStyles.header}">`,
-    `    <a href="/" style="${staticShellStyles.brand}">ShiftLabs</a>`,
+    `    <a href="${escapeHtml(homePath)}" style="${staticShellStyles.brand}">ShiftLabs</a>`,
     "  </header>",
     `  <section style="${staticShellStyles.section}">`,
     eyebrow
@@ -220,7 +224,7 @@ function buildHtmlDocument(baseHtml, page) {
   const head = buildHead({ ...page, preservedAssetTags });
   return [
     "<!DOCTYPE html>",
-    '<html lang="pt-BR">',
+    `<html lang="${escapeHtml(page.lang)}">`,
     "  <head>",
     head,
     "  </head>",
@@ -239,33 +243,57 @@ async function writeRouteHtml(baseHtml, routePath, page) {
   await writeFile(filePath, buildHtmlDocument(baseHtml, page), "utf8");
 }
 
+const landingPages = [
+  {
+    routePath: "/",
+    lang: "pt-BR",
+    ogLocale: "pt_BR",
+    title: "ShiftLabs | Da Ideia ao Primeiro Cliente e Estrutura para Empresas",
+    description:
+      "A ShiftLabs leva sua ideia até a entrega ao primeiro cliente e estrutura empresas prontas para crescer com previsibilidade e execução coordenada.",
+    eyebrow: "/Engenharia de negócios, da ideia à escala",
+    heading: "Tiramos negócios do papel. Estruturamos os que já existem.",
+    text: "A ShiftLabs transforma ideias em negócios reais, até a entrega ao primeiro cliente, e organiza empresas prontas para crescer com previsibilidade.",
+  },
+  {
+    routePath: "/en",
+    lang: "en",
+    ogLocale: "en_US",
+    title: "ShiftLabs | From Idea to First Customer, and Structure for Companies",
+    description:
+      "ShiftLabs takes your idea all the way to the first customer and structures established companies for predictable growth and coordinated execution.",
+    eyebrow: "/Business engineering, from idea to scale",
+    heading: "We get businesses off the ground. We structure the ones already running.",
+    text: "ShiftLabs turns ideas into real businesses, all the way to delivery to the first customer, and organizes established companies to grow predictably.",
+  },
+];
+
 async function run() {
   const baseHtml = await readFile(baseHtmlPath, "utf8");
   const organizationSchema = buildOrganizationSchema();
 
-  await writeRouteHtml(baseHtml, "/", {
-    title: "ShiftLabs | Da Ideia ao Primeiro Cliente e Estrutura para Empresas",
-    description:
-      "A ShiftLabs leva sua ideia até a entrega ao primeiro cliente e estrutura empresas prontas para crescer com previsibilidade e execução coordenada.",
-    routePath: "/",
-    robots: "index, follow, max-image-preview:large",
-    jsonLd: [
-      organizationSchema,
-      buildWebPageSchema(
-        "ShiftLabs",
-        "A ShiftLabs leva sua ideia até a entrega ao primeiro cliente e estrutura empresas prontas para crescer com previsibilidade e execução coordenada.",
-        "/",
-      ),
-    ],
-    bodyHtml: buildStaticLayout({
-      eyebrow: "/Engenharia de negócios, da ideia à escala",
-      title: "Tiramos negócios do papel. Estruturamos os que já existem.",
-      description:
-        "A ShiftLabs transforma ideias em negócios reais, até a entrega ao primeiro cliente, e organiza empresas prontas para crescer com previsibilidade.",
-    }),
-  });
+  for (const page of landingPages) {
+    await writeRouteHtml(baseHtml, page.routePath, {
+      title: page.title,
+      description: page.description,
+      routePath: page.routePath,
+      lang: page.lang,
+      ogLocale: page.ogLocale,
+      robots: "index, follow, max-image-preview:large",
+      jsonLd: [
+        organizationSchema,
+        buildWebPageSchema("ShiftLabs", page.description, page.routePath, page.lang),
+      ],
+      bodyHtml: buildStaticLayout({
+        homePath: page.routePath,
+        eyebrow: page.eyebrow,
+        title: page.heading,
+        description: page.text,
+      }),
+    });
+  }
 
-  console.log("[seo] HTML estatico gerado para /.");
+  console.log("[seo] HTML estatico gerado para / e /en.");
 }
 
 run().catch((error) => {

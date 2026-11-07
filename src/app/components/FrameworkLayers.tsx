@@ -186,12 +186,12 @@ function IntelligenceLayerIcon() {
   );
 }
 
-const layers = [
-  { label: "Identidade", Icon: IdentityLayerIcon },
-  { label: "Fundamentos", Icon: FundamentalsLayerIcon },
-  { label: "Arquitetura", Icon: ArchitectureLayerIcon },
-  { label: "Sistema Operacional", Icon: OperatingSystemLayerIcon },
-  { label: "Camada de Inteligência", Icon: IntelligenceLayerIcon },
+const layerIcons = [
+  IdentityLayerIcon,
+  FundamentalsLayerIcon,
+  ArchitectureLayerIcon,
+  OperatingSystemLayerIcon,
+  IntelligenceLayerIcon,
 ];
 
 const arrivalSeconds = [0.3, 1.8, 3.2, 4.5, 5.7];
@@ -202,7 +202,7 @@ type CyclePhase = "idle" | "run" | "reset";
 const phaseDurationMs: Record<CyclePhase, number> = { idle: 300, run: 7400, reset: 840 };
 const nextPhase: Record<CyclePhase, CyclePhase> = { idle: "run", run: "reset", reset: "idle" };
 
-export function FrameworkLayers() {
+export function FrameworkLayers({ labels }: { labels: string[] }) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [isInView, setIsInView] = useState(false);
   const [phase, setPhase] = useState<CyclePhase>("idle");
@@ -251,7 +251,9 @@ export function FrameworkLayers() {
         </span>
       </span>
       <ol className="framework-flow-list">
-        {layers.map(({ label, Icon }, index) => (
+        {labels.map((label, index) => {
+          const Icon = layerIcons[index];
+          return (
           <li
             key={label}
             className="framework-flow-item"
@@ -289,7 +291,8 @@ export function FrameworkLayers() {
             </span>
             <span className="framework-flow-label">{label}</span>
           </li>
-        ))}
+          );
+        })}
       </ol>
     </div>
   );

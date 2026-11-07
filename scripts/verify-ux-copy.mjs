@@ -2,8 +2,11 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 const root = process.cwd();
-const appPath = path.join(root, "src/app/App.tsx");
-const source = await readFile(appPath, "utf8");
+const sourcePaths = ["src/app/App.tsx", "src/app/copy.ts"];
+const sources = await Promise.all(
+  sourcePaths.map((sourcePath) => readFile(path.join(root, sourcePath), "utf8")),
+);
+const source = sources.join("\n");
 
 const forbiddenSnippets = [
   "Bloco 2",
@@ -49,6 +52,10 @@ const requiredSnippets = [
   "Histórias de dormir na voz da família.",
   "Formalização de cessões imobiliárias.",
   "Contato",
+  "We get businesses off the ground. ",
+  "From idea to first customer.",
+  "Business Engineering Framework™",
+  "Where do we start: with your idea or with your company?",
 ];
 
 const forbiddenPatterns = [

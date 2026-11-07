@@ -21,6 +21,7 @@ import ponteFigure from "../vendor/hairline/problemas/ponte.js";
 import pedidosFigure from "../vendor/hairline/problemas/pedidos.js";
 import gaveteiroFigure from "../vendor/hairline/problemas/gaveteiro.js";
 import painelFigure from "../vendor/hairline/problemas/painel.js";
+import { copy, localeFromPath } from "./copy";
 
 const mono = "var(--font-system-mono)";
 const heading = "var(--font-system)";
@@ -35,8 +36,9 @@ const configuredSiteUrl = (
   (import.meta.env.VITE_SITE_URL as string | undefined) ?? fallbackSiteUrl
 ).trim();
 const siteUrl = configuredSiteUrl.replace(/\/+$/, "") || fallbackSiteUrl;
-const seoDefaultDescription =
-  "A ShiftLabs leva sua ideia até a entrega ao primeiro cliente e estrutura empresas prontas para crescer com previsibilidade e execução coordenada.";
+const locale = localeFromPath(window.location.pathname);
+const t = copy[locale];
+const seoDefaultDescription = t.seo.description;
 const seoDefaultImagePath = "/social-preview.png";
 const seoOrganizationLogoPath = "/fav-icon.svg";
 
@@ -447,160 +449,37 @@ function BigWordmark() {
 }
 
 /* ─── Data ─── */
-const heroTimeline = [
-  {
-    step: "/01",
-    title: "validação",
-    figure: sondagemFigure,
-    label:
-      "Um terreno de sondagem com uma grade de estacas; com o mouse, as estacas sobem onde o solo cede, e no ponto fraco sobem mais.",
-  },
-  {
-    step: "/02",
-    title: "arquitetura",
-    figure: maqueteFigure,
-    label:
-      "A maquete de um prédio de quatro andares; com o mouse, os andares se afastam e um deles mostra a laje e os pilares.",
-  },
-  {
-    step: "/03",
-    title: "execução",
-    figure: motorFigure,
-    label:
-      "Um motor de quatro cilindros rodando em compasso; com o mouse, ele acelera e os quatro pistões seguem juntos, presos ao mesmo eixo.",
-  },
-  {
-    step: "/04",
-    title: "escala",
-    figure: balancaFigure,
-    label:
-      "Uma balança romana; com o mouse, entra carga no prato e o contrapeso corre sozinho pela escala até nivelar de novo.",
-  },
-];
+const heroFigures = [sondagemFigure, maqueteFigure, motorFigure, balancaFigure];
+const heroTimeline = t.hero.timeline.map((slide, index) => ({
+  ...slide,
+  step: `/0${index + 1}`,
+  figure: heroFigures[index],
+}));
 
-const problemCards = [
-  {
-    id: 1,
-    text: "Ideia e mercado que nunca se encontram.",
-    figure: ponteFigure,
-    figureLabel:
-      "Duas metades de uma ponte, feitas de margens opostas; com o mouse, elas crescem e passam uma ao lado da outra, sem se encontrar.",
-  },
-  {
-    id: 2,
-    text: "Decisões no palpite, sem validação real.",
-    figure: painelFigure,
-    figureLabel:
-      "Um painel com três mostradores cujos ponteiros oscilam no palpite; com o mouse, a medição liga e os ponteiros vão para bem longe do palpite.",
-  },
-  {
-    id: 3,
-    text: "Marketing gera demanda que a operação não absorve.",
-    figure: pedidosFigure,
-    figureLabel:
-      "Pedidos caem numa bandeja mais rápido do que um carimbo despacha; com o mouse, a pilha transborda.",
-  },
-  {
-    id: 4,
-    text: "Tecnologia acumula decisões sem arquitetura clara.",
-    figure: gaveteiroFigure,
-    figureLabel:
-      "Um arquivo com gavetas abarrotadas; com o mouse, a gaveta é empurrada e volta a abrir, cuspindo papel.",
-  },
-];
+const problemFigures = [ponteFigure, painelFigure, pedidosFigure, gaveteiroFigure];
+const problemCards = t.problem.cards.map((card, index) => ({
+  ...card,
+  id: index + 1,
+  figure: problemFigures[index],
+}));
 
-const services = [
-  {
-    title: "Produto & Estratégia",
-    desc: "Validamos a ideia e definimos proposta de valor, arquitetura e roadmap com base em pesquisa.",
-    figure: roadmapFigure,
-    figureLabel:
-      "Uma trilha de pedras até uma bandeira; com o mouse em cima, o caminho se constrói em degraus até o marco escolhido.",
-  },
-  {
-    title: "Tecnologia & Arquitetura",
-    desc: "Construímos o produto do zero ou reorganizamos o que já existe, com arquitetura escalável e stack bem definida.",
-    figure: torreFigure,
-    figureLabel:
-      "Uma torre de blocos empilhados sem prumo; com o mouse em cima, as camadas entram no prumo.",
-  },
-  {
-    title: "Growth & Comercial",
-    desc: "Definimos posicionamento, pricing e funis para conquistar o primeiro cliente e crescer com margem.",
-    figure: funilFigure,
-    figureLabel:
-      "Um funil em degraus por onde descem bolinhas; as das bordas caem pelo caminho e só as do centro chegam ao cofre.",
-  },
-  {
-    title: "Inteligência & Operação",
-    desc: "Montamos a operação, modelamos indicadores e automatizamos processos para reduzir fricção.",
-    figure: chipFigure,
-    figureLabel:
-      "Um chip numa placa recebendo sinais sem parar; com o mouse em cima, o chip sobe, e a trilha sob o mouse recebe todo o fluxo.",
-  },
-];
+const serviceFigures = [roadmapFigure, torreFigure, funilFigure, chipFigure];
+const services = t.services.items.map((service, index) => ({
+  ...service,
+  figure: serviceFigures[index],
+}));
 
-const workSteps = [
-  {
-    step: "/01",
-    title: "Diagnóstico",
-    desc: "Entendemos a ideia ou a operação atual: mercado, produto, tecnologia e crescimento, para encontrar riscos reais e prioridades.",
-  },
-  {
-    step: "/02",
-    title: "Arquitetura de execução",
-    desc: "Transformamos o diagnóstico em um plano claro: prioridades, fluxos, indicadores, responsáveis e sequência de implementação.",
-  },
-  {
-    step: "/03",
-    title: "Entrega coordenada",
-    desc: "Executamos com frentes integradas até o resultado combinado: o primeiro cliente atendido ou a operação funcionando com previsibilidade.",
-  },
-];
+const workSteps = t.method.steps.map((step, index) => ({
+  ...step,
+  step: `/0${index + 1}`,
+}));
 
-const audienceItems = [
-  {
-    text: "Fundadores com uma ideia para tirar do papel.",
-    textMaxClass: "max-w-[230px]",
-  },
-  {
-    text: "Empresas que querem lançar um novo produto.",
-    textMaxClass: "max-w-[230px]",
-  },
-  {
-    text: "Negócios que cresceram rápido demais.",
-    textMaxClass: "max-w-[230px]",
-  },
-  {
-    text: "Empresas prontas que precisam de estrutura.",
-    textMaxClass: "max-w-[230px]",
-  },
-];
+const audienceItems = t.audience.items.map((text) => ({
+  text,
+  textMaxClass: "max-w-[230px]",
+}));
 
-const pathTracks = [
-  {
-    label: "/Do zero",
-    title: "Da ideia ao primeiro cliente.",
-    desc: "Para quem tem uma ideia e precisa transformá-la em um negócio real.",
-    steps: [
-      "Validamos a ideia e o mercado.",
-      "Desenhamos o modelo de negócio e o produto.",
-      "Construímos e lançamos a primeira versão.",
-      "Acompanhamos a entrega ao primeiro cliente.",
-    ],
-  },
-  {
-    label: "/Empresa pronta",
-    title: "Estrutura para o que já existe.",
-    desc: "Para empresas em operação que cresceram mais rápido do que a própria estrutura.",
-    steps: [
-      "Mapeamos onde a operação trava.",
-      "Organizamos produto, tecnologia e comercial.",
-      "Implementamos processos e indicadores.",
-      "Preparamos a empresa para crescer com previsibilidade.",
-    ],
-  },
-];
+const pathTracks = t.paths.tracks;
 
 const ecosystemSites = [
   { name: "Menux", href: "https://menux.co", Logo: MenuxLogo },
@@ -618,83 +497,44 @@ const ecosystemMarqueeItems = Array.from(
   (_, index) => ecosystemSites[index % ecosystemSites.length],
 );
 
-const caseStudies = [
+const caseBrands = [
   {
     name: "Menux",
     Logo: MenuxLogo,
     href: "https://menux.co",
     domain: "menux.co",
-    title: "Uma IA que explica o cardápio em cada mesa.",
-    context:
-      "dúvidas travam o salão, os adicionais saem sem padrão e a gestão fica sem leitura do que acontece na mesa.",
-    effect:
-      "pelo QR Code da mesa, sem instalar app, o cliente tira dúvidas sobre pratos, porções e restrições e recebe sugestões de adicionais. O garçom segue no atendimento.",
-    capability:
-      "IA no navegador e o Maestro no backoffice, que organiza comportamento, dúvidas e aceitação em sinais para ajustar cardápio, oferta e operação.",
   },
   {
     name: "Cortex",
     Logo: CortexLogo,
     href: "https://www.cortex.je",
     domain: "cortex.je",
-    title: "Atender na régua e provar que atendeu.",
-    context:
-      "operadores regulados costumam atender em um sistema e provar em outro, e a prova só é montada depois do pedido.",
-    effect:
-      "a Atena atende no WebChat dentro da régua do operador, leva casos de julgamento ao time humano e registra cada decisão na hora.",
-    capability:
-      "quatro agentes de IA para atendimento, eventos de pagamento, jogo responsável e governança de evidências.",
   },
   {
     name: "Contto",
     Logo: ConttoLogo,
     href: "https://www.contto.sh",
     domain: "contto.sh",
-    title: "Histórias de dormir na voz da família.",
-    context:
-      "a hora de dormir depende de quem está por perto para contar a história.",
-    effect:
-      "um adulto grava a própria voz com autorização, ou usa a Voz do Contto, e as histórias nascem em conversa para crianças de 3 a 8 anos.",
-    capability:
-      "livro de seis noites escrito por IA, sem anúncios, com o adulto no controle da conta e da retirada da voz.",
   },
   {
     name: "Repasse Seguro",
     Logo: RepasseSeguroLogo,
     href: "https://www.repasseseguro.com.br",
     domain: "repasseseguro.com.br",
-    title: "Formalização de cessões imobiliárias.",
-    context:
-      "quem precisa sair de um contrato imobiliário nem sempre encontra um caminho seguro.",
-    effect:
-      "a plataforma conecta quem quer sair do contrato a quem busca oportunidade abaixo da tabela, com comissão apenas no fechamento.",
-    capability:
-      "verificação documental, conta escrow e módulos para cedente, cessionário e administração.",
   },
 ];
 
-const coordinationItems = [
-  {
-    before: "Design isolado.",
-    after: "Marca, produto e experiência decididos junto com o negócio.",
-  },
-  {
-    before: "Código isolado.",
-    after: "Sistemas feitos do zero, com a nossa engenharia e o nosso framework.",
-  },
-  {
-    before: "Marketing isolado.",
-    after: "Oferta e comercial prontos para chegar ao primeiro cliente.",
-  },
-];
+const caseStudies = caseBrands.map((brand, index) => ({
+  ...brand,
+  ...t.cases.items[index],
+}));
 
-const homeSections = [
-  ["#problema", "Problema"],
-  ["#caminhos", "Caminhos"],
-  ["#servicos", "Serviços"],
-  ["#como-trabalhamos", "Método"],
-  ["#cases", "Cases"],
-];
+const coordinationItems = t.why.items;
+
+const homeSections = t.nav.sections.map(([id, label]) => [
+  `#${t.ids[id as keyof typeof t.ids]}`,
+  label,
+]);
 
 const socialLinks = [
   {
@@ -768,6 +608,18 @@ function upsertLink(rel: string, href: string): void {
   element.setAttribute("href", href);
 }
 
+function upsertAlternateLink(hreflang: string, href: string): void {
+  const selector = `link[rel="alternate"][hreflang="${hreflang}"]`;
+  let element = document.head.querySelector(selector) as HTMLLinkElement | null;
+  if (!element) {
+    element = document.createElement("link");
+    element.setAttribute("rel", "alternate");
+    element.setAttribute("hreflang", hreflang);
+    document.head.appendChild(element);
+  }
+  element.setAttribute("href", href);
+}
+
 function upsertJsonLdScript(
   id: string,
   payload: Record<string, unknown> | Array<Record<string, unknown>> | null,
@@ -805,9 +657,9 @@ function buildLandingPageSchema(): Record<string, unknown> {
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: "ShiftLabs",
-    url: `${siteUrl}/`,
+    url: toAbsoluteUrl(t.homePath),
     description: seoDefaultDescription,
-    inLanguage: "pt-BR",
+    inLanguage: t.htmlLang,
   };
 }
 
@@ -819,7 +671,7 @@ function applySeoPayload(payload: SeoPayload): void {
   const canonicalUrl = toAbsoluteUrl(payload.path);
   const imageUrl = toAbsoluteUrl(payload.imagePath ?? seoDefaultImagePath);
 
-  document.documentElement.lang = "pt-BR";
+  document.documentElement.lang = t.htmlLang;
   document.title = normalizedTitle;
 
   upsertMetaByName("description", normalizedDescription);
@@ -833,7 +685,7 @@ function applySeoPayload(payload: SeoPayload): void {
   upsertMetaByName("author", "ShiftLabs");
 
   upsertMetaByProperty("og:site_name", "ShiftLabs");
-  upsertMetaByProperty("og:locale", "pt_BR");
+  upsertMetaByProperty("og:locale", t.ogLocale);
   upsertMetaByProperty("og:type", payload.type ?? "website");
   upsertMetaByProperty("og:title", normalizedTitle);
   upsertMetaByProperty("og:description", normalizedDescription);
@@ -847,6 +699,9 @@ function applySeoPayload(payload: SeoPayload): void {
   upsertMetaByName("twitter:image", imageUrl);
 
   upsertLink("canonical", canonicalUrl);
+  upsertAlternateLink("pt-BR", toAbsoluteUrl(copy.pt.homePath));
+  upsertAlternateLink("en", toAbsoluteUrl(copy.en.homePath));
+  upsertAlternateLink("x-default", toAbsoluteUrl(copy.pt.homePath));
   upsertJsonLdScript("organization", buildOrganizationSchema());
   upsertJsonLdScript("page", payload.pageSchema ?? null);
 }
@@ -892,9 +747,9 @@ function LandingPage() {
   ) => {
     let formattedValue = value;
     if (field === "whatsapp") {
-      if (value.startsWith("+")) {
+      if (locale === "en" || value.startsWith("+")) {
         const digits = value.replace(/\D/g, "");
-        formattedValue = "+" + digits.slice(0, 15);
+        formattedValue = digits ? "+" + digits.slice(0, 15) : "";
       } else {
         let v = value.replace(/\D/g, "");
         if (v.length > 11) v = v.slice(0, 11);
@@ -934,25 +789,25 @@ function LandingPage() {
     if (!name || !whatsapp || !email || !company || !subject) {
       setHeroContactFeedback({
         type: "error",
-        message: "Preencha todos os campos para continuar.",
+        message: t.contact.missingFields,
       });
       return;
     }
 
     const mailBody = [
-      `Nome: ${name}`,
-      `WhatsApp: ${whatsapp}`,
-      `E-mail: ${email}`,
-      `Empresa: ${company}`,
+      `${t.contact.fields.name}: ${name}`,
+      `${t.contact.fields.whatsapp}: ${whatsapp}`,
+      `${t.contact.fields.email}: ${email}`,
+      `${t.contact.fields.company}: ${company}`,
       "",
       subject,
     ].join("\n");
 
-    window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(`Contato pelo site - ${company}`)}&body=${encodeURIComponent(mailBody)}`;
+    window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(t.contact.mailSubject(company))}&body=${encodeURIComponent(mailBody)}`;
 
     setHeroContactFeedback({
       type: "success",
-      message: `Se o seu e-mail não abrir, escreva direto para ${contactEmail}.`,
+      message: t.contact.successFallback(contactEmail),
     });
   };
 
@@ -1038,7 +893,7 @@ function LandingPage() {
               }`}
             >
               <a
-                href="/"
+                href={t.homePath}
                 aria-label="ShiftLabs"
                 title="ShiftLabs"
                 className="inline-flex min-h-[44px] items-center gap-2 py-1"
@@ -1048,7 +903,7 @@ function LandingPage() {
               </a>
               <div className="flex items-center gap-2 sm:gap-3 md:gap-6">
                 <nav
-                  aria-label="Seções da home"
+                  aria-label={t.nav.sectionsLabel}
                   className="hidden lg:flex items-center gap-1"
                 >
                   {homeSections.map(([href, label]) => (
@@ -1070,6 +925,20 @@ function LandingPage() {
                   aria-hidden
                   className="hidden lg:block h-4 w-px bg-[#d6dace]"
                 />
+                <a
+                  href={t.switchTo.href}
+                  hrefLang={t.switchTo.lang}
+                  lang={t.switchTo.lang}
+                  aria-label={t.switchTo.ariaLabel}
+                  className="inline-flex min-h-[44px] items-center px-2 text-[#5f644c] hover:text-[#101700] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#101700] text-[12px] uppercase"
+                  style={{
+                    fontFamily: mono,
+                    fontWeight: 400,
+                    lineHeight: "normal",
+                  }}
+                >
+                  {t.switchTo.label}
+                </a>
                 <button
                   type="button"
                   onClick={openContactModal}
@@ -1080,7 +949,7 @@ function LandingPage() {
                     lineHeight: "normal",
                   }}
                 >
-                  Contato
+                  {t.nav.contact}
                 </button>
               </div>
             </div>
@@ -1091,7 +960,7 @@ function LandingPage() {
       <main className="text-[#101700]">
         {/* ===== HERO ===== */}
         <div
-          id="inicio"
+          id={t.ids.hero}
           data-reveal="section"
           className="border-y border-[#d6dace] scroll-mt-[96px]"
         >
@@ -1101,15 +970,13 @@ function LandingPage() {
               <div className="flex flex-col justify-between p-6 w-full lg:w-[58%] min-h-[360px] lg:h-[462px]">
                 <div className="flex flex-col gap-12 max-w-[540px]">
                   <div className="flex flex-col gap-6">
-                    <SectionLabel>
-                      /Engenharia de negócios, da ideia à escala
-                    </SectionLabel>
+                    <SectionLabel>{t.hero.label}</SectionLabel>
                     <SectionTitle
                       as="h1"
                       className="text-[32px]"
                     >
-                      <span className="block">{`Tiramos negócios do papel. `}</span>
-                      <span className="block">Estruturamos os que já existem.</span>
+                      <span className="block">{t.hero.titleLines[0]}</span>
+                      <span className="block">{t.hero.titleLines[1]}</span>
                     </SectionTitle>
                   </div>
                   <p
@@ -1117,9 +984,7 @@ function LandingPage() {
                     className="text-[#5f644c] text-[14px] md:text-[16px] max-w-[343px]"
                     style={{ fontFamily: body, lineHeight: 1.333 }}
                   >
-                    A ShiftLabs transforma ideias em negócios reais, até a
-                    entrega ao primeiro cliente, e organiza empresas prontas
-                    para crescer com previsibilidade.
+                    {t.hero.text}
                   </p>
                 </div>
                 <div className="mt-8 lg:mt-0">
@@ -1129,7 +994,7 @@ function LandingPage() {
                     className="inline-flex min-h-[36px] items-center bg-[#101700] text-[#f2f3ef] px-3 py-2 text-[12px] uppercase cursor-pointer transition-[background-color,transform] hover:bg-[#263600] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#101700]"
                     style={{ fontFamily: mono }}
                   >
-                    conversar com a ShiftLabs
+                    {t.hero.cta}
                   </button>
                 </div>
               </div>
@@ -1147,10 +1012,9 @@ function LandingPage() {
           <div className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] py-12">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
               <div className="flex flex-col gap-6 max-w-[640px]">
-                <SectionLabel>/Feitos do zero</SectionLabel>
+                <SectionLabel>{t.ecosystem.label}</SectionLabel>
                 <SectionTitle as="h2" className="text-[32px]">
-                  Plataformas e sistemas feitos do zero com a engenharia e o
-                  framework da ShiftLabs.
+                  {t.ecosystem.title}
                 </SectionTitle>
               </div>
             </div>
@@ -1167,7 +1031,7 @@ function LandingPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={
-                        isClone ? undefined : `Abrir site da ${name} em nova aba`
+                        isClone ? undefined : t.ecosystem.openSite(name)
                       }
                       aria-hidden={isClone || undefined}
                       tabIndex={isClone ? -1 : undefined}
@@ -1184,7 +1048,7 @@ function LandingPage() {
         </div>
 
         <nav
-          aria-label="Seções da home"
+          aria-label={t.nav.sectionsLabel}
           className="sticky top-[72px] z-40 lg:hidden border-b border-[#d6dace] bg-[#f2f3ef]"
         >
           <div className="flex overflow-x-auto px-4">
@@ -1203,19 +1067,19 @@ function LandingPage() {
 
         {/* ===== PROBLEM HEADER ===== */}
         <div
-          id="problema"
+          id={t.ids.problem}
           data-reveal="section"
           className="border-b border-[#d6dace] scroll-mt-[96px]"
         >
           <div className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] py-12">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
               <div className="flex flex-col gap-6 max-w-[499px]">
-                <SectionLabel>/problema</SectionLabel>
+                <SectionLabel>{t.problem.label}</SectionLabel>
                 <SectionTitle
                   as="h2"
                   className="text-[32px]"
                 >
-                  Negócios travam em dois momentos: antes de nascer e depois de crescer.
+                  {t.problem.title}
                 </SectionTitle>
               </div>
               <p
@@ -1223,9 +1087,7 @@ function LandingPage() {
                 className="text-[#5f644c] text-[14px] md:text-[16px] max-w-[335px]"
                 style={{ fontFamily: body, lineHeight: 1.4 }}
               >
-                Ideias param por falta de método, validação e time. Empresas
-                prontas perdem força quando a estrutura não acompanha o
-                crescimento.
+                {t.problem.text}
               </p>
             </div>
           </div>
@@ -1285,9 +1147,7 @@ function LandingPage() {
                   lineHeight: "normal",
                 }}
               >
-                Antes do primeiro cliente, o risco é construir a coisa errada.
-                Depois dele, é crescer sobre uma base que não aguenta. A
-                ShiftLabs atua nos dois momentos.
+                {t.problem.quote}
               </p>
             </div>
           </div>
@@ -1295,15 +1155,15 @@ function LandingPage() {
 
         {/* ===== CAMINHOS ===== */}
         <div
-          id="caminhos"
+          id={t.ids.paths}
           data-reveal="section"
           className="border-b border-[#d6dace] scroll-mt-[96px]"
         >
           <div className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] py-12">
             <div className="flex flex-col gap-6 max-w-[560px]">
-              <SectionLabel>/Dois caminhos</SectionLabel>
+              <SectionLabel>{t.paths.label}</SectionLabel>
               <SectionTitle as="h2" className="text-[32px]">
-                Do zero ou do que já existe, cuidamos do caminho inteiro.
+                {t.paths.title}
               </SectionTitle>
             </div>
           </div>
@@ -1387,7 +1247,7 @@ function LandingPage() {
                   className="text-[#5f644c] text-[12px] lowercase"
                   style={{ fontFamily: mono, textShadow: audienceTextHalo }}
                 >
-                  /Para Quem é a ShiftLabs
+                  {t.audience.label}
                 </p>
                 <h2
                   data-reveal="title"
@@ -1399,7 +1259,7 @@ function LandingPage() {
                     textShadow: audienceTextHalo,
                   }}
                 >
-                  Da primeira ideia à próxima fase.
+                  {t.audience.title}
                 </h2>
               </div>
             </div>
@@ -1444,18 +1304,18 @@ function LandingPage() {
 
         {/* ===== THE SHIFT APPROACH ===== */}
         <div
-          id="abordagem"
+          id={t.ids.approach}
           data-reveal="section"
           className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] pt-16 pb-9 scroll-mt-[96px]"
         >
           <div className="flex flex-col lg:flex-row lg:items-end gap-8 lg:gap-12">
             <div className="flex flex-col gap-8 max-w-[649px]">
-              <SectionLabel>/Abordagem ShiftLabs</SectionLabel>
+              <SectionLabel>{t.approach.label}</SectionLabel>
               <SectionTitle
                 as="h2"
                 className="text-[32px]"
               >
-                Da ideia ou do caos a sistemas coordenados.
+                {t.approach.title}
               </SectionTitle>
             </div>
             <p
@@ -1463,27 +1323,17 @@ function LandingPage() {
               className="text-[#5f644c] text-[14px] md:text-[16px] max-w-[338px]"
               style={{ fontFamily: body, lineHeight: 1.4 }}
             >
-              <span>A ShiftLabs não é </span>
-              <span
-                className="text-[#101700]"
-                style={{ fontFamily: display, fontWeight: 500 }}
-              >
-                agência.{" "}
-              </span>
-              <span>Não é </span>
-              <span
-                className="text-[#101700]"
-                style={{ fontFamily: display, fontWeight: 500 }}
-              >
-                consultoria tradicional.
-              </span>
-              <span> Não é </span>
-              <span
-                className="text-[#101700]"
-                style={{ fontFamily: display, fontWeight: 500 }}
-              >
-                software factory.
-              </span>
+              {t.approach.parts.map(([plain, strong]) => (
+                <span key={strong}>
+                  {plain}
+                  <span
+                    className="text-[#101700]"
+                    style={{ fontFamily: display, fontWeight: 500 }}
+                  >
+                    {strong}
+                  </span>
+                </span>
+              ))}
             </p>
           </div>
         </div>
@@ -1491,19 +1341,19 @@ function LandingPage() {
         {/* ===== O QUE FAZEMOS ===== */}
         <div className="border-t border-[#d6dace]">
           <div
-            id="servicos"
+            id={t.ids.services}
             data-reveal="section"
             className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] pt-16 pb-9 scroll-mt-[96px]"
           >
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 lg:gap-12">
               <div className="flex flex-col gap-6 max-w-[499px]">
-                <SectionLabel>/O QUE FAZEMOS</SectionLabel>
+                <SectionLabel>{t.services.label}</SectionLabel>
                 <SectionTitle
                   as="h2"
                   className="text-[32px]"
                 >
-                  <span className="block">Como construímos e </span>
-                  <span className="block">estruturamos negócios.</span>
+                  <span className="block">{t.services.titleLines[0]}</span>
+                  <span className="block">{t.services.titleLines[1]}</span>
                 </SectionTitle>
               </div>
               <p
@@ -1515,10 +1365,9 @@ function LandingPage() {
                   className="text-[#101700]"
                   style={{ fontFamily: display, fontWeight: 500 }}
                 >
-                  Somos a engenharia estrutural do negócio.
+                  {t.services.lead}
                 </span>{" "}
-                Da ideia à operação, trabalhamos na interseção de produto,
-                tecnologia, comercial, growth e inteligência artificial.
+                {t.services.text}
               </p>
             </div>
           </div>
@@ -1582,14 +1431,14 @@ function LandingPage() {
                   className="text-[#3d4f0a] text-[12px] lowercase"
                   style={{ fontFamily: mono }}
                 >
-                  /Crescimento previsível
+                  {t.framework.label}
                 </p>
                 <h2
                   data-reveal="title"
                   className="text-[#101700] text-[length:clamp(14px,calc(6vw-5px),32px)] whitespace-nowrap"
                   style={{ fontFamily: heading, fontWeight: 500, letterSpacing: titleTracking }}
                 >
-                  Framework de Engenharia de Negócios™
+                  {t.framework.title}
                 </h2>
                 <p
                   data-reveal="text"
@@ -1600,10 +1449,10 @@ function LandingPage() {
                     lineHeight: 1.1,
                   }}
                 >
-                  Do zero ou de uma empresa pronta, cada projeto segue camadas:
+                  {t.framework.intro}
                 </p>
               </div>
-              <FrameworkLayers />
+              <FrameworkLayers labels={t.framework.layers} />
               <p
                 className="framework-outcome text-center text-balance text-[18px] md:text-[20px] lg:text-[24px]"
                 style={{
@@ -1613,7 +1462,7 @@ function LandingPage() {
                   lineHeight: "normal",
                 }}
               >
-                Decisão deixa de ser opinião e passa a ser engenharia.
+                {t.framework.outcome}
               </p>
             </div>
             <div className="hidden xl:block w-[192px] shrink-0 border-y border-[#d6dace]" />
@@ -1622,18 +1471,18 @@ function LandingPage() {
 
         {/* ===== HOW WE WORK ===== */}
         <div
-          id="como-trabalhamos"
+          id={t.ids.method}
           data-reveal="section"
           className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] pt-16 pb-9 scroll-mt-[96px]"
         >
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 lg:gap-12">
             <div className="flex flex-col gap-6 max-w-[560px]">
-              <SectionLabel>/Como trabalhamos</SectionLabel>
+              <SectionLabel>{t.method.label}</SectionLabel>
               <SectionTitle
                 as="h2"
                 className="text-[32px]"
               >
-                Da primeira conversa à entrega.
+                {t.method.title}
               </SectionTitle>
             </div>
             <p
@@ -1641,9 +1490,7 @@ function LandingPage() {
               className="text-[#5f644c] text-[14px] md:text-[16px] max-w-[420px]"
               style={{ fontFamily: body, lineHeight: 1.4 }}
             >
-              Antes de sair construindo, entendemos em que fase o negócio está,
-              desenhamos a arquitetura de execução e colocamos produto,
-              tecnologia, crescimento e operação para trabalhar no mesmo sistema.
+              {t.method.text}
             </p>
           </div>
         </div>
@@ -1694,17 +1541,17 @@ function LandingPage() {
 
         {/* ===== CASES ===== */}
         <div
-          id="cases"
+          id={t.ids.cases}
           data-reveal="section"
           className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] pt-16 pb-9 scroll-mt-[96px]"
         >
           <div className="flex flex-col gap-6 max-w-[499px]">
-            <SectionLabel>/cases</SectionLabel>
+            <SectionLabel>{t.cases.label}</SectionLabel>
             <SectionTitle
               as="h2"
               className="text-[32px]"
             >
-              Plataformas feitas do zero com a nossa engenharia.
+              {t.cases.title}
             </SectionTitle>
           </div>
         </div>
@@ -1736,7 +1583,7 @@ function LandingPage() {
                         style={{ fontFamily: mono }}
                       >
                         {domain} <span aria-hidden>↗</span>
-                        <span className="sr-only"> (abre em nova aba)</span>
+                        <span className="sr-only">{t.cases.newTab}</span>
                       </a>
                     </div>
                     <div className="flex flex-col gap-4">
@@ -1753,9 +1600,9 @@ function LandingPage() {
                       </h3>
                       <div className="flex flex-col gap-3">
                         {[
-                          ["Contexto: ", context],
-                          ["Efeito: ", effect],
-                          ["Capacidade: ", capability],
+                          [t.cases.contextLabel, context],
+                          [t.cases.effectLabel, effect],
+                          [t.cases.capabilityLabel, capability],
                         ].map(([label, text]) => (
                           <p
                             key={label}
@@ -1785,9 +1632,9 @@ function LandingPage() {
         >
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 lg:gap-12">
             <div className="flex flex-col gap-8 max-w-[649px]">
-              <SectionLabel>/Por que a ShiftLabs</SectionLabel>
+              <SectionLabel>{t.why.label}</SectionLabel>
               <SectionTitle as="h2" className="text-[32px]">
-                Um time só, da ideia à escala.
+                {t.why.title}
               </SectionTitle>
             </div>
             <p
@@ -1795,9 +1642,7 @@ function LandingPage() {
               className="text-[#5f644c] text-[14px] md:text-[16px] max-w-[338px]"
               style={{ fontFamily: body, lineHeight: 1.4 }}
             >
-              Quando design, código e marketing são contratados separados,
-              ninguém responde pelo resultado. Na ShiftLabs, as três frentes
-              andam juntas.
+              {t.why.text}
             </p>
           </div>
         </div>
@@ -1858,13 +1703,13 @@ function LandingPage() {
                     className="text-[#456300] text-[12px] lowercase"
                     style={{ fontFamily: mono }}
                   >
-                    /Próximo passo
+                    {t.cta.label}
                   </p>
                   <SectionTitle
                     as="h2"
                     className="text-[32px]"
                   >
-                    Por onde começamos: pela sua ideia ou pela sua empresa?
+                    {t.cta.title}
                   </SectionTitle>
                 </div>
                 <p
@@ -1872,9 +1717,7 @@ function LandingPage() {
                   className="text-[#456300] text-[14px] md:text-[16px] max-w-[360px] mt-8"
                   style={{ fontFamily: body, lineHeight: 1.4 }}
                 >
-                  A primeira conversa serve para entender em que fase você está
-                  e qual é o caminho até o próximo resultado: o primeiro cliente
-                  ou uma operação que cresce com previsibilidade.
+                  {t.cta.text}
                 </p>
               </div>
               <div className="relative flex items-end justify-end p-6 w-full lg:w-1/2 min-h-[120px] lg:h-[462px]">
@@ -1884,7 +1727,7 @@ function LandingPage() {
                   className="inline-flex min-h-[36px] items-center bg-[#101700] text-[#f2f3ef] px-3 py-2 text-[12px] uppercase cursor-pointer transition-[background-color,transform] hover:bg-[#263600] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#101700]"
                   style={{ fontFamily: mono }}
                 >
-                  iniciar conversa
+                  {t.cta.button}
                 </button>
               </div>
             </div>
@@ -1897,7 +1740,7 @@ function LandingPage() {
 
       {/* ===== FOOTER ===== */}
       <footer
-        id="contato"
+        id={t.ids.contact}
         data-reveal="section"
         className="max-w-[1512px] mx-auto px-6 md:px-8 xl:px-[192px] py-9 scroll-mt-[96px] text-[#101700]"
       >
@@ -1909,8 +1752,7 @@ function LandingPage() {
               className="text-[#5f644c] text-[14px] md:text-[16px]"
               style={{ fontFamily: body, lineHeight: 1.3 }}
             >
-              Tiramos negócios do papel e estruturamos empresas prontas, com
-              produto, tecnologia, comercial e operação coordenados.
+              {t.footer.text}
             </p>
             <p
               data-reveal="text"
@@ -1923,11 +1765,11 @@ function LandingPage() {
               >
                 © 2026 ShiftLabs.
               </span>
-              <span> Todos os direitos reservados.</span>
+              <span>{t.footer.rights}</span>
             </p>
           </div>
           <nav
-            aria-label="Rodapé"
+            aria-label={t.nav.footerLabel}
             className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 md:gap-x-16"
           >
             <div className="flex flex-col gap-3">
@@ -1935,7 +1777,7 @@ function LandingPage() {
                 className="text-[#5f644c] text-[12px] lowercase"
                 style={{ fontFamily: mono }}
               >
-                /home
+                {t.footer.homeLabel}
               </p>
               {homeSections.map(([href, label]) => (
                 <a
@@ -1953,7 +1795,7 @@ function LandingPage() {
                 className="text-[#5f644c] text-[12px] lowercase"
                 style={{ fontFamily: mono }}
               >
-                /empresa
+                {t.footer.companyLabel}
               </p>
               <button
                 type="button"
@@ -1961,7 +1803,7 @@ function LandingPage() {
                 className="inline-flex min-h-[32px] items-center text-left text-[#5f644c] hover:text-[#101700] transition-colors text-[14px] md:text-[16px] cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#101700]"
                 style={{ fontFamily: body, lineHeight: 1.3 }}
               >
-                Contato
+                {t.nav.contact}
               </button>
             </div>
             <div className="flex flex-col gap-3">
@@ -1969,7 +1811,7 @@ function LandingPage() {
                 className="text-[#5f644c] text-[12px] lowercase"
                 style={{ fontFamily: mono }}
               >
-                /redes
+                {t.footer.socialLabel}
               </p>
               {socialLinks.map(({ name, href, Icon }) => (
                 <a
@@ -2006,7 +1848,7 @@ function LandingPage() {
           <div
             role="dialog"
             aria-modal="true"
-            aria-label="Formulário de contato"
+            aria-label={t.contact.dialogLabel}
             className="relative flex max-h-[calc(100dvh-32px)] w-full max-w-[760px] flex-col overflow-hidden border border-[#d6dace] bg-[#f2f3ef]"
             onClick={(event) => event.stopPropagation()}
           >
@@ -2016,7 +1858,7 @@ function LandingPage() {
                   className="text-[#5f644c] text-[12px] lowercase"
                   style={{ fontFamily: mono }}
                 >
-                  /contato
+                  {t.contact.label}
                 </p>
                 <button
                   type="button"
@@ -2024,7 +1866,7 @@ function LandingPage() {
                   className="inline-flex min-h-[36px] items-center border border-[#d6dace] px-3 py-2 text-[12px] uppercase text-[#5f644c] hover:text-[#101700]"
                   style={{ fontFamily: mono, lineHeight: "normal" }}
                 >
-                  fechar
+                  {t.contact.close}
                 </button>
               </div>
               <p
@@ -2036,7 +1878,7 @@ function LandingPage() {
                   lineHeight: "normal",
                 }}
               >
-                {isContactSuccess ? "Mensagem pronta" : "Fale com a ShiftLabs"}
+                {isContactSuccess ? t.contact.successTitle : t.contact.title}
               </p>
             </div>
 
@@ -2054,7 +1896,7 @@ function LandingPage() {
                             className="text-[12px] lowercase text-[#5f644c]"
                             style={{ fontFamily: mono }}
                           >
-                            /falta um passo
+                            {t.contact.successLabel}
                           </p>
                           <p
                             className="text-[25px] md:text-[36px] text-[#101700]"
@@ -2065,7 +1907,7 @@ function LandingPage() {
                               lineHeight: 1.03,
                             }}
                           >
-                            Sua mensagem está pronta no e-mail.
+                            {t.contact.successHeading}
                           </p>
                         </div>
                       </div>
@@ -2073,7 +1915,7 @@ function LandingPage() {
                         className="shiftlabs-success-chip"
                         style={{ fontFamily: mono }}
                       >
-                        STATUS: PRONTA
+                        {t.contact.successStatus}
                       </span>
                     </div>
 
@@ -2085,48 +1927,25 @@ function LandingPage() {
                     </p>
 
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                      <div className="shiftlabs-success-step border border-[#d6dace] p-3">
-                        <p
-                          className="text-[12px] lowercase text-[#5f644c]"
-                          style={{ fontFamily: mono }}
+                      {t.contact.steps.map(([label, text]) => (
+                        <div
+                          key={label}
+                          className="shiftlabs-success-step border border-[#d6dace] p-3"
                         >
-                          /passo 01
-                        </p>
-                        <p
-                          className="mt-1 text-[14px] text-[#101700]"
-                          style={{ fontFamily: body, lineHeight: 1.3 }}
-                        >
-                          Abrimos seu app de e-mail com tudo preenchido.
-                        </p>
-                      </div>
-                      <div className="shiftlabs-success-step border border-[#d6dace] p-3">
-                        <p
-                          className="text-[12px] lowercase text-[#5f644c]"
-                          style={{ fontFamily: mono }}
-                        >
-                          /passo 02
-                        </p>
-                        <p
-                          className="mt-1 text-[14px] text-[#101700]"
-                          style={{ fontFamily: body, lineHeight: 1.3 }}
-                        >
-                          Confira a mensagem e clique em enviar.
-                        </p>
-                      </div>
-                      <div className="shiftlabs-success-step border border-[#d6dace] p-3">
-                        <p
-                          className="text-[12px] lowercase text-[#5f644c]"
-                          style={{ fontFamily: mono }}
-                        >
-                          /passo 03
-                        </p>
-                        <p
-                          className="mt-1 text-[14px] text-[#101700]"
-                          style={{ fontFamily: body, lineHeight: 1.3 }}
-                        >
-                          Retornaremos em até 2 dias úteis.
-                        </p>
-                      </div>
+                          <p
+                            className="text-[12px] lowercase text-[#5f644c]"
+                            style={{ fontFamily: mono }}
+                          >
+                            {label}
+                          </p>
+                          <p
+                            className="mt-1 text-[14px] text-[#101700]"
+                            style={{ fontFamily: body, lineHeight: 1.3 }}
+                          >
+                            {text}
+                          </p>
+                        </div>
+                      ))}
                     </div>
 
                     <div aria-hidden className="shiftlabs-success-progress" />
@@ -2138,7 +1957,7 @@ function LandingPage() {
                         className="inline-flex min-h-[36px] items-center border border-[#d6dace] px-3 py-2 text-[12px] uppercase text-[#5f644c] hover:text-[#101700]"
                         style={{ fontFamily: mono, lineHeight: "normal" }}
                       >
-                        voltar ao formulário
+                        {t.contact.backToForm}
                       </button>
                     </div>
                   </div>
@@ -2155,7 +1974,7 @@ function LandingPage() {
                       className="text-[13px] text-[#5f644c]"
                       style={{ fontFamily: body }}
                     >
-                      Nome
+                      {t.contact.fields.name}
                     </span>
                     <input
                       type="text"
@@ -2175,7 +1994,7 @@ function LandingPage() {
                       className="text-[13px] text-[#5f644c]"
                       style={{ fontFamily: body }}
                     >
-                      WhatsApp
+                      {t.contact.fields.whatsapp}
                     </span>
                     <input
                       type="tel"
@@ -2194,7 +2013,7 @@ function LandingPage() {
                       className="text-[13px] text-[#5f644c]"
                       style={{ fontFamily: body }}
                     >
-                      E-mail
+                      {t.contact.fields.email}
                     </span>
                     <input
                       type="email"
@@ -2213,7 +2032,7 @@ function LandingPage() {
                       className="text-[13px] text-[#5f644c]"
                       style={{ fontFamily: body }}
                     >
-                      Empresa
+                      {t.contact.fields.company}
                     </span>
                     <input
                       type="text"
@@ -2232,7 +2051,7 @@ function LandingPage() {
                       className="text-[13px] text-[#5f644c]"
                       style={{ fontFamily: body }}
                     >
-                      Assunto
+                      {t.contact.fields.subject}
                     </span>
                     <input
                       type="text"
@@ -2251,8 +2070,7 @@ function LandingPage() {
                   className="mt-5 text-[12px] text-[#5f644c]"
                   style={{ fontFamily: body, lineHeight: 1.3 }}
                 >
-                  Ao continuar, abrimos seu e-mail com a mensagem pronta.
-                  Usaremos seus dados apenas para responder seu contato.
+                  {t.contact.notice}
                 </p>
 
                 <div className="sticky bottom-0 -mx-5 mt-3 flex flex-wrap items-center gap-3 border-t border-[#d6dace] bg-[#f2f3ef] px-5 pt-3 pb-1 md:-mx-6 md:px-6">
@@ -2262,14 +2080,14 @@ function LandingPage() {
                     className="inline-flex min-h-[36px] items-center border border-[#d6dace] px-3 py-2 text-[12px] uppercase text-[#5f644c] hover:text-[#101700]"
                     style={{ fontFamily: mono, lineHeight: "normal" }}
                   >
-                    cancelar
+                    {t.contact.cancel}
                   </button>
                   <button
                     type="submit"
                     className="inline-flex min-h-[36px] items-center bg-[#101700] px-3 py-2 text-[12px] uppercase text-[#f2f3ef]"
                     style={{ fontFamily: mono, lineHeight: "normal" }}
                   >
-                    continuar no e-mail
+                    {t.contact.submit}
                   </button>
                 </div>
                 {isContactError ? (
@@ -2294,9 +2112,9 @@ function LandingPage() {
 export default function App() {
   useEffect(() => {
     applySeoPayload({
-      title: "ShiftLabs | Da Ideia ao Primeiro Cliente e Estrutura para Empresas",
+      title: t.seo.title,
       description: seoDefaultDescription,
-      path: "/",
+      path: t.homePath,
       pageSchema: buildLandingPageSchema(),
     });
   }, []);

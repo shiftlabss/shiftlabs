@@ -8,16 +8,26 @@ const rawSiteUrl = process.env.VITE_SITE_URL ?? process.env.SITE_URL ?? fallback
 const siteUrl = rawSiteUrl.trim().replace(/\/+$/, "");
 const nowDate = new Date().toISOString().slice(0, 10);
 
+function buildSitemapUrl(loc, priority) {
+  return [
+    "  <url>",
+    `    <loc>${loc}</loc>`,
+    `    <xhtml:link rel="alternate" hreflang="pt-BR" href="${siteUrl}/" />`,
+    `    <xhtml:link rel="alternate" hreflang="en" href="${siteUrl}/en" />`,
+    `    <xhtml:link rel="alternate" hreflang="x-default" href="${siteUrl}/" />`,
+    `    <lastmod>${nowDate}</lastmod>`,
+    "    <changefreq>weekly</changefreq>",
+    `    <priority>${priority}</priority>`,
+    "  </url>",
+  ];
+}
+
 function buildSitemapXml() {
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    "  <url>",
-    `    <loc>${siteUrl}/</loc>`,
-    `    <lastmod>${nowDate}</lastmod>`,
-    "    <changefreq>weekly</changefreq>",
-    "    <priority>1.0</priority>",
-    "  </url>",
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+    ...buildSitemapUrl(`${siteUrl}/`, "1.0"),
+    ...buildSitemapUrl(`${siteUrl}/en`, "0.9"),
     "</urlset>",
     "",
   ].join("\n");
